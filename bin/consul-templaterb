@@ -1,0 +1,110 @@
+#!/usr/bin/env ruby
+# This script can be launched to get a uniq id for this instance
+require 'consul/async/consul_endpoint'
+require 'consul/async/consul_template'
+require 'optparse'
+require 'optparse/uri'
+
+def usage_text
+  "USAGE: #{__FILE__} [[options]]"
+end
+
+options = {
+  consul: {
+    debug: {
+      network: false
+    },
+    base_url: 'http://locahost:8500',
+    token: nil,
+    retry_duration: 10,      # On error, retry after n seconds
+    min_duration: 0.5,       # On sucess and when differences are found
+    retry_on_non_diff: 7,    # On success but when there are not differences
+    wait_duration: 600,      # Delay to block in Consul
+    max_retry_duration: 600, # On consecutive errors, delay will increase, max value
+    missing_index_retry_time_on_diff: 15, # On endpoints without X-Consul-Index => next request
+    missing_index_retry_time_on_unchanged: 60, # Endpoints with X-Consul index and no diff
+    paths: {
+      '/v1/catalog/services': {
+        min_duration: 30,    # Since services change a lot, refresh services every 30 seconds
+      },
+      '/v1/catalog/nodes': {
+        min_duration: 30,    # Do not wake up before 30 seconds when node appear/disappear
+      },
+      '/v1/catalog/datacenters': {
+        min_duration: 60,    # Datacenters are not added every minute, right?
+      }
+    }
+  }
+}
+hot_reload_failure = 'die'
+once = false
+optparse = OptionParser.new do |opts|
+  opts.banner = usage_text
+
+  opts.on('-h', '--help', 'Show help') do
+    STDERR.puts opts
+    exit 0
+  end
+
+  opts.on('-c', '--consul-addr=<address>', String, 'Address of Consul, eg: http://locahost:8500') do |consul_url|
+    options[:consul][:base_url] = consul_url
+  end
+
+  opts.on('-w', '--wait=<min_duration>', Float, 'Wait at least n seconds before each template generation') do |min_duration|
+    options[:consul][:min_duration] = min_duration
+  end
+
+  opts.on('-r', '--retry-delay=<min_duration>', Float, 'Min Retry delay on Error/Missing Consul Index') do |min_duration|
+    options[:consul][:min_duration] = min_duration
+  end
+
+  opts.on('-k', '--hot-reload=<behavior>', String, 'Control hot reload behaviour, one of :'\
+                                                  '[die (kill daemon on hot reload failure), '\
+                                                  'keep (on error, keep running), '\
+                                                  'disable (hot reload disabled)] ') do |hot_reload_behaviour|
+    hot_reload_failure = 'die' == hot_reload_behaviour ? nil : hot_reload_behaviour
+  end
+
+  opts.on('-d', '--debug-network-usage', 'Debug the network usage') do
+    options[:consul][:debug][:network] = true
+  end
+
+  opts.on(nil, '--once', 'Do not run the process as a daemon') do
+    once = true
+  end
+end
+
+optparse.parse!
+
+consul_conf = Consul::Async::ConsulConfiguration.new(options[:consul])
+template_file = ARGV[0]
+template_file_ctime = File.ctime(template_file)
+template = File.read(template_file)
+output = ARGV[1] || 'result.txt'
+EventMachine.run do
+  template_manager = Consul::Async::ConsulEndPointsManager.new(consul_conf, template)
+  EventMachine.add_periodic_timer(3) do
+    new_time = File.ctime(template_file)
+    begin
+      template_file_ctime = new_time
+      template = File.read(template_file)
+      template_manager.update_template template
+      template_manager.write(output)
+      STDERR.puts "[INFO] Hot reload of template #{template_file} with success"
+    rescue StandardError => e
+      STDERR.puts "****\n[ERROR] HOT Reload of template #{template_file} did fail due to #{e}\n****\n"
+      raise e unless hot_reload_failure == 'keep'
+      STDERR.puts "[WARN] Hot reload of #{template_file} was not taken into account, keep running with previous version"
+    end if template_file_ctime != new_time
+  end if hot_reload_failure
+  EventMachine.add_periodic_timer(1) do
+    res = template_manager.write(output)
+    if res && once
+      STDERR.puts "[INFO] Program ends since daemon mode has been disabled, file has been written as #{output}"
+      template_manager.terminate
+      EventMachine.stop
+    end
+  end
+end
+
+exit 0

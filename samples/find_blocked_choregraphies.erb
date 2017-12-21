@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="refresh" content="5"/>
+    <title>Choregraphie status with consul-templaterb</title>
+  </head>
+  <body>
+    <h1>Show all choregraphie information</h1>
+    <div>This page only show choregraphie when at least one holder exists.</div>
+<% require 'base64'
+   require 'json'
+   require 'date'
+   current_time = Time.now.utc
+%>
+<% kv('choregraphie', recurse:true).result.json.each do |tuple|
+%>  
+      <%
+        json = JSON.parse(Base64.decode64(tuple['Value']))
+        holders = json['holders']
+      %>
+    <% if holders.count > 0 %>
+    <div>
+      <h2 id="<%= tuple['Key'] %>"><%= tuple['Key'] %>: <%= holders.count%>/<%= json['concurrency'] %></h2>
+      <pre><%= JSON.pretty_generate(json) %></pre>
+      <ul>
+      <%
+      holders.each_pair do |key, value|
+        begin
+          holder_date = Time.parse(value)
+          color = 'green'
+          diff = (current_time - holder_date).round(0) 
+          color = 'orange' if diff > 1800
+          color = 'red' if diff > 3600
+        rescue StandardError => e
+          color = 'purple'
+          holder_date = "Cannot parse date: #{e}"
+          diff = "Error Parsing date #{value}"
+        end
+      %><li style="color:<%= color %>"><%= key %> : <%= holder_date %> : <%= diff %> seconds ago</li>
+       <%
+      end %>
+      </ul>
+    </div>
+    <% end %>
+<% end %>
+  </body>
+</html>
