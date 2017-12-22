@@ -1,4 +1,4 @@
-require "consul/templaterb/version"
+require 'consul/templaterb/version'
 
 module Consul
   module Templaterb

@@ -4,14 +4,19 @@ require 'thread'
 require 'erb'
 module Consul
   module Async
+    class InvalidTemplateException < StandardError
+      attr_reader :cause
+      def initialize(cause)
+        @cause = cause
+      end
+    end
+
     class ConsulEndPointsManager
       attr_reader :conf, :net_info
-      def initialize(consul_configuration, template)
+      def initialize(consul_configuration)
         @conf = consul_configuration
         @endpoints = {}
         @iteration = 1
-        @template = template
-        @last_result = ''
         @start_time = Time.now.utc
         @net_info = {
           success: 0,
@@ -72,49 +77,50 @@ module Consul
         create_if_missing(path, query_params) { ConsulTemplateKV.new(ConsulEndpoint.new(conf, path, true, query_params, default_value)) }
       end
 
-      def render(tpl = @template)
+      def render(tpl)
         ERB.new(tpl).result(binding)
+      rescue StandardError => e
+        e2 = InvalidTemplateException.new e
+        raise e2, "Template contains errors: #{e.message}", e.backtrace
       end
 
-      def update_template(new_template)
-        if new_template != @template
-          render(new_template)
-          @template = new_template.freeze
-        end
-      end
-
-      def write(file)
-        data = render
-        not_ready = 0
+      def write(file, tpl, last_result)
+        data = render(tpl)
+        not_ready = []
         ready = 0
         @iteration += 1
         to_cleanup = []
-        @endpoints.each_value do |tpl|
-          if tpl.ready?
+        @endpoints.each_value do |endpt|
+          if endpt.ready?
             ready += 1
           else
-            not_ready += 1
+            not_ready << endpt.endpoint.path
           end
-          to_cleanup << tpl if (@iteration - tpl.seen_at) > 30
+          to_cleanup << endpt if (@iteration - endpt.seen_at) > 30
         end
-        if not_ready.positive?
-          STDERR.print "[INFO] Waiting for data from #{not_ready}/#{not_ready + ready} endpoints...\r"
-          return false
+        if not_ready.count.positive?
+          STDERR.print "[INFO] Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}...\r"
+          return [false, '']
         end
         if to_cleanup.count > 1
           STDERR.puts "[INFO] Candidates for cleanup: #{to_cleanup}..."
           # TODO: cleanup old endpoints
         end
-        if @last_result != data
+        if last_result != data
           STDERR.print "[INFO] Write #{Utilities.bytes_to_h data.bytesize} bytes to #{file}, "\
                        "netinfo=#{@net_info} aka "\
-                       "#{Utilities.bytes_to_h((net_info[:bytes_read] / (Time.now.utc - @start_time) ).round(1))}/s ...\r"
-          File.open(file, 'w') do |f|
+                       "#{Utilities.bytes_to_h((net_info[:bytes_read] / (Time.now.utc - @start_time)).round(1))}/s ...\n"
+          tmp_file = "#{file}.tmp"
+          File.open(tmp_file, 'w') do |f|
             f.write data
           end
-          @last_result = data
+          File.rename(tmp_file, file)
+        else
+          STDERR.print "[DBUG] Unchanged #{Utilities.bytes_to_h data.bytesize} bytes to #{file}, "\
+                       "netinfo=#{@net_info} aka "\
+                       "#{Utilities.bytes_to_h((net_info[:bytes_read] / (Time.now.utc - @start_time)).round(1))}/s ...\r"
         end
-        true
+        [true, data]
       end
 
       def terminate
@@ -150,11 +156,9 @@ module Consul
       def initialize(consul_endpoint)
         @endpoint = consul_endpoint
         consul_endpoint.on_response do |res|
-          @ready = true
-          @result = res
+          @result = parse_result(res)
         end
-        @result = consul_endpoint.last_result
-        @ready = consul_endpoint.ready?
+        @result = parse_result(consul_endpoint.last_result)
       end
 
       def _seen_at(val)
@@ -164,7 +168,13 @@ module Consul
       attr_reader :result
 
       def ready?
-        @ready
+        endpoint.ready?
+      end
+
+      private
+
+      def parse_result(res)
+        res
       end
     end
 

@@ -2,6 +2,7 @@
 # This script can be launched to get a uniq id for this instance
 require 'consul/async/consul_endpoint'
 require 'consul/async/consul_template'
+require 'consul/async/consul_template_render'
 require 'optparse'
 require 'optparse/uri'
 
@@ -78,29 +79,20 @@ optparse.parse!
 
 consul_conf = Consul::Async::ConsulConfiguration.new(options[:consul])
 template_file = ARGV[0]
-template_file_ctime = File.ctime(template_file)
-template = File.read(template_file)
-output = ARGV[1] || 'result.txt'
+output_file = ARGV[1] || 'result.txt'
 EventMachine.run do
-  template_manager = Consul::Async::ConsulEndPointsManager.new(consul_conf, template)
-  EventMachine.add_periodic_timer(3) do
-    new_time = File.ctime(template_file)
-    begin
-      template_file_ctime = new_time
-      template = File.read(template_file)
-      template_manager.update_template template
-      template_manager.write(output)
-      STDERR.puts "[INFO] Hot reload of template #{template_file} with success"
-    rescue StandardError => e
-      STDERR.puts "****\n[ERROR] HOT Reload of template #{template_file} did fail due to #{e}\n****\n"
-      raise e unless hot_reload_failure == 'keep'
-      STDERR.puts "[WARN] Hot reload of #{template_file} was not taken into account, keep running with previous version"
-    end if template_file_ctime != new_time
-  end if hot_reload_failure
+  template_manager = Consul::Async::ConsulEndPointsManager.new(consul_conf)
+  template_render = Consul::Async::ConsulTemplateRender.new(template_manager, template_file, output_file, hot_reload_failure: hot_reload_failure)
   EventMachine.add_periodic_timer(1) do
-    res = template_manager.write(output)
-    if res && once
-      STDERR.puts "[INFO] Program ends since daemon mode has been disabled, file has been written as #{output}"
+    begin
+      res = template_render.run
+      if res && once
+        STDERR.puts "[INFO] Program ends since daemon mode has been disabled, file has been written as #{output}"
+        template_manager.terminate
+        EventMachine.stop
+      end
+    rescue StandardError => e
+      STDERR.puts "[ERROR] Fatal error occured: #{e.inspect}"
       template_manager.terminate
       EventMachine.stop
     end
