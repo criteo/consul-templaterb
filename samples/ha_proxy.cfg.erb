@@ -1,0 +1,91 @@
+# Sample HA-Proxy Configuration
+# Will add all services having 
+global
+  maxconn 1024
+  stats socket    /tmp/haproxy mode 600 level admin
+
+defaults
+  timeout connect 1000
+  timeout client 5000
+  timeout server 15000
+
+<%
+  # Services to hide
+  services_blacklist = ['consul-agent-http', 'mesos-slave', 'mesos-agent-watcher']
+  # Compute the health of a Service
+  def compute_state(node)
+    states = ['passing', []]
+    node['Checks'].each do |chk|
+      st = chk['Status']
+      states[1] << st
+      if st == 'critical'
+        states[0] = st
+      elsif st == 'warning' && states[0] == 'passing'
+        states[0] = st
+      end
+    end
+    states
+  end
+  def compute_attributes(node)
+    w = 100
+    node['Service']['Tags'].each do |tag|
+      match = /^weight-([1-9][0-9])*$/.match(tag)
+      w = match[1].to_i if match
+    end
+    attributes = ""
+    states = compute_state(node)
+    attributes = "#{attributes}disabled " if states[0] == 'critical'
+    if states[0] == 'warning'
+      w = w / 8
+    end
+    attributes = "#{attributes}weight #{w} " if w.positive?
+  end
+  backends = {}
+  services.result.json.each do |service_name, tags|
+    if !services_blacklist.include?(service_name) && tags.include?('http')
+      backends[service_name] = []
+      service(service_name, tag:'http').result.json.sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |node|
+        backends[service_name] << node if node['Service']['Port']
+      end
+     end
+  end
+%>
+
+<% backends.each_pair do |service_name, nodes|
+%>
+backend backend_http__<%= service_name %>
+  mode http
+  balance leastconn
+  <% nodes.each do |node|
+  %>server <%= node['Node']['Node']%>_<%= node['Service']['Port'] %> <%= node['Node']['Address']%>:<%= node['Service']['Port'] %> <%= compute_attributes(node) %>
+  <% end %>
+<% end %>
+
+frontend fontend_http
+   mode http
+   bind *:8000
+   option httplog
+   log 127.0.0.1:534 local5
+   option  dontlognull
+   option forwardfor
+<% backends.each_pair do |service_name, nodes|
+%>
+   acl host__<%= service_name %> hdr_beg(host) -i <%= service_name %>.
+   use_backend backend_http__<%= service_name %> if host__<%= service_name%>
+<% end %>
+
+listen stats
+  bind    :8001
+  mode            http
+  log             global
+  maxconn 10
+  timeout client  100s
+  timeout server  100s
+  timeout connect 100s
+  timeout queue   100s
+  stats enable
+  stats hide-version
+  stats refresh 30s
+  stats show-node
+  stats auth admin:admin
+  stats uri  /haproxy?stats
