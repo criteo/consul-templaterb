@@ -1,0 +1,37 @@
+AllCops:
+  Exclude:
+    - bundle/**/*
+  TargetRubyVersion: 2.4
+
+Metrics/AbcSize:
+  Max: 80
+
+Metrics/BlockNesting:
+  Max: 4
+
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/CyclomaticComplexity:
+  Max: 15
+
+Metrics/LineLength:
+  Max: 150
+
+Metrics/MethodLength:
+  Max: 50
+
+Metrics/ParameterLists:
+  Max: 12
+
+Metrics/PerceivedComplexity:
+  Max: 18
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/MultilineBlockChain:
+  Enabled: false

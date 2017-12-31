@@ -4,6 +4,21 @@ require 'thread'
 require 'erb'
 module Consul
   module Async
+    class ConsulTemplateRenderedResult
+      attr_reader :template_file, :output_file, :hot_reloaded, :ready, :modified, :last_result
+      def initialize(template_file, output_file, hot_reloaded, was_success, modified, last_result)
+        @template_file = template_file
+        @output_file = output_file
+        @hot_reloaded = hot_reloaded
+        @ready = was_success
+        @modified = modified
+        @last_result = last_result
+      end
+
+      def ready?
+        @ready
+      end
+    end
     class ConsulTemplateRender
       attr_reader :template_file, :output_file, :template_file_ctime, :hot_reload_failure
       def initialize(template_manager, template_file, output_file, hot_reload_failure: 'die')
@@ -20,7 +35,9 @@ module Consul
       end
 
       def run
-        hot_reload_if_needed || write
+        hot_reloaded = hot_reload_if_needed
+        was_success, modified, last_result = write
+        ConsulTemplateRenderedResult.new(template_file, output_file, hot_reloaded, was_success, modified, last_result)
       end
 
       private
@@ -40,28 +57,22 @@ module Consul
       end
 
       def write
-        sucess, @last_result = @template_manager.write(@output_file, @template, @last_result)
-        sucess
+        success, modified, @last_result = @template_manager.write(@output_file, @template, @last_result)
+        [success, modified, @last_result]
       end
 
       def hot_reload_if_needed
         new_time = File.ctime(template_file)
         begin
           @template_file_ctime = new_time
-          ret = update_template(load_template)
-          if ret
-            STDERR.puts "[INFO] Hot reload of template #{template_file} with success"
-            write
-          end
-          return ret
+          return update_template(load_template)
         rescue Consul::Async::InvalidTemplateException => e
           STDERR.puts "****\n[ERROR] HOT Reload of template #{template_file} did fail due to #{e}\n****\n"
           raise e unless hot_reload_failure == 'keep'
           STDERR.puts "[WARN] Hot reload of #{template_file} was not taken into account, keep running with previous version"
-          false
         end if template_file_ctime != new_time
+        false
       end
-      false
     end
   end
 end

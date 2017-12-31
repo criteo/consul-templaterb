@@ -12,7 +12,7 @@ module Consul
     end
 
     class ConsulEndPointsManager
-      attr_reader :conf, :net_info
+      attr_reader :conf, :net_info, :start_time
       def initialize(consul_configuration)
         @conf = consul_configuration
         @endpoints = {}
@@ -99,8 +99,8 @@ module Consul
           to_cleanup << endpt if (@iteration - endpt.seen_at) > 30
         end
         if not_ready.count.positive?
-          STDERR.print "[INFO] Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}...\r"
-          return [false, '']
+          STDERR.print "[INFO] Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}..."
+          return [false, false, '']
         end
         if to_cleanup.count > 1
           STDERR.puts "[INFO] Candidates for cleanup: #{to_cleanup}..."
@@ -115,12 +115,8 @@ module Consul
             f.write data
           end
           File.rename(tmp_file, file)
-        else
-          STDERR.print "[DBUG] Unchanged #{Utilities.bytes_to_h data.bytesize} bytes to #{file}, "\
-                       "netinfo=#{@net_info} aka "\
-                       "#{Utilities.bytes_to_h((net_info[:bytes_read] / (Time.now.utc - @start_time)).round(1))}/s ...\r"
         end
-        [true, data]
+        [true, data != last_result, data]
       end
 
       def terminate

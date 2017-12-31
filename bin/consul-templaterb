@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 # This script can be launched to get a uniq id for this instance
-require 'consul/async/consul_endpoint'
-require 'consul/async/consul_template'
-require 'consul/async/consul_template_render'
+require 'consul/async/consul_template_engine'
+require 'consul/async/process_handler'
 require 'optparse'
 require 'optparse/uri'
 
@@ -18,8 +17,8 @@ options = {
     base_url: 'http://locahost:8500',
     token: nil,
     retry_duration: 10,      # On error, retry after n seconds
-    min_duration: 0.5,       # On sucess and when differences are found
-    retry_on_non_diff: 7,    # On success but when there are not differences
+    min_duration: 1,         # On sucess and when differences are found
+    retry_on_non_diff: 20,   # On success but when there are not differences
     wait_duration: 600,      # Delay to block in Consul
     max_retry_duration: 600, # On consecutive errors, delay will increase, max value
     missing_index_retry_time_on_diff: 15, # On endpoints without X-Consul-Index => next request
@@ -37,8 +36,9 @@ options = {
     }
   }
 }
-hot_reload_failure = 'die'
-once = false
+consul_engine = Consul::Async::ConsulTemplateEngine.new
+program = nil
+
 optparse = OptionParser.new do |opts|
   opts.banner = usage_text
 
@@ -63,40 +63,84 @@ optparse = OptionParser.new do |opts|
                                                   '[die (kill daemon on hot reload failure), '\
                                                   'keep (on error, keep running), '\
                                                   'disable (hot reload disabled)] ') do |hot_reload_behaviour|
-    hot_reload_failure = 'die' == hot_reload_behaviour ? nil : hot_reload_behaviour
+    consul_engine.hot_reload_failure = 'die' == hot_reload_behaviour ? nil : hot_reload_behaviour
+  end
+
+  opts.on('-e', '--exec=<command>', String, 'Execute the following command') do |cmd|
+    consul_engine.add_template_callback do |all_ready, _template_manager, results|
+      if all_ready
+        modified = results.reduce(false) { |a, e| a || (e.ready? && e.modified) }
+        if modified
+          if program.nil?
+            STDERR.puts "Starting process: #{cmd}..."
+            program = Consul::Async::ProcessHandler.new(cmd) if program.nil?
+            program.start
+          else
+            program.reload
+          end
+        end
+      end
+    end
   end
 
   opts.on('-d', '--debug-network-usage', 'Debug the network usage') do
     options[:consul][:debug][:network] = true
+    consul_engine.add_template_callback do |all_ready, template_manager, results|
+      if all_ready
+        mod = false
+        results = results.map do |res|
+          mod ||= res.modified
+          STDERR.puts "[INFO] Hot reload of template #{res.template_file} with success" if res.hot_reloaded
+          "#{res.modified ? 'WRITTEN' : 'UNCHANGED'}[#{res.output_file}]"
+        end.join(' ')
+        if mod
+          STDERR.puts("[INFO] File written: #{results} #{template_manager.net_info.inspect}")
+        else
+          STDERR.print "[DBUG] Files not changed #{results} #{template_manager.net_info.inspect}\r"
+        end
+      else
+        STDERR.print "[DBUG] Still waiting for data #{template_manager.net_info.inspect}...\r"
+      end
+    end
+  end
+
+  opts.on('-t', '--template=<TEMPLATE_FILE>:<DESTINATION>:[command]', String, 'Add a template') do |tpl|
+    splitted = tpl.split(':')
+    source = splitted[0]
+    dest = splitted[1]
+    command = splitted[2]
+    consul_engine.add_template(source, dest)
+
+    if command
+      consul_engine.add_template_callback do |_all_ready, _template_manager, results|
+        results.each do |res|
+          next unless res.ready? && res.modified && res.output_file == dest && res.template_file == source
+          # Our template has been fully rendered
+          STDERR.puts("Executing command: #{command}")
+          system(command)
+        end
+      end
+    end
   end
 
   opts.on(nil, '--once', 'Do not run the process as a daemon') do
-    once = true
+    consul_engine.add_template_callback do |all_ready, template_manager, _|
+      if all_ready
+        STDERR.puts "[INFO] Program ends since daemon mode has been disabled, file has been written as #{output_file}"
+        template_manager.terminate
+        EventMachine.stop
+      end
+    end
   end
 end
 
 optparse.parse!
 
 consul_conf = Consul::Async::ConsulConfiguration.new(options[:consul])
-template_file = ARGV[0]
-output_file = ARGV[1] || 'result.txt'
-EventMachine.run do
-  template_manager = Consul::Async::ConsulEndPointsManager.new(consul_conf)
-  template_render = Consul::Async::ConsulTemplateRender.new(template_manager, template_file, output_file, hot_reload_failure: hot_reload_failure)
-  EventMachine.add_periodic_timer(1) do
-    begin
-      res = template_render.run
-      if res && once
-        STDERR.puts "[INFO] Program ends since daemon mode has been disabled, file has been written as #{output}"
-        template_manager.terminate
-        EventMachine.stop
-      end
-    rescue StandardError => e
-      STDERR.puts "[ERROR] Fatal error occured: #{e.inspect}"
-      template_manager.terminate
-      EventMachine.stop
-    end
-  end
-end
+template_manager = Consul::Async::ConsulEndPointsManager.new(consul_conf)
+
+consul_engine.add_template(ARGV[0], ARGV[1] || 'result.txt') if ARGV[0]
+
+consul_engine.run(template_manager)
 
 exit 0
