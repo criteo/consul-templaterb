@@ -5,7 +5,7 @@ module Consul
         if bytes < 1024
           "#{bytes} b"
         elsif bytes < 1_048_576
-          "#{bytes / 1024} Kb"
+          "#{(bytes / 1024).round(2)} Kb"
         elsif bytes < 1_073_741_824
           "#{(bytes / 1_048_576.0).round(2)} Mb"
         else
