@@ -1,14 +1,14 @@
 + List of all datacenters
 -------------------------
-<% datacenters.result.json.each do |dc| %>
-  * <%= dc %> with <%= services(dc:dc).result.json.keys.count %> services, <%= nodes(dc:dc).result.json.count %> nodes
+<% datacenters.  each do |dc| %>
+  * <%= dc %> with <%= services(dc:dc).keys.count %> services, <%= nodes(dc:dc).count %> nodes
 <% end %>
 
 ===========
 
 + List of all services in current DC
 ------------------------------------
-<% services.result.json.each do |service_name, tags|
+<% services.each do |service_name, tags|
  %>  * <%= service_name %> [ <%= tags %> ]
 <% end %>
 
@@ -16,10 +16,10 @@
 
 + List all services instances with http tag on current DC, instances sorted by node name
 ----------------------------------------------------------------------------------------
-<% services.result.json.each do |service_name, tags|
+<% services.each do |service_name, tags|
      if tags.include? 'http'
 %>  ++ Service <%= service_name %>
-<%     service(service_name, tag:'http').result.json.sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |node|
+<%     service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |node|
 %>  * <%= service_name %> -> <%=
   node['Node']['Node'] %>:<%= node['Service']['Port'] %>  <%=
   node['Service']['Tags'] %> status: <%
@@ -33,20 +33,20 @@
 
 + List all nodes for DC, sorted by name
 ---------------------------------------
-<% nodes.result.json.sort {|a,b| a['Node'] <=> b['Node'] }.each do |node|
+<% nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |node|
 %>  * <%= node['Address'].ljust(16) %> <%= node['Node'] %>
 <% end %>
 
 + KV of Current DC
 ------------------
 
-<% kv(keys:true).result.json.each do |key|
+<% kv(keys:true).each do |key|
 %> * <%= key %>
 <% end %>
 
 + Show all choregraphie information
 -----------------------------------
 <% require 'base64' %>
-<% kv('choregraphie', recurse:true).result.json.each do |tuple|
+<% kv('choregraphie', recurse:true).each do |tuple|
 %> * <%= tuple['Key'].ljust(64) %> = <%= Base64.decode64(tuple['Value']) %>
 <% end %>

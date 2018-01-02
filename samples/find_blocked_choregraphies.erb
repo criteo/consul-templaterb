@@ -13,11 +13,18 @@
    require 'date'
    current_time = Time.now.utc
 %>
-<% kv('choregraphie', recurse:true).result.json.each do |tuple|
-%>  
+<% kv('choregraphie', recurse:true).each do |tuple|
+%>
+      <!-- <%= tuple['Key'] %> -->
       <%
-        json = JSON.parse(Base64.decode64(tuple['Value']))
-        holders = json['holders']
+        if tuple['Value'].nil?
+          json = []
+          holders = []
+      %><strong>Invalid Choregraphie data: <%= tuple %></strong><%
+        else
+          json = JSON.parse(Base64.decode64(tuple['Value']))
+          holders = json['holders']
+        end
       %>
     <% if holders.count > 0 %>
     <div>

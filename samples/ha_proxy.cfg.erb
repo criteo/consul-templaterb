@@ -41,10 +41,10 @@ defaults
     attributes = "#{attributes}weight #{w} " if w.positive?
   end
   backends = {}
-  services.result.json.each do |service_name, tags|
+  services.each do |service_name, tags|
     if !services_blacklist.include?(service_name) && tags.include?('http')
       backends[service_name] = []
-      service(service_name, tag:'http').result.json.sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |node|
+      service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |node|
         backends[service_name] << node if node['Service']['Port']
       end
      end

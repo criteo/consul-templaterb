@@ -1,6 +1,7 @@
 require 'consul/async/utilities'
 require 'em-http'
 require 'thread'
+require 'forwardable'
 require 'erb'
 module Consul
   module Async
@@ -64,7 +65,7 @@ module Consul
       def datacenters
         path = '/v1/catalog/datacenters'
         query_params = {}
-        create_if_missing(path, query_params) { ConsulTemplateDatacenters.new(ConsulEndpoint.new(conf, path, true, query_params, '{}')) }
+        create_if_missing(path, query_params) { ConsulTemplateDatacenters.new(ConsulEndpoint.new(conf, path, true, query_params, '[]')) }
       end
 
       def kv(name = nil, dc: nil, keys: nil, recurse: false)
@@ -148,7 +149,9 @@ module Consul
     end
 
     class ConsulTemplateAbstract
-      attr_reader :endpoint, :seen_at
+      extend Forwardable
+      def_delegators :result_delegate, :each, :[], :sort, :each_value
+      attr_reader :result, :endpoint, :seen_at
       def initialize(consul_endpoint)
         @endpoint = consul_endpoint
         consul_endpoint.on_response do |res|
@@ -161,50 +164,65 @@ module Consul
         @seen_at = val
       end
 
-      attr_reader :result
-
       def ready?
-        endpoint.ready?
+        @endpoint.ready?
       end
 
-      private
+      protected
+
+      def result_delegate
+        result.json
+      end
 
       def parse_result(res)
         res
       end
     end
 
-    class ConsulTemplateService < ConsulTemplateAbstract
+    class ConsulTemplateAbstractMap < ConsulTemplateAbstract
+      def_delegators :result_delegate, :each, :[], :keys, :sort, :values, :each_pair, :each_value
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
-    class ConsulTemplateDatacenters < ConsulTemplateAbstract
+    class ConsulTemplateAbstractArray < ConsulTemplateAbstract
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
-    class ConsulTemplateServices < ConsulTemplateAbstract
+    class ConsulTemplateService < ConsulTemplateAbstractMap
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
-    class ConsulTemplateChecks < ConsulTemplateAbstract
+    class ConsulTemplateDatacenters < ConsulTemplateAbstractArray
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
-    class ConsulTemplateNodes < ConsulTemplateAbstract
+    class ConsulTemplateServices < ConsulTemplateAbstractMap
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
-    class ConsulTemplateKV < ConsulTemplateAbstract
+    class ConsulTemplateChecks < ConsulTemplateAbstractArray
+      def initialize(consul_endpoint)
+        super(consul_endpoint)
+      end
+    end
+
+    class ConsulTemplateNodes < ConsulTemplateAbstractArray
+      def initialize(consul_endpoint)
+        super(consul_endpoint)
+      end
+    end
+
+    class ConsulTemplateKV < ConsulTemplateAbstractArray
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
