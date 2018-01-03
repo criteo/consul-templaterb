@@ -89,23 +89,26 @@ module Consul
         data = render(tpl)
         not_ready = []
         ready = 0
-        @iteration += 1
+        @iteration = Time.now.utc - @start_time
         to_cleanup = []
-        @endpoints.each_value do |endpt|
+        @endpoints.each_pair do |endpoint_key, endpt|
           if endpt.ready?
             ready += 1
           else
             not_ready << endpt.endpoint.path
           end
-          to_cleanup << endpt if (@iteration - endpt.seen_at) > 30
+          to_cleanup << endpoint_key if (@iteration - endpt.seen_at) > 10
         end
         if not_ready.count.positive?
           STDERR.print "[INFO] Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}..."
           return [false, false, '']
         end
         if to_cleanup.count > 1
-          STDERR.puts "[INFO] Candidates for cleanup: #{to_cleanup}..."
-          # TODO: cleanup old endpoints
+          STDERR.puts "[INFO] Cleaned up #{to_cleanup.count} endpoints: #{to_cleanup}"
+          to_cleanup.each do |to_remove|
+            x = @endpoints.delete(to_remove)
+            x.endpoint.terminate
+          end
         end
         if last_result != data
           STDERR.print "[INFO] Write #{Utilities.bytes_to_h data.bytesize} bytes to #{file}, "\
@@ -135,7 +138,7 @@ module Consul
         tpl = @endpoints[fqdn]
         unless tpl
           tpl = yield
-          STDERR.print "[INFO] path #{path.ljust(64)} #{query_params.inspect} \r"
+          STDERR.print "[INFO] path #{path.ljust(64)} #{query_params.inspect}\r"
           @endpoints[fqdn] = tpl
           tpl.endpoint.on_response do |result|
             @net_info[:success] = @net_info[:success] + 1
