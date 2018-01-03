@@ -11,8 +11,28 @@
 <% require 'base64'
    require 'json'
    require 'date'
-   current_time = Time.now.utc
+   @current_time = Time.now.utc
 %>
+<%
+  def display_holder(holder, value)
+    begin
+      holder_date = Time.parse(value)
+      color = 'green'
+      diff = (@current_time - holder_date).round(0) 
+      color = 'orange' if diff > 3600
+      color = 'red' if diff > 7200
+      diff_txt = "#{diff % 3600} seconds"
+      diff_txt = "#{(diff % 86400) / 3600} hours, #{diff_txt}" if diff > 3600
+      diff_txt = "#{diff / 86400} days, #{diff_txt}" if diff > 86400
+    rescue StandardError => e
+      color = 'purple'
+      holder_date = "Cannot parse date: #{e}"
+      diff_txt = "Error Parsing date #{value}"
+    end
+   "<li style=\"color:#{color}\">#{holder}: #{holder_date} : #{diff_txt} ago"
+  end
+%>
+
 <% kv('choregraphie', recurse:true).each do |tuple|
 %>
       <!-- <%= tuple['Key'] %> -->
@@ -33,19 +53,21 @@
       <ul>
       <%
       holders.each_pair do |key, value|
-        begin
-          holder_date = Time.parse(value)
-          color = 'green'
-          diff = (current_time - holder_date).round(0) 
-          color = 'orange' if diff > 1800
-          color = 'red' if diff > 3600
-        rescue StandardError => e
-          color = 'purple'
-          holder_date = "Cannot parse date: #{e}"
-          diff = "Error Parsing date #{value}"
+        if value.is_a?(Hash)
+      %>
+          <li><u><%= key %>:</u><ul>
+<%
+           # Other way of handling holders
+           value.each_pair do |k,v|
+             %><%= display_holder(k, v) %><%
+           end
+%>
+          </ul>
+          </li>
+      <%
+        else
+      %><%= display_holder(key, value) %><%
         end
-      %><li style="color:<%= color %>"><%= key %> : <%= holder_date %> : <%= diff %> seconds ago</li>
-       <%
       end %>
       </ul>
     </div>
