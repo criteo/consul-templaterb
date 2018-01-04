@@ -16,7 +16,7 @@
     "Service": {
       "ID": "consul",
       "Service": "consul",
-      "Tags": [],
+      "Tags": ["http"],
       "Address": "",
       "Port": 8300,
       "EnableTagOverride": false,
@@ -59,7 +59,7 @@
     "Service": {
       "ID": "consul",
       "Service": "consul",
-      "Tags": [],
+      "Tags": ["http"],
       "Address": "",
       "Port": 8300,
       "EnableTagOverride": false,
@@ -102,7 +102,7 @@
     "Service": {
       "ID": "consul",
       "Service": "consul",
-      "Tags": [],
+      "Tags": ["http"],
       "Address": "",
       "Port": 8300,
       "EnableTagOverride": false,
@@ -117,6 +117,49 @@
         "Status": "passing",
         "Notes": "",
         "Output": "Agent alive and reachable",
+        "ServiceID": "",
+        "ServiceName": "",
+        "ServiceTags": [],
+        "CreateIndex": 228090242,
+        "ModifyIndex": 228090242
+      }
+    ]
+  },
+  {
+    "Node": {
+      "ID": "830c08a0-34d2-ed54-0000-a30d9b1b6e35",
+      "Node": "consul04-par.central.criteo.preprod",
+      "Address": "10.251.1.99",
+      "Datacenter": "par",
+      "TaggedAddresses": {
+        "lan": "10.251.1.99",
+        "wan": "10.251.1.99"
+      },
+      "Meta": {
+        "consul-network-segment": "",
+        "rack_name": "1909"
+      },
+      "CreateIndex": 228090242,
+      "ModifyIndex": 228091729
+    },
+    "Service": {
+      "ID": "consul",
+      "Service": "consul",
+      "Tags": ["http"],
+      "Address": "",
+      "Port": 8300,
+      "EnableTagOverride": false,
+      "CreateIndex": 228090242,
+      "ModifyIndex": 228090242
+    },
+    "Checks": [
+      {
+        "Node": "consul03-par.central.criteo.preprod",
+        "CheckID": "serfHealth",
+        "Name": "Serf Health Status",
+        "Status": "critical",
+        "Notes": "",
+        "Output": "Broken",
         "ServiceID": "",
         "ServiceName": "",
         "ServiceTags": [],

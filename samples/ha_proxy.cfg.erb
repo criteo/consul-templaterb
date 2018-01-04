@@ -1,5 +1,5 @@
 # Sample HA-Proxy Configuration
-# Will add all services having 
+# Will add all services having
 global
   maxconn 1024
   stats socket    /tmp/haproxy mode 600 level admin
@@ -34,11 +34,11 @@ defaults
     end
     attributes = ""
     states = compute_state(node)
-    attributes = "#{attributes}disabled " if states[0] == 'critical'
+    attributes = "#{attributes} disabled" if states[0] == 'critical'
     if states[0] == 'warning'
       w = w / 8
     end
-    attributes = "#{attributes}weight #{w} " if w.positive?
+    attributes = "#{attributes} weight #{w}" if w.positive?
   end
   backends = {}
   services.each do |service_name, tags|
@@ -56,11 +56,11 @@ defaults
 backend backend_http__<%= service_name %>
   mode http
   balance leastconn
-  <% nodes.each do |node|
-  %>server <%= node['Node']['Node']%>_<%= node['Service']['Port'] %> <%= node['Node']['Address']%>:<%= node['Service']['Port'] %> <%= compute_attributes(node) %>
-  <% end %>
-<% end %>
-
+<%   nodes.each do |node|
+  %>  server <%= node['Node']['Node']%>_<%= node['Service']['Port'] %> <%= node['Node']['Address']%>:<%= node['Service']['Port'] %><%= compute_attributes(node) %>
+<%   end
+   end
+%>
 frontend fontend_http
    mode http
    bind *:8000
