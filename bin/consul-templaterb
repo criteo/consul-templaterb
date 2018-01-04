@@ -2,6 +2,7 @@
 # This script can be launched to get a uniq id for this instance
 require 'consul/async/consul_template_engine'
 require 'consul/async/process_handler'
+require 'consul/async/version'
 require 'optparse'
 require 'optparse/uri'
 
@@ -44,6 +45,11 @@ optparse = OptionParser.new do |opts|
 
   opts.on('-h', '--help', 'Show help') do
     STDERR.puts opts
+    exit 0
+  end
+
+  opts.on('-v', '--version', 'Show Version') do
+    STDERR.puts Consul::Async::VERSION
     exit 0
   end
 
@@ -104,7 +110,7 @@ optparse = OptionParser.new do |opts|
     end
   end
 
-  opts.on('-t', '--template=<TEMPLATE_FILE>:<DESTINATION>:[command]', String, 'Add a template') do |tpl|
+  opts.on('-t', '--template erb_file:output:[command]', String, 'Add a erb template, its output and optional reload command') do |tpl|
     splitted = tpl.split(':')
     source = splitted[0]
     dest = splitted[1]

@@ -1,11 +1,22 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'consul/templaterb/version'
+require 'consul/async/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'consul-templaterb'
-  spec.version       = Consul::Templaterb::VERSION
+
+  version            = Consul::Async::VERSION
+  patch_version      = case `git describe --tags`.to_s
+                       when /^#{version}.(\d+)-/
+                         Regexp.last_match(1).to_i + 1
+                       when /^#{version}.(\d+)/
+                         Regexp.last_match(1).to_i
+                       else
+                         0
+                       end
+
+  spec.version       = "#{version}.#{patch_version}"
   spec.authors       = ['SRE Core Services']
   spec.email         = ['sre-core-services@criteo.com']
 
