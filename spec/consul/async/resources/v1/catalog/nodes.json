@@ -1,0 +1,47 @@
+[
+  {
+    "ID": "",
+    "Node": "consul01-par.central.criteo.preprod",
+    "Address": "10.251.1.98",
+    "Datacenter": "",
+    "TaggedAddresses": {
+      "lan": "10.251.1.98",
+      "wan": "10.251.1.98"
+    },
+    "Meta": null,
+    "CreateIndex": 228090242,
+    "ModifyIndex": 228090242
+  },
+  {
+    "ID": "7a985997-3925-4f18-8613-637c81bd750b",
+    "Node": "consul02-par.central.criteo.preprod",
+    "Address": "10.251.1.96",
+    "Datacenter": "par",
+    "TaggedAddresses": {
+      "lan": "10.251.1.96",
+      "wan": "10.251.1.96"
+    },
+    "Meta": {
+      "consul-network-segment": "",
+      "rack_name": "2207"
+    },
+    "CreateIndex": 228090242,
+    "ModifyIndex": 228091668
+  },
+  {
+    "ID": "830c08a0-34d2-ed54-57ff-a30d9b1b6e35",
+    "Node": "consul03-par.central.criteo.preprod",
+    "Address": "10.251.1.97",
+    "Datacenter": "par",
+    "TaggedAddresses": {
+      "lan": "10.251.1.97",
+      "wan": "10.251.1.97"
+    },
+    "Meta": {
+      "consul-network-segment": "",
+      "rack_name": "1908"
+    },
+    "CreateIndex": 228090242,
+    "ModifyIndex": 228091729
+  }
+]

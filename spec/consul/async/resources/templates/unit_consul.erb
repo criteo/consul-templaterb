@@ -1,0 +1,7 @@
+Service Consul
+<%
+  service('consul').each do |service|
+%><%=service['Node']['Node']%>:<%=service['Service']['Port']%>
+<%
+  end
+%>

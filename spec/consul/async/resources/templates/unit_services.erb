@@ -1,0 +1,7 @@
+Services
+<%
+  services().each_pair do |service_name, tags|
+%><%= service_name %>:<%= tags.map {|tag| tag}.join(' ') %>
+<%
+  end
+%>

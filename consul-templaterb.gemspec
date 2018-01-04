@@ -52,4 +52,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '0.42.0'
   spec.add_development_dependency 'rubocop-junit-formatter'
   spec.add_development_dependency 'nexus'
+  spec.add_development_dependency 'webmock'
 end
