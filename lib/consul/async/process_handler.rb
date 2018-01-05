@@ -1,12 +1,15 @@
 module Consul
   module Async
+    class ProcessDoesNotExist < StandardError
+    end
     class ProcessHandler
-      attr_reader :command, :sig_reload, :sig_term, :pid
+      attr_reader :command, :sig_reload, :sig_term, :pid, :exit_status
       def initialize(command, sig_reload: 'HUP', sig_term: 'TERM')
         @command = command
         @sig_reload = sig_reload
         @sig_term = sig_term
         @pid = nil
+        @exit_status = nil
       end
 
       def start
@@ -25,24 +28,34 @@ module Consul
       end
 
       def kill
-        STDERR.puts "Sending #{sig_term} to #{pid}..."
+        return exit_status if pid.nil?
+        the_pid = pid
+        @pid = nil
+        STDERR.puts "[KILL] Sending #{sig_term} to #{the_pid}..."
         begin
-          Process.kill(sig_term, pid)
+          STDERR.puts "[KILL] waiting for #{the_pid}..."
+          Process.kill(sig_term, the_pid)
         rescue Errno::ESRCH
-          STDERR.puts "*** Process #{pid} has already been killed"
+          STDERR.puts "[KILL] *** Process #{the_pid} has already been killed"
         end
         begin
-          _pid, exit_status = Process.waitpid2 pid
+          _pid, @exit_status = Process.waitpid2 the_pid
         rescue SystemCallError
-          STDERR.puts "*** UNEXPECTED ERROR *** Failed to get return code for #{pid}"
+          STDERR.puts "[KILL] *** UNEXPECTED ERROR *** Failed to get return code for #{the_pid}"
         end
         exit_status
       end
 
       def process_status
-        cpid, result = Process.waitpid2(pid, Process::WNOHANG)
-        raise "Unexpected PID: #{cpid}, was expecting #{pid}" unless cpid == pid
-        result
+        raise ProcessDoesNotExist, 'No child process' if pid.nil?
+        begin
+          cpid, result = Process.waitpid2(pid, Process::WNOHANG)
+          raise ProcessDoesNotExist, "Unexpected PID: #{cpid}, was expecting #{pid}" unless cpid.nil? || cpid == pid
+          result
+        rescue Errno::ECHILD => e
+          e2 = ProcessDoesNotExist.new e
+          raise e2, "ChildProcess has been killed: #{e.message}", e.backtrace
+        end
       end
     end
   end

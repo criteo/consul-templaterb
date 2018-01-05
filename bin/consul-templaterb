@@ -38,7 +38,7 @@ options = {
   }
 }
 consul_engine = Consul::Async::ConsulTemplateEngine.new
-program = nil
+@programs = {}
 
 optparse = OptionParser.new do |opts|
   opts.banner = usage_text
@@ -73,16 +73,24 @@ optparse = OptionParser.new do |opts|
   end
 
   opts.on('-e', '--exec=<command>', String, 'Execute the following command') do |cmd|
-    consul_engine.add_template_callback do |all_ready, _template_manager, results|
+    consul_engine.add_template_callback do |all_ready, template_manager, results|
       if all_ready
         modified = results.reduce(false) { |a, e| a || (e.ready? && e.modified) }
         if modified
-          if program.nil?
-            STDERR.puts "Starting process: #{cmd}..."
-            program = Consul::Async::ProcessHandler.new(cmd) if program.nil?
-            program.start
+          if @programs[cmd].nil?
+            STDERR.puts "[EXEC] Starting process: #{cmd}..."
+            @programs[cmd] = Consul::Async::ProcessHandler.new(cmd)
+            @programs[cmd].start
           else
-            program.reload
+            @programs[cmd].reload
+          end
+        elsif !@programs[cmd].nil?
+          begin
+            @programs[cmd].process_status
+          rescue Consul::Async::ProcessDoesNotExist => e
+            STDERR.puts "[ERROR] The process is dead, aborting run: #{e.inspect}"
+            template_manager.terminate
+            EventMachine.stop
           end
         end
       end
@@ -140,6 +148,15 @@ optparse = OptionParser.new do |opts|
   end
 end
 
+def kill_program
+  @programs.each do |k, v|
+    STDERR.puts "Killing process #{k}..."
+    v.kill
+  end
+  @programs = {}
+  exit 0
+end
+
 optparse.parse!
 
 consul_conf = Consul::Async::ConsulConfiguration.new(options[:consul])
@@ -147,6 +164,17 @@ template_manager = Consul::Async::ConsulEndPointsManager.new(consul_conf)
 
 consul_engine.add_template(ARGV[0], ARGV[1] || 'result.txt') if ARGV[0]
 
+# Ensure to kill child process if any
+%w(INT PIPE TERM).each do |sig|
+  Signal.trap(sig) do
+    STDERR.puts "[KILL] received #{sig}, stopping myself"
+    kill_program
+  end
+end
+
 consul_engine.run(template_manager)
+
+# Kill possible child process if consul_engine.run did stop
+kill_program
 
 exit 0
