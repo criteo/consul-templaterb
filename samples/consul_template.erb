@@ -43,10 +43,3 @@
 <% kv(keys:true).each do |key|
 %> * <%= key %>
 <% end %>
-
-+ Show all choregraphie information
------------------------------------
-<% require 'base64' %>
-<% kv('choregraphie', recurse:true).each do |tuple|
-%> * <%= tuple['Key'].ljust(64) %> = <%= Base64.decode64(tuple['Value']) %>
-<% end %>
