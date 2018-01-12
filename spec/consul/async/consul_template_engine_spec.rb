@@ -22,4 +22,27 @@ RSpec.describe Consul::Async::ConsulTemplateEngine do
     end
     expect(@renderer.render).to eq read 'samples/haproxy.cfg'
   end
+
+  samples_path = File.expand_path('../../../../samples', __FILE__)
+
+  it "Expects samples (#{samples_path}) is a valid directory" do
+    expect(File.directory?(samples_path)).to be true
+  end
+
+  Dir["#{samples_path}/*.erb"].each do |erb|
+    it "Checks that #{erb} do work" do
+      mock_all
+      EM.run_block do
+        template_manager = Consul::Async::ConsulEndPointsManager.new(@conf)
+        template_file = erb
+        output_file = 'out.txt'
+        @renderer = Consul::Async::ConsulTemplateRender.new(template_manager, template_file, output_file)
+      end
+      # For multi-pass templates, we wait for up to 3 iterations
+      3.times do
+        @renderer.run
+      end
+      expect(@renderer.render).not_to be_empty
+    end
+  end
 end

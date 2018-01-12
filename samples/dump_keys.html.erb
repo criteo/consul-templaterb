@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="refresh" content="5"/>
+<% path = ENV['kv_path'] || 'services-data' %>
+    <title>Consul KV <%= path %></title>
+  </head>
+  <body>
+    <h1>Show all keys under hierarchy <%= path %></h1>
+<% require 'base64'
+   require 'json'
+   require 'date'
+%>
+<% kv(path, recurse:true).each do |tuple|
+     key = tuple['Key']
+     val = "NO_VALUE"
+     if !tuple['Value'].nil?
+       begin
+         val = Base64.decode64(tuple['Value'])
+       rescue StdError => e
+         val = "#{e.inspect} for tuple['Value']"
+       end
+     end
+%><h2><a name="#{key}"><%= key%></a></h2>
+<code><%= val %></code>
+<% end %>
+</body>
+</html>

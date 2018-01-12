@@ -17,16 +17,20 @@ module Consul
 
     def mock_path(path)
       body = read("#{path}.json")
-      stub_request(:get, "http://locahost:8500/#{path}?index=0&stale=stale&tag=http&wait=600s")
-        .to_return(body: body, status: 200)
-      stub_request(:get, "http://locahost:8500/#{path}?index=0&stale=stale&wait=600s")
+      stub_request(:get, %r{http://locahost:8500/#{path}?.*})
         .to_return(body: body, status: 200)
       body
     end
 
     def mock_all
       results = {}
-      %w(v1/catalog/nodes v1/catalog/services v1/health/service/consul).each do |path|
+      %w(v1/catalog/datacenters
+         v1/catalog/nodes
+         v1/catalog/services
+         v1/health/service/consul
+         v1/kv/
+         v1/kv/choregraphies
+         v1/kv/services-data/web-preview/network-service).each do |path|
         results[path] = mock_path path
       end
       results
