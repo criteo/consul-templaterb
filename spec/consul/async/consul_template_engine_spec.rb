@@ -8,7 +8,7 @@ RSpec.describe Consul::Async::ConsulTemplateEngine do
     @conf = Consul::Async::ConsulConfiguration.new
   end
 
-  it 'Renders properly basic.erb' do
+  it 'Renders properly ha_proxy.cfg.erb' do
     mock_all
     EM.run_block do
       template_manager = Consul::Async::ConsulEndPointsManager.new(@conf)
