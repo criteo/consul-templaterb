@@ -118,10 +118,15 @@ optparse = OptionParser.new do |opts|
     end
   end
 
-  opts.on('-t', '--template erb_file:output:[command]', String, 'Add a erb template, its output and optional reload command') do |tpl|
+  opts.on('-t', '--template erb_file:[output]:[command]', String, 'Add a erb template, its output and optional reload command') do |tpl|
     splitted = tpl.split(':')
     source = splitted[0]
     dest = splitted[1]
+    unless dest
+      dest = source.gsub(/\.erb$/, '')
+      STDERR.puts "-t --template #{tpl} : Since output has not been set, using #{dest}"
+    end
+    raise "Source and destination cannot be the same in #{tpl}" if source == dest || dest.empty?
     command = splitted[2]
     consul_engine.add_template(source, dest)
 
