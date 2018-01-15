@@ -174,6 +174,11 @@ end
 new_size = find_max_descriptors(65_536)
 STDERR.puts "Max number of descriptors set to #{new_size}" if options[:consul][:debug][:network]
 
+# This is needed to avoid EM not to crash on some Linux Hosts
+# When using a very large number of Consul Endpoints
+# See https://github.com/eventmachine/eventmachine/issues/636#issuecomment-143313282
+EM.epoll
+
 consul_conf = Consul::Async::ConsulConfiguration.new(options[:consul])
 template_manager = Consul::Async::ConsulEndPointsManager.new(consul_conf)
 
