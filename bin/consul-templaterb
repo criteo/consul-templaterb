@@ -159,6 +159,21 @@ end
 
 optparse.parse!
 
+# Find the max descriptors for our system
+def find_max_descriptors(max_descripors)
+  i = max_descripors
+  max_size = 1024
+  while i != max_size && i > 1024
+    max_size = EM.set_descriptor_table_size i
+    i /= 2 if max_size < i
+  end
+  max_size
+end
+
+# Since we might be using a lots of descriptors, document this
+new_size = find_max_descriptors(65_536)
+STDERR.puts "Max number of descriptors set to #{new_size}" if options[:consul][:debug][:network]
+
 consul_conf = Consul::Async::ConsulConfiguration.new(options[:consul])
 template_manager = Consul::Async::ConsulEndPointsManager.new(consul_conf)
 
