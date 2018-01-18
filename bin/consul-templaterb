@@ -39,6 +39,8 @@ options = {
 }
 consul_engine = Consul::Async::ConsulTemplateEngine.new
 @programs = {}
+cur_sig_reload = 'HUP'.freeze
+cur_sig_term = 'TERM'.freeze
 
 optparse = OptionParser.new do |opts|
   opts.banner = usage_text
@@ -72,14 +74,34 @@ optparse = OptionParser.new do |opts|
     consul_engine.hot_reload_failure = 'die' == hot_reload_behaviour ? nil : hot_reload_behaviour
   end
 
+  def compute_signal(val, none_value)
+    valid_signals = Signal.list.keys
+    raise "Please #{val} specifiy a signal: #{valid_signals.inspect}" unless val
+    return nil if val == none_value
+    raise "Invalid signal, valid signals: #{valid_signals.inspect}" unless valid_signals.include? val
+    val
+  end
+
+  opts.on('-K', '--sig-term=kill_signal', String,
+          'Signal to sent to next --exec command on kill, default=#{cur_sig_term}') do |sig|
+    cur_sig_term = compute_signal(sig, nil)
+  end
+
+  opts.on('-R', '--sig-reload=reload_signal', String,
+          'Signal to sent to next --exec command on reload (NONE supported), default=#{cur_sig_reload}') do |sig|
+    cur_sig_reload = compute_signal(sig, 'NONE')
+  end
+
   opts.on('-e', '--exec=<command>', String, 'Execute the following command') do |cmd|
+    sig_reload = cur_sig_reload
+    sig_term = cur_sig_term
     consul_engine.add_template_callback do |all_ready, template_manager, results|
       if all_ready
         modified = results.reduce(false) { |a, e| a || (e.ready? && e.modified) }
         if modified
           if @programs[cmd].nil?
-            STDERR.puts "[EXEC] Starting process: #{cmd}..."
-            @programs[cmd] = Consul::Async::ProcessHandler.new(cmd)
+            STDERR.puts "[EXEC] Starting process: #{cmd}... on_reload=#{sig_reload ? sig_reload : 'NONE'} on_term=#{sig_term}"
+            @programs[cmd] = Consul::Async::ProcessHandler.new(cmd, sig_reload: sig_reload, sig_term: sig_term)
             @programs[cmd].start
           else
             @programs[cmd].reload
@@ -135,7 +157,6 @@ optparse = OptionParser.new do |opts|
         results.each do |res|
           next unless res.ready? && res.modified && res.output_file == dest && res.template_file == source
           # Our template has been fully rendered
-          STDERR.puts("Executing command: #{command}")
           system(command)
         end
       end

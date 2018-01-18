@@ -5,6 +5,7 @@ module Consul
     class ProcessHandler
       attr_reader :command, :sig_reload, :sig_term, :pid, :exit_status
       def initialize(command, sig_reload: 'HUP', sig_term: 'TERM')
+        raise 'empty sig_term is not supported' unless sig_term
         @command = command
         @sig_reload = sig_reload
         @sig_term = sig_term
@@ -18,7 +19,8 @@ module Consul
       end
 
       def reload
-        STDERR.puts "Sending #{sig_reload} to #{pid}..."
+        return if sig_reload.nil?
+        STDERR.puts "Sending SIG #{sig_reload} to #{pid}..."
         begin
           Process.kill(sig_reload, pid)
         rescue Errno::ESRCH => e
@@ -31,7 +33,7 @@ module Consul
         return exit_status if pid.nil?
         the_pid = pid
         @pid = nil
-        STDERR.puts "[KILL] Sending #{sig_term} to #{the_pid}..."
+        STDERR.puts "[KILL] Sending SIG #{sig_term} to #{the_pid}..."
         begin
           STDERR.puts "[KILL] waiting for #{the_pid}..."
           Process.kill(sig_term, the_pid)
