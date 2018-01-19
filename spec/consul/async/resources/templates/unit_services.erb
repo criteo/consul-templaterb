@@ -5,3 +5,17 @@ Services
 <%
   end
 %>
+Services with filter http
+<%
+  services(tag: 'http').each_pair do |service_name, tags|
+%><%= service_name %>:<%= tags.map {|tag| tag}.join(' ') %>
+<%
+  end
+%>
+Services with filter coin
+<%
+  services(tag: 'coin').each_pair do |service_name, tags|
+%><%= service_name %>:<%= tags.map {|tag| tag}.join(' ') %>
+<%
+  end
+%>

@@ -1,2 +1,7 @@
 Services
 consul:http
+
+Services with filter http
+consul:http
+
+Services with filter coin

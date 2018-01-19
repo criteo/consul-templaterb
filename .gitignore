@@ -12,6 +12,9 @@
 /samples/*.html
 /samples/*.txt
 /samples/*.cfg
+/spec/consul/async/resources/templates/*.txt
+/spec/consul/async/resources/templates/*.result
+/out.txt
 
 # rspec failure tracking
 .rspec_status

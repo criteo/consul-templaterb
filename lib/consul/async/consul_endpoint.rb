@@ -104,6 +104,10 @@ module Consul
         @modified
       end
 
+      def mutate(new_data)
+        @data = new_data.dup
+      end
+
       def json
         @data_json = JSON.parse(data) if @data_json.nil?
         @data_json
@@ -128,7 +132,7 @@ module Consul
       end
     end
     class ConsulEndpoint
-      attr_reader :conf, :path, :x_consul_index, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value
+      attr_reader :conf, :path, :x_consul_index, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value, :query_params
       def initialize(conf, path, enforce_json_200 = true, query_params = {}, default_value = '[]')
         @conf = conf.create(path)
         @default_value = default_value

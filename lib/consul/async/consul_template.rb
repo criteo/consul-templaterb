@@ -211,6 +211,17 @@ module Consul
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
+
+      def parse_result(res)
+        return res unless res.data == '{}' || endpoint.query_params[:tag]
+        res_json = JSON.parse(res.data)
+        result = {}
+        res_json.each do |name, tags|
+          result[name] = tags if tags.include? endpoint.query_params[:tag]
+        end
+        res.mutate(JSON.generate(result))
+        res
+      end
     end
 
     class ConsulTemplateChecks < ConsulTemplateAbstractArray
