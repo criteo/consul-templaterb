@@ -1,0 +1,17 @@
+Service Consul
+<%
+  service('consul').each do |instance|
+%><%= instance['Node']['Node'] %>:<%= instance['Service']['Port'] %>
+<%
+  end
+%>---
+Service Consul filter UI
+<%
+  service('consul', tag: 'UI').each do |instance|
+    # The mocks do not simulate queries
+    if instance['Service']['Tags'].include? 'UI'
+%><%= instance['Node']['Node'] %>:<%= instance['Service']['Port'] %>
+<%
+    end
+  end
+%>

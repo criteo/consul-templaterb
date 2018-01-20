@@ -1,0 +1,8 @@
+Check Consul
+-------
+CheckID: consul-exta-check
+Name: marathon_http_check_0
+Node: consul04-par.central.criteo.preprod<
+Notes: Simple HTTP Check
+Output: HTTP GET http://localhost:8500/health: 200 OK Output: OK
+Status: passing

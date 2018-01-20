@@ -1,0 +1,11 @@
+Check Consul
+<%
+  checks_for_service('consul').each do |check|
+%>-------
+CheckID: <%= check['CheckID'] %>
+Name: <%= check['Name'] %>
+Node: <%= check['Node'] %><
+Notes: <%= ERB::Util.html_escape(check['Notes']) %>
+Output: <%= ERB::Util.html_escape(check['Output']) %>
+Status: <%= check['Status'] %>
+<% end %>

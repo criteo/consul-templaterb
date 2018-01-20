@@ -27,6 +27,7 @@ module Consul
       %w(v1/catalog/datacenters
          v1/catalog/nodes
          v1/catalog/services
+         v1/health/checks/consul
          v1/health/service/consul
          v1/kv/
          v1/kv/choregraphies

@@ -145,7 +145,7 @@
     "Service": {
       "ID": "consul",
       "Service": "consul",
-      "Tags": ["http"],
+      "Tags": ["http", "UI"],
       "Address": "",
       "Port": 8300,
       "EnableTagOverride": false,

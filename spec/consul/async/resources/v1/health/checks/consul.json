@@ -1,0 +1,18 @@
+[
+    {
+        "Node": "consul04-par.central.criteo.preprod",
+        "CheckID": "consul-exta-check",
+        "Name": "marathon_http_check_0",
+        "Status": "passing",
+        "Notes": "Simple HTTP Check",
+        "Output": "HTTP GET http://localhost:8500/health: 200 OK Output: OK",
+        "ServiceID": "consul",
+        "ServiceName": "consul",
+        "ServiceTags": [
+            "http",
+            "UI"
+        ],
+        "CreateIndex": 756295278,
+        "ModifyIndex": 764984879
+    }
+]
