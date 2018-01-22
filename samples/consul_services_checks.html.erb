@@ -1,0 +1,136 @@
+<%
+# This template can be configure the following way with environment variables
+# Environment variables to filter services/instances
+#   SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
+  services_tag_filter = ENV['SERVICES_TAG_FILTER']
+%><!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="refresh" content="300"/>
+    <title>Consul Checks  <%= services_tag_filter %></title>
+    <style type="text/css">
+.passing > h3, .passing > .status {
+  color:green;
+}
+.warning > h3, .warning > .status{
+  color: orange;
+}
+.critical > h3, .critical > .status {
+  color: red;
+  font-weight: bold;
+}
+.qlink {
+  text-decoration: none;
+}
+nav {
+  width: 200px;
+  float: left;
+  display: inline;
+  margin: 0;
+  padding: 0;
+  margin-right: 10px;
+}
+nav ul {
+  padding: 0;
+  margin: 0;
+}
+nav li {
+  list-style-type: none;
+  padding-left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  //max-width: 160px;
+  text-overflow: ellipsis;
+}
+nav li::before {
+  content: "→ "
+}
+section#main{
+  width: 500;
+  float: left;
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+nav li a {
+  text-decoration: none;
+}
+.state-selector-group {
+  float: right;
+}
+.check {
+  transition: opacity 1s ease-out;
+}
+</style>
+<script type="text/javascript">
+  function updateStates() {
+    states = ['passing', 'warning', 'critical']
+    stylesheet = document.getElementById('css-states');
+    txt = "";
+    for (var i in states) {
+      var s = states[i];
+      is_checked = document.getElementById('show_'+s).checked
+      var to_append = "." + s + " { ";
+      if (is_checked) {
+        to_append += "opacity: 1; height: auto;"
+      } else {
+        to_append += "opacity: 0; height: 0; overflow: hidden;"
+      }
+      to_append += " }\r\n"
+      txt +=  to_append;
+    }
+    stylesheet.textContent = txt;
+  }
+</script>
+<style type="text/css" id="css-states">
+</style>
+  </head>
+  <body onload="updateStates()">
+<nav class="menu">
+  <ul>
+<%
+   all_services = services(tag: services_tag_filter)
+   all_services.each do |service_name, tags|
+%>    <li><a href="#service_<%= service_name %>"><%= service_name %></a></li><%
+   end
+%>  </ul>
+</nav>
+<div class="state-selector-group">
+<div class="state-selector">
+  <input id="show_passing" type="checkbox" class="checks-visibility" value="passing" checked="checked" onchange="updateStates()"/>
+  <label for="show_passing">Show Passing</label>
+</div>
+<div class="state-selector">
+  <input id="show_warning" type="checkbox" class="checks-visibility" value="warning" checked="checked" onchange="updateStates()"/>
+  <label for="show_warning">Show Warning</label>
+</div>
+<div class="state-selector">
+  <input id="show_critical" type="checkbox" class="checks-visibility" value="critical" checked="checked" onchange="updateStates()"/>
+  <label for="show_critical">Show Critical</label>
+</div>
+</div>
+<section>
+<h1 id="services">Services <%= services_tag_filter ? " tag: #{services_tag_filter}" : 'No filtering' %></h1>
+<%
+  all_services.each do |service_name, tags|
+%><div class="service" id="service_<%= service_name %>">
+  <h2>Service <%= service_name %></h2><%
+    checks_for_service(service_name).each do |check|
+%>
+<div class="check <%= check['Status'] %>" id="<%= check['CheckID'] %>">
+<h3><%= check['Name'] %> / <%= check['Node'] %></h3>
+<div class="notes"><%= ERB::Util.html_escape(check['Notes']) %></div>
+<samp class="ouput"><%= ERB::Util.html_escape(check['Output']) %></samp>
+<div class="status"><%= check['Status'] %></div>
+</div>
+<%
+    end
+%>
+</div>
+<%
+  end
+%>
+</section>
+</body>
+</html>
