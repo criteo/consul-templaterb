@@ -54,6 +54,20 @@ module Consul
         create_if_missing(path, query_params) { ConsulTemplateNodes.new(ConsulEndpoint.new(conf, path, true, query_params, '[]')) }
       end
 
+      def agent_self
+        path = '/v1/agent/self'
+        query_params = {}
+        default_value = '{"Config":{}, "Coord":{}, "Member":{}, "Meta":{}, "Stats":{}}'
+        create_if_missing(path, query_params) { ConsulAgentSelf.new(ConsulEndpoint.new(conf, path, true, query_params, default_value)) }
+      end
+
+      def agent_metrics
+        path = '/v1/agent/metrics'
+        query_params = {}
+        default_value = '{"Gauges":[], "Points":[], "Member":{}, "Counters":[], "Samples":{}}'
+        create_if_missing(path, query_params) { ConsulAgentMetrics.new(ConsulEndpoint.new(conf, path, true, query_params, default_value)) }
+      end
+
       def services(dc: nil, tag: nil)
         path = '/v1/catalog/services'
         query_params = {}
@@ -221,6 +235,18 @@ module Consul
         end
         res.mutate(JSON.generate(result))
         res
+      end
+    end
+
+    class ConsulAgentSelf < ConsulTemplateAbstractMap
+      def initialize(consul_endpoint)
+        super(consul_endpoint)
+      end
+    end
+
+    class ConsulAgentMetrics < ConsulTemplateAbstractMap
+      def initialize(consul_endpoint)
+        super(consul_endpoint)
       end
     end
 

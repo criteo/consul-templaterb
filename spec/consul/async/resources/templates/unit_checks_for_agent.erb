@@ -1,0 +1,12 @@
+Consul Agent Info
+<%
+  consul_info = agent_self()
+  consul_metrics = agent_metrics()
+%>-------
+NodeName: <%= consul_info['Config']['NodeName'] %>
+Consul Metrics
+-------
+<%
+consul_metrics['Samples'].each do|metric|
+  %><%= metric['Name']%> Mean: <%= metric['Mean']%>
+<% end %>

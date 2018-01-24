@@ -1,0 +1,145 @@
+{
+    "Timestamp": "2018-01-24 09:13:00 +0000 UTC",
+    "Gauges": [
+        {
+            "Name": "consul.consul.session_ttl.active",
+            "Value": 0,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.runtime.alloc_bytes",
+            "Value": 5989864,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.runtime.free_count",
+            "Value": 282665,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.runtime.heap_objects",
+            "Value": 49310,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.runtime.malloc_count",
+            "Value": 331975,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.runtime.num_goroutines",
+            "Value": 66,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.runtime.sys_bytes",
+            "Value": 14625016,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.runtime.total_gc_pause_ns",
+            "Value": 1815444,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.runtime.total_gc_runs",
+            "Value": 14,
+            "Labels": {}
+        }
+    ],
+    "Points": [],
+    "Counters": [
+        {
+            "Name": "consul.raft.apply",
+            "Count": 1,
+            "Sum": 1,
+            "Min": 1,
+            "Max": 1,
+            "Mean": 1,
+            "Stddev": 0,
+            "Labels": {}
+        }
+    ],
+    "Samples": [
+        {
+            "Name": "consul.consul.fsm.coordinate.batch-update",
+            "Count": 1,
+            "Sum": 0.06999299675226212,
+            "Min": 0.06999299675226212,
+            "Max": 0.06999299675226212,
+            "Mean": 0.06999299675226212,
+            "Stddev": 0,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.memberlist.gossip",
+            "Count": 200,
+            "Sum": 2.9891850010026246,
+            "Min": 0.0035920001100748777,
+            "Max": 0.12217999994754791,
+            "Mean": 0.014945925005013122,
+            "Stddev": 0.013010087029736207,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.raft.commitTime",
+            "Count": 1,
+            "Sum": 0.024396000429987907,
+            "Min": 0.024396000429987907,
+            "Max": 0.024396000429987907,
+            "Mean": 0.024396000429987907,
+            "Stddev": 0,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.raft.fsm.apply",
+            "Count": 1,
+            "Sum": 0.10652600228786469,
+            "Min": 0.10652600228786469,
+            "Max": 0.10652600228786469,
+            "Mean": 0.10652600228786469,
+            "Stddev": 0,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.raft.leader.dispatchLog",
+            "Count": 1,
+            "Sum": 0.011900999583303928,
+            "Min": 0.011900999583303928,
+            "Max": 0.011900999583303928,
+            "Mean": 0.011900999583303928,
+            "Stddev": 0,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.serf.queue.Event",
+            "Count": 20,
+            "Sum": 10,
+            "Min": 0,
+            "Max": 1,
+            "Mean": 0.5,
+            "Stddev": 0.512989176042577,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.serf.queue.Intent",
+            "Count": 20,
+            "Sum": 0,
+            "Min": 0,
+            "Max": 0,
+            "Mean": 0,
+            "Stddev": 0,
+            "Labels": {}
+        },
+        {
+            "Name": "consul.serf.queue.Query",
+            "Count": 20,
+            "Sum": 0,
+            "Min": 0,
+            "Max": 0,
+            "Mean": 0,
+            "Stddev": 0,
+            "Labels": {}
+        }
+    ]
+}

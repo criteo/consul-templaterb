@@ -24,7 +24,9 @@ module Consul
 
     def mock_all
       results = {}
-      %w(v1/catalog/datacenters
+      %w(v1/agent/metrics
+         v1/agent/self
+         v1/catalog/datacenters
          v1/catalog/nodes
          v1/catalog/services
          v1/health/checks/consul

@@ -1,0 +1,13 @@
+Consul Agent Info
+-------
+NodeName: C02Q3L7GG8WP
+Consul Metrics
+-------
+consul.consul.fsm.coordinate.batch-update Mean: 0.06999299675226212
+consul.memberlist.gossip Mean: 0.014945925005013122
+consul.raft.commitTime Mean: 0.024396000429987907
+consul.raft.fsm.apply Mean: 0.10652600228786469
+consul.raft.leader.dispatchLog Mean: 0.011900999583303928
+consul.serf.queue.Event Mean: 0.5
+consul.serf.queue.Intent Mean: 0
+consul.serf.queue.Query Mean: 0
