@@ -172,7 +172,7 @@ optparse = OptionParser.new do |opts|
   opts.on(nil, '--once', 'Do not run the process as a daemon') do
     consul_engine.add_template_callback do |all_ready, template_manager, _|
       if all_ready
-        STDERR.puts "[INFO] Program ends since daemon mode has been disabled, file has been written as #{output_file}"
+        STDERR.puts '[INFO] Program ends since daemon mode has been disabled, file(s) has been written'
         template_manager.terminate
         EventMachine.stop
       end
