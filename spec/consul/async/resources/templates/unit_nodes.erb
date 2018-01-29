@@ -1,7 +1,9 @@
 Nodes
 <%
-  nodes().each do |node|
-%><%= node['Node'] %>
+  nodes().each do |n|
+%><%= n['Node'] %>
 <%
   end
 %>
+Node: <%= node('consul02-par.central.criteo.preprod')['Node'] %>
+ID: <%= node('7a985997-3925-4f18-8613-637c81bd750b')['ID'] %>

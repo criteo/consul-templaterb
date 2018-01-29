@@ -31,14 +31,14 @@
       xserv.add_attribute 'tags', tags.sort.join(',')
       xnodes = REXML::Element.new 'instances'
       xnodes.add_attribute 'count', service(service_name).count
-      service(service_name).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |node|
+      service(service_name).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
         xnode = REXML::Element.new 'service-instance'
-        xnode.add_attribute 'id', node['Node']['ID'] if node['Node']['ID']
-        xnode.add_attribute 'address', node['Node']['Address']
-        xnode.add_attribute 'name', node['Node']['Name']
-        xnode.add_attribute 'port', node['Service']['Port'].to_i
-        xnode.add_attribute 'tags', node['Service']['Tags'].sort.join(',')
-        xnode.add_attribute 'statuses', (node['Checks'].map { |c| c['Status'] }.join(' '))
+        xnode.add_attribute 'id', snode['Node']['ID'] if snode['Node']['ID']
+        xnode.add_attribute 'address', snode['Node']['Address']
+        xnode.add_attribute 'name', snode['Node']['Name']
+        xnode.add_attribute 'port', snode['Service']['Port'].to_i
+        xnode.add_attribute 'tags', snode['Service']['Tags'].sort.join(',')
+        xnode.add_attribute 'statuses', (snode['Checks'].map { |c| c['Status'] }.join(' '))
         xnodes.add_element xnode
       end
       xserv.add_element xnodes
@@ -50,11 +50,11 @@
   def create_nodes
     xnodes = REXML::Element.new 'nodes'
     xnodes.add_attribute 'count', nodes.count
-    nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |node|
+    nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |snode|
       xnode = REXML::Element.new 'node'
-      xnode.add_attribute 'id', node['ID']
-      xnode.add_attribute 'address', node['Address']
-      xnode.add_attribute 'name', node['Node']
+      xnode.add_attribute 'id', snode['ID']
+      xnode.add_attribute 'address', snode['Address']
+      xnode.add_attribute 'name', snode['Node']
       xnodes.add xnode
     end
     xnodes

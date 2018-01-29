@@ -54,6 +54,13 @@ module Consul
         create_if_missing(path, query_params) { ConsulTemplateNodes.new(ConsulEndpoint.new(conf, path, true, query_params, '[]')) }
       end
 
+      def node(name_or_id, dc: nil)
+        path = "/v1/catalog/node/#{name_or_id}"
+        query_params = {}
+        query_params[:dc] = dc if dc
+        create_if_missing(path, query_params) { ConsulTemplateNodes.new(ConsulEndpoint.new(conf, path, true, query_params, '{}')) }
+      end
+
       def agent_self
         path = '/v1/agent/self'
         query_params = {}

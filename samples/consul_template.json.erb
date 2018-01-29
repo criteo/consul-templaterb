@@ -13,9 +13,9 @@
   # Services to hide
   services_blacklist = (ENV['EXCLUDE_SERVICES'] || 'consul-agent-http,mesos-slave,mesos-agent-watcher,mesos-exporter-slave').split(',')
   # Compute the health of a Service
-  def compute_state(node)
+  def compute_state(snode)
     states = ['passing', []]
-    node['Checks'].each do |chk|
+    snode['Checks'].each do |chk|
       st = chk['Status']
       states[1] << st
       if st == 'critical'
@@ -26,14 +26,14 @@
     end
     states
   end
-  def compute_attributes(node)
+  def compute_attributes(snode)
     w = 100
-    node['Service']['Tags'].each do |tag|
+    snode['Service']['Tags'].each do |tag|
       match = /^weight-([1-9][0-9])*$/.match(tag)
       w = match[1].to_i if match
     end
     attributes = ""
-    states = compute_state(node)
+    states = compute_state(snode)
     attributes = "#{attributes} disabled" if states[0] == 'critical'
     if states[0] == 'warning'
       w = w / 8
@@ -44,10 +44,10 @@
   services(tag: service_tag_filter).each do |service_name, tags|
     if !services_blacklist.include?(service_name) && tags.include?(instance_must_tag)
       the_backends = []
-      service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |node|
-        tags_of_instance = node['Service']['Tags']
+      service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
+        tags_of_instance = snode['Service']['Tags']
         if tags_of_instance.include?(instance_must_tag) && !tags_of_instance.include?(instance_exclude_tag)
-          the_backends << node if node['Service']['Port']
+          the_backends << snode if snode['Service']['Port']
         end
       end
       # We add the backend ONLY if at least one valid instance does exists
@@ -63,12 +63,12 @@
       instances: []
     }
     json_backends[service_name] = service
-    nodes.each do |node|
+    nodes.each do |snode|
       server = { frontend_id: "backend_http__#{service_name}",
-                 id:     node['Service']['ID'],
-                 addr:   node['Node']['Address'],
-                 port:   node['Service']['Port'],
-                 tags:   node['Service']['Tags'],
+                 id:     snode['Service']['ID'],
+                 addr:   snode['Node']['Address'],
+                 port:   snode['Service']['Port'],
+                 tags:   snode['Service']['Tags'],
       }
       service[:instances] << server
     end

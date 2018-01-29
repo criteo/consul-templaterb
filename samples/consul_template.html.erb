@@ -52,10 +52,10 @@
 <% services.each do |service_name, tags|
 %><h2 id="service_<%= service_name %>" title="<%= tags %>"><%= service_name %> <a class="qlink" href="#service_<%= service_name %>">&#128279;</a></h2>
 <ul>
-<%     service(service_name).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |node|
-  tags = node['Service']['Tags'].sort
-  addr = node['Node']['Address']
-  port = node['Service']['Port'].to_i ? ":#{node['Service']['Port']}" : ''
+<%     service(service_name).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
+  tags = snode['Service']['Tags'].sort
+  addr = snode['Node']['Address']
+  port = snode['Service']['Port'].to_i ? ":#{snode['Service']['Port']}" : ''
   url = if tags.include? 'https'
           "https://#{addr}#{port}"
         elsif tags.include? 'http'
@@ -66,11 +66,11 @@
           nil
         end
 %><li><a <%= url ? "href=\"#{url}\"" : nil %>><%=
-  node['Node']['Node'] %><%= port %></a>
-  <span class="tags"><%= node['Service']['Tags'].sort %></tag>
+  snode['Node']['Node'] %><%= port %></a>
+  <span class="tags"><%= snode['Service']['Tags'].sort %></tag>
   <span class="statuses"><%
-  node['Checks'].each do |c| %> <span title="<%= c['Name']%>" class="<%= c['Status'] %>"><%= c['Status']
-  %></span><% end if node['Checks'] %></span></li>
+  snode['Checks'].each do |c| %> <span title="<%= c['Name']%>" class="<%= c['Status'] %>"><%= c['Status']
+  %></span><% end if snode['Checks'] %></span></li>
 <% end%>
 </ul>
 <% end%>
@@ -78,8 +78,8 @@
 
 <h1 id="nodes">List all nodes for DC, sorted by name</h1>
 <ul>
-<% nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |node|
-%> <li id="node_#{node['ID']"><%= node['Address'].ljust(16) %> <%= node['Node'] %></li>
+<% nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |snode|
+%> <li id="node_#{snode['ID']"><%= snode['Address'].ljust(16) %> <%= snode['Node'] %></li>
 <% end %>
 </ul>
 

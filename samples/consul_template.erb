@@ -19,12 +19,12 @@
 <% services.each do |service_name, tags|
      if tags.include? 'http'
 %>  ++ Service <%= service_name %>
-<%     service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |node|
+<%     service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
 %>  * <%= service_name %> -> <%=
-  node['Node']['Node'] %>:<%= node['Service']['Port'] %>  <%=
-  node['Service']['Tags'] %> status: <%
-  node['Checks'].each do |c| %> <%= c['Status']
-  %><% end if node['Checks'] %>
+  snode['Node']['Node'] %>:<%= snode['Service']['Port'] %>  <%=
+  snode['Service']['Tags'] %> status: <%
+  snode['Checks'].each do |c| %> <%= c['Status']
+  %><% end if snode['Checks'] %>
 <%     end
      end
    end %>
@@ -33,8 +33,8 @@
 
 + List all nodes for DC, sorted by name
 ---------------------------------------
-<% nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |node|
-%>  * <%= node['Address'].ljust(16) %> <%= node['Node'] %>
+<% nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |snode|
+%>  * <%= snode['Address'].ljust(16) %> <%= snode['Node'] %>
 <% end %>
 
 + KV of Current DC
