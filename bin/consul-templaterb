@@ -65,6 +65,10 @@ optparse = OptionParser.new do |opts|
     options[:consul][:base_url] = consul_url
   end
 
+  opts.on('-t', '--consul-token=<token>', String, 'Use a token to connect to Consul') do |consul_token|
+    options[:consul][:token] = consul_token
+  end
+
   opts.on('-w', '--wait=<min_duration>', Float, 'Wait at least n seconds before each template generation') do |min_duration|
     options[:consul][:min_duration] = min_duration
   end
