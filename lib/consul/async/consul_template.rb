@@ -104,7 +104,7 @@ module Consul
         query_params[:recurse] = recurse if recurse
         query_params[:keys] = keys if keys
         default_value = '[]'
-        create_if_missing(path, query_params) { ConsulTemplateKV.new(ConsulEndpoint.new(conf, path, true, query_params, default_value)) }
+        create_if_missing(path, query_params) { ConsulTemplateKV.new(ConsulEndpoint.new(conf, path, true, query_params, default_value), name) }
       end
 
       def render(tpl)
@@ -278,8 +278,34 @@ module Consul
     end
 
     class ConsulTemplateKV < ConsulTemplateAbstractArray
-      def initialize(consul_endpoint)
+      attr_reader :root
+      def initialize(consul_endpoint, root)
+        @root = root
         super(consul_endpoint)
+      end
+
+      def find(name = root)
+        res = result_delegate.find { |k| name == k['Key'] }
+        res || {}
+      end
+
+      # Get the raw value (might be base64 encoded)
+      def get_value(name = root)
+        find(name)['Value']
+      end
+
+      # Get the Base64 Decoded value
+      def get_value_decoded(name = root)
+        val = get_value(name)
+        return nil unless val
+        Base64.decode64(val)
+      end
+
+      # Helper to get the value decoded as JSON
+      def get_value_json(name = root)
+        x = get_value_decoded(name)
+        return nil unless x
+        JSON.parse(x)
       end
     end
   end
