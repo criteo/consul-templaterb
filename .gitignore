@@ -12,6 +12,7 @@
 /samples/*.html
 /samples/*.txt
 /samples/*.cfg
+/samples/criteo/haproxy.cfg
 /samples/consul_template
 /samples/find_blocked_choregraphies
 /spec/consul/async/resources/templates/*.txt

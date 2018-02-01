@@ -1,0 +1,163 @@
+<%
+# This template can be configure the following way with environment variables
+# Environment variables to filter services/instances
+#   SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
+#   INSTANCE_MUST_TAG: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
+#   INSTANCE_EXCLUDE_TAG: Exclude instances having the given tag (default: canary)
+#   EXCLUDE_SERVICES: comma-separated services to exclude (default: consul-agent-http,mesos-slave,mesos-agent-watcher)
+# Environment variables to configure HaProxy
+#   PORT0 : HaProxy main port (default to 8000)
+#   PORT1 : HaProxy admin port (default to 8001)
+#   HAPROXY_ADMIN_PORT: Port to listen
+#   HAPROXY_ADMIN_USER_PASSWORD: User:Password to access to stats (default: none)
+#   HAPROXY_SOCKET_FILE: HaProxy socket to control HaProxy
+
+  service_tag_filter = ENV['SERVICES_TAG_FILTER'] || 'http'
+  instance_must_tag = ENV['INSTANCE_MUST_TAG'] || service_tag_filter
+  instance_exclude_tag = ENV['INSTANCE_EXCLUDE_TAG'] || 'canary'
+  kv_root = ENV['KV_ROOT'] || "services-data"
+  optional_dns_suffix = ENV['DNS_SUFFIX'] || ''
+
+  # Services to hide
+  services_blacklist = (ENV['EXCLUDE_SERVICES'] || 'consul-agent-http,mesos-slave,mesos-agent-watcher,mesos-exporter-slave').split(',')
+  # Compute the health of a Service
+  def compute_state(node)
+    states = ['passing', []]
+    node['Checks'].each do |chk|
+      st = chk['Status']
+      states[1] << st
+      states[0] = st if st == 'critical' || (st == 'warning' && states[0] == 'passing')
+    end
+    states
+  end
+  def compute_attributes(node)
+    w = 100
+    node['Service']['Tags'].each do |tag|
+      match = /^weight-([1-9][0-9])*$/.match(tag)
+      w = match[1].to_i if match
+    end
+    attributes = ""
+    states = compute_state(node)
+    attributes = "#{attributes} disabled" if states[0] == 'critical'
+    if states[0] == 'warning'
+      w = w / 8
+    end
+    attributes = "#{attributes} weight #{w}" if w.positive?
+  end
+  backends = {}
+  all_kv = {}
+  services(tag: service_tag_filter).each do |service_name, tags|
+    if !services_blacklist.include?(service_name) && tags.include?(instance_must_tag)
+      the_backends = []
+      kv_data = kv("#{kv_root}/#{service_name}/network-service").get_value_json
+      all_kv[service_name] = kv_data if kv_data
+      service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |node|
+        tags_of_instance = node['Service']['Tags']
+        if tags_of_instance.include?(instance_must_tag) && !tags_of_instance.include?(instance_exclude_tag)
+          the_backends << node if node['Service']['Port']
+        end
+      end
+      # We add the backend ONLY if at least one valid instance does exists
+      backends[service_name] = the_backends
+    end
+  end
+
+  @all_kv = all_kv
+  def find_alternative_fqdns(service_name)
+    json_kv = @all_kv[service_name]
+    return nil unless json_kv
+    return nil unless json_kv['alternative_fqdn']
+    # Add spaces before
+    " #{json_kv['alternative_fqdn'].join(' ')}"
+  end
+%>global
+     log 127.0.0.1 local0 info
+     maxconn 262144
+     user haproxy
+     group haproxy
+     nbproc 1
+     daemon
+     stats socket /var/lib/haproxy/stats level admin mode 644 expose-fd listeners
+     stats timeout 2m
+     tune.bufsize 33792
+     ssl-default-bind-options no-sslv3 no-tlsv10 no-tlsv11 no-tls-tickets
+     ssl-default-bind-ciphers ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256
+     ssl-default-server-options no-sslv3 no-tlsv10 no-tlsv11 no-tls-tickets
+     ssl-default-server-ciphers ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256
+     ssl-server-verify required
+
+defaults
+     log global
+     mode http
+     retries 3
+     timeout connect 10s
+     timeout client 30s
+     timeout server 30s
+     timeout http-keep-alive 10s
+     timeout http-request 10s
+     timeout queue 1s
+     timeout check 5s
+     option httplog
+     option dontlognull
+     option redispatch
+     option prefer-last-server
+     option dontlog-normal
+     option http-keep-alive
+     option forwardfor except 127.0.0.0/8
+     balance roundrobin
+     maxconn 262134
+     http-reuse safe
+     default-server inter 5s fastinter 1s fall 3 slowstart 20s
+
+listen stats
+     bind *:8080
+     stats enable
+     stats uri /haproxy_stats
+
+# ==== Managed by consul-templaterb ====
+
+frontend fe_main # HTTP(S) Service
+    bind *:80 name http
+
+    # Monitoring
+    monitor-uri /delivery/monitor/mesos-haproxy/lb-check
+    errorfile 200 /etc/haproxy/200-criteo-ok.txt
+
+    # Adding a header indicating client side is using HTTPS
+    acl http  ssl_fc,not
+    acl https ssl_fc
+    http-request set-header X-Forwarded-Protocol https if https
+
+    # Disable CONNECT globally (identified as vulnerability by audit tools such as Qualys)
+    acl ::disabled_http_methods method CONNECT
+    http-request block if ::disabled_http_methods
+
+    # Consul-agent ACL
+    acl consul-agent-http-acl hdr_dom(host) -i  consul-agent-http.lb-ty5.crto.in consul-agent-http.lb-ty5.central.criteo.prod
+    use_backend bestatic_consul-agent-http if consul-agent-http-acl
+
+    # ACLs, HTTP Host header based, following the pattern <consul_app_name>.<fqdn_suffix>
+<% backends.each_pair do |service_name, nodes|
+%>
+   acl <%= service_name %>-acl hdr_beg(host) -i <%= service_name %>.<%= optional_dns_suffix %><%= find_alternative_fqdns(service_name)%>
+   use_backend be_<%= service_name %> if <%= service_name%>-acl
+<% end %>
+
+# Backends
+backend bestatic_consul-agent-http
+    http-request deny if !METH_GET # Deny writes
+    server srv0 127.0.0.1:8500
+
+<% backends.each_pair do |service_name, nodes|
+%>
+backend be_<%= service_name %>
+<% if all_kv[service_name] %>
+  # data2: <%= all_kv[service_name] %>
+<% end %>
+  mode http
+  balance leastconn
+<%   nodes.each_with_index do |node, idx|
+  %>  server srv<%= idx %> <%= node['Node']['Address']%>:<%= node['Service']['Port'] %><%= compute_attributes(node) %>
+<%   end
+   end
+%>
