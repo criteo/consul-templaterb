@@ -15,7 +15,7 @@ options = {
     debug: {
       network: false
     },
-    base_url: 'http://locahost:8500',
+    base_url: ENV['CONSUL_HTTP_ADDR'] || 'http://locahost:8500',
     token: nil,
     retry_duration: 10,      # On error, retry after n seconds
     min_duration: 1,         # On sucess and when differences are found
