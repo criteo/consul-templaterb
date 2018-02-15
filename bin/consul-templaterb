@@ -19,7 +19,7 @@ options = {
     token: nil,
     retry_duration: 10,      # On error, retry after n seconds
     min_duration: 1,         # On sucess and when differences are found
-    retry_on_non_diff: 20,   # On success but when there are not differences
+    retry_on_non_diff: 3,    # On success but when there are not differences
     wait_duration: 600,      # Delay to block in Consul
     max_retry_duration: 600, # On consecutive errors, delay will increase, max value
     missing_index_retry_time_on_diff: 15, # On endpoints without X-Consul-Index => next request
