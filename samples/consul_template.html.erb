@@ -55,7 +55,8 @@
 <%     service(service_name).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
   tags = snode['Service']['Tags'].sort
   addr = snode['Node']['Address']
-  port = snode['Service']['Port'].to_i ? ":#{snode['Service']['Port']}" : ''
+  port_num = snode['Service']['Port'].to_i
+  port = port_num && port_num > 0 ? ":#{port_num}" : ''
   url = if tags.include? 'https'
           "https://#{addr}#{port}"
         elsif tags.include? 'http'
