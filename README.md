@@ -1,24 +1,52 @@
 # Consul::Templaterb
 
 This GEM is both a library and an executable that allows to generate files
-using ruby's erb templates.
+using data from Consul (Discovery and Key/Value Store) easily using ruby's
+erb templates. It also support launching programs and babysitting processes
+when rendering the files, thus notifying programs when data do change.
 
-## Why?
+It is intended for user accustomed to expressiveness or Ruby templating (ERB),
+allowing for more flexibility and than Go Templating.
 
-The program consul template already supports this kind of behaviour and this
-GEM is directly inspired from it.
+It also allow to use all of ruby language, especially usefull for generating
+files in several formats (JSON, XML) where text substitutions are hard to get
+right.
 
-But Consul Template uses Go templates which is very limited in its set of
+It also focuses on good performance and lightweight usage of bandwidth,
+especially for very large clusters and watching lots of services.
+
+For complicated rendering of templates and large Consul Clusters, it usually
+render faster with a more predictible way the template than the original
+consul-template.
+
+## Differences with HashiCorp's consul-template
+
+[Hashicorp's Consul Template](https://github.com/hashicorp/consul-template)
+inspired strongly the creation of this GEM and this executable wants
+to achieve better results in some use cases, especially for very large
+Consul clusters with many nodes and servers.
+
+consul-template has more features regarding Consul support (for instance, it
+has support for Hashicorp's Vault), but consul-templaterb focuses on getting
+more power with the generation of templates and more performance.
+
+Consul Template uses Go templates which is very limited in its set of
 features is quite limited: it is complicated to sort, apply real transformations
 using code and even interact with the OS (ex: get the current date, format
 timestamps...).
+
+The sort feature for instances allow you to create predictible output (i.e: meaning
+that the order of nodes is predictible), thus it might offer better performance
+since the reload of processes if happening ONLY when the files are binary
+different. Thus, if using consul-templaterb, you will reload less your haproxy or
+load-balancer than you would do with consul-template.
 
 Compared to consul-template, consul-templaterb offers the following features:
 
 * Hot-Reload of template files
 * Bandwith limitation per endpoint (will soon support dynamic bandwith limiter)
 * Supports baby sitting of multiple processes
-* Supports all Ruby features (ex: base64, real XML generation...)
+* Supports all Ruby features (ex: base64, real JSON/XML generation...)
 * Information about bandwidth
 
 The executable supports close semantics to Consul template, it also supports
@@ -36,11 +64,17 @@ gem 'consul-templaterb'
 
 And then execute:
 
+```shell
     $ bundle
+[...]
+```
 
 Or install it yourself as:
 
-    $ gem install consul-templaterb
+```shell
+$ gem install consul-templaterb
+[...]
+```
 
 ## Usage of consul-templaterb
 
@@ -48,12 +82,29 @@ Or install it yourself as:
 
 ```shell
 $ consul-templaterb --help
+USAGE: bin/consul-templaterb [[options]]
+    -h, --help                       Show help
+    -v, --version                    Show Version
+    -c, --consul-addr=<address>      Address of Consul, eg: http://locahost:8500
+        --consul-token=<token>       Use a token to connect to Consul
+    -w, --wait=<min_duration>        Wait at least n seconds before each template generation
+    -r, --retry-delay=<min_duration> Min Retry delay on Error/Missing Consul Index
+    -k, --hot-reload=<behavior>      Control hot reload behaviour, one of :[die (kill daemon on hot reload failure), keep (on error, keep running), disable (hot reload disabled)]
+    -K, --sig-term=kill_signal       Signal to sent to next --exec command on kill, default=#{cur_sig_term}
+    -R, --sig-reload=reload_signal   Signal to sent to next --exec command on reload (NONE supported), default=#{cur_sig_reload}
+    -e, --exec=<command>             Execute the following command
+    -d, --debug-network-usage        Debug the network usage
+    -t erb_file:[output]:[command],  Add a erb template, its output and optional reload command
+        --template
+        --once                       Do not run the process as a daemon
 ```
 
 ### Generate multiple templates
 
 In the same way as consul-template, consul-templaterb supports multiple templates and executing
-commands when the files do change. The parameter --template <ERB>:<DEST>:[reload_command] :
+commands when the files do change. The parameter `--template <ERB>:<DEST>:[reload_command]` works
+in the following way:
+
 * ERB : the ERB file to use as a template
 * DEST: the destination file
 * reload_command: optional shell command executed whenever the file has been modified
@@ -61,6 +112,7 @@ commands when the files do change. The parameter --template <ERB>:<DEST>:[reload
 The argument can be specified multiple times, ex:
 
 Example of usage:
+
 ```shell
 $ consul-templaterb \\
   --template "samples/ha_proxy.cfg.erb:/opt/haproxy/etc/haproxy.cfg:sudo service haproxy reload"
@@ -81,8 +133,11 @@ Signals can be customized per process. Two signals are supported with options --
 given signal. By default, HUP will be sent to reload events (you can use NONE to avoid sending any
 reload signal), TERM will be used when leaving consul-templaterb.
 
-
 ### Bandwidth limitation
+
+This is actually the original reason for the creation of this GEM: on Criteo's large clusters,
+consul-template generated several hundreds of Mb/s to the Consul-Agent which also
+generated several hundreds of Mb/s with the Consul servers.
 
 By design, the GEM supports limiting the number of requests per endpoints (see code in
 `bin/consul-templaterb` file). It avoids using too much network to fetch data from Consul
@@ -94,7 +149,7 @@ by consul-templaterb.
 
 ### Samples
 
-Have a look into the samples/ directory to browse example files.
+Have a look into the [samples/](samples/) directory to browse example files.
 
 ## Template development
 
@@ -159,7 +214,8 @@ queries mechanism.
 ### render_file RELATIVE_PATH_TO_ERB_FILE
 
 This allow to include a template file into another one. Beware, it does not check for infinite recursion!
-The template can be either a static file either another template.
+The template can be either a static file either another template. The file has to be a valid template, but
+can also be raw text (if it is a valid template.
 
 Example:
 
@@ -171,14 +227,34 @@ Example:
 
 We recommend using bundle using `bundle install`, you can now run `bundle exec bin/consul-templaterb`.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the
+version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version,
+push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+## Known bugs
+
+Here are the known bugs of the application:
+
+* [ ] On Mac OS X, with many services, consul-templaterb sometimes crashes when watching lots of changes (more than 2k
+  watches) at the same time. This bug is a race condition, probably in `em-http-request`. Only visible on very large
+  clusters.
+* [ ] render_file might create an infinite recusion if a template includes itself indirectly.
+
+## TODO
+
+* [ ] Hashi's Vault support
+* [ ] Implement automatic dynamic rate limit
+* [ ] More samples: apache, nginx, full website displaying consul information...
+* [ ] Optimize rendering speed at startup: an iteration is done very second by default, but it would be possible to speed
+      up rendering by iterating with higher frequency until the first write of result has been performed.
+* [ ] Allow to tune bandwith using a simple config file (while it should not be necessary for 90% of use-cases)
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/consul-templaterb. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/consul-templaterb.
+This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the
+[Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
