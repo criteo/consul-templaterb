@@ -31,7 +31,7 @@ module Consul
       end
 
       def render(tpl = @template)
-        @template_manager.render(tpl)
+        @template_manager.render(tpl, template_file)
       end
 
       def run
@@ -57,7 +57,7 @@ module Consul
       end
 
       def write
-        success, modified, @last_result = @template_manager.write(@output_file, @template, @last_result)
+        success, modified, @last_result = @template_manager.write(@output_file, @template, @last_result, template_file)
         [success, modified, @last_result]
       end
 

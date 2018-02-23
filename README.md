@@ -156,6 +156,17 @@ mechanism.
 endpoint does not support blocking queries, data will be refreshed every few seconds, but will not use blocking
 queries mechanism.
 
+### render_file RELATIVE_PATH_TO_ERB_FILE
+
+This allow to include a template file into another one. Beware, it does not check for infinite recursion!
+The template can be either a static file either another template.
+
+Example:
+
+```erb
+<%= render_file 'header.html.erb' %>
+```
+
 ## Development
 
 We recommend using bundle using `bundle install`, you can now run `bundle exec bin/consul-templaterb`.

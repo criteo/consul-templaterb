@@ -107,15 +107,26 @@ module Consul
         create_if_missing(path, query_params) { ConsulTemplateKV.new(ConsulEndpoint.new(conf, path, true, query_params, default_value), name) }
       end
 
-      def render(tpl)
-        ERB.new(tpl).result(binding)
+      def render_file(path)
+        new_path = File.expand_path(path, File.dirname(@current_erb_path))
+        raise "render_file ERROR: #{path} is resolved as #{new_path}, but the file does not exists" unless File.exist? new_path
+        render(File.read(new_path), new_path)
+      end
+
+      def render(tpl, tpl_file_path)
+        # Ugly, but allow to use render_file well to support stack of calls
+        old_value = @current_erb_path
+        @current_erb_path = tpl_file_path
+        result = ERB.new(tpl).result(binding)
+        @current_erb_path = old_value
+        result
       rescue StandardError => e
         e2 = InvalidTemplateException.new e
         raise e2, "Template contains errors: #{e.message}", e.backtrace
       end
 
-      def write(file, tpl, last_result)
-        data = render(tpl)
+      def write(file, tpl, last_result, tpl_file_path)
+        data = render(tpl, tpl_file_path)
         not_ready = []
         ready = 0
         @iteration = Time.now.utc - @start_time
