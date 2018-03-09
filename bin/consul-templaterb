@@ -12,7 +12,7 @@ end
 
 def compute_default_output(source)
   dest = source.gsub(/\.erb$/, '')
-  raise "Source and destination cannot be the same in #{tpl}" if source == dest || dest.empty?
+  raise "Source and destination cannot be the same in #{source}" if source == dest || dest.empty?
   dest
 end
 
