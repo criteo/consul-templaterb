@@ -24,7 +24,7 @@
       holder_date = "Cannot parse date: #{e}"
       diff_txt = "Error Parsing date #{value}"
     end
-   "<li class=\"list-group-item list-group-item-#{status}\">#{holder}: #{holder_date} : #{diff_txt} ago"
+   ["<li class=\"list-group-item list-group-item-#{status}\">#{holder}: #{holder_date} : #{diff_txt} ago", status]
   end
 %>
 
@@ -52,33 +52,35 @@
       <div class="card-header" id="heading-<%= key %>">
         <span class="badge badge-pill badge-primary float-right"><%= holders.count%>/<%= json['concurrency'] %></span>
         <h5 class="mb-0">
-          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse-<%= key %>" aria-expanded="true" aria-controls="collapse-<%= key %>">
+          <a href="href="#<%= key %>" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse-<%= key %>" aria-expanded="true" aria-controls="collapse-<%= key %>">
             <%= tuple['Key'] %>
-          </button>
+          </a>
         </h5>
       </div>
-      <div id="collapse-<%= key %>" class="collapse" aria-labelledby="heading-<%= key %>" data-parent="#accordion">
+      <%
+        text_result = ''
+        clazz = 'collapse'
+        holders.each_pair do |key,value|
+          if value.is_a?(Hash)
+            text_result+= "<li><u>#{key}:</u><ul class=\"list-group\">"
+            value.each_pair do |k, v|
+              res, status = display_holder(k, v)
+              clazz = 'collapse show' unless status == 'success'
+              text_result += res
+            end
+            text_result += '</ul></li>'
+          else
+            res, status = display_holder(key, value)
+            clazz = 'collapse show' unless status == 'success'
+            text_result << res
+          end
+        end
+      %>
+      <div id="collapse-<%= key %>" class="<%= clazz %>" aria-labelledby="heading-<%= key %>" data-parent="#accordion">
         <div class="card-body">
           <pre class="pre-scrollable"><code><%= JSON.pretty_generate(json) %></code></pre>
           <ul class="list-group">
-            <%
-              holders.each_pair do |key, value|
-              if value.is_a?(Hash)
-            %>
-              <li><u><%= key %>:</u>
-                <ul class="list-group">
-                  <%
-                    # Other way of handling holders
-                    value.each_pair do |k,v|
-                    %>
-                      <%= display_holder(k, v) %>
-                    <% end %>
-                </ul>
-              </li>
-            <% else %>
-              <%= display_holder(key, value) %>
-            <% end %>
-            <% end %>
+            <%= text_result %>
           </ul>
         </div>
       </div>
