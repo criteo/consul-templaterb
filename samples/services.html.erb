@@ -1,0 +1,89 @@
+<%
+# This template can be configure the following way with environment variables
+# Environment variables to filter services/instances
+#   SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
+  services_tag_filter = ENV['SERVICES_TAG_FILTER']
+  def status_to_class(status)
+    if status == 'passing'
+      'success'
+    elsif status == 'warning'
+      'warning'
+    elsif status == 'critical'
+      'danger'
+    else
+      'info'
+    end
+  end
+  %>
+<%= render_file 'common/header.html.erb' %>
+<% require 'base64'
+   require 'json'
+   require 'date'
+%>
+<nav>
+  <ul>
+    <li><a href="#datacenters">DataCenters</a></li>
+    <li><a href="#list_services">List of services</a></li>
+    <li><a href="#services">Services with instances</a></li>
+    <li><a href="#nodes">All Nodes</a></li>
+    <li><a href="#kv">Key/Value Store</a></li>
+  </ul>
+</nav>
+<h1 id="datacenters">List of all datacenters</h1>
+<ul>
+<% datacenters.each do |dc| %>
+  <li id="dc_<%=dc %>%"><%= dc %> with <%= services(dc:dc).keys.count %> services, <%= nodes(dc:dc).count %> nodes</li>
+<% end %>
+</ul>
+
+<h1 id="list_services">List of all services in current DC</h1>
+<ul>
+<% services.each do |service_name, tags|
+ %>
+  <li><a href="#service_<%= service_name %>"><%= service_name %></a> <%= tags.sort %></li>
+<% end %>
+</ul>
+
+<h1 id="services">List all services instances sorted by node name</h1>
+<% services.each do |service_name, tags|
+%><h2 id="service_<%= service_name %>" title="<%= tags %>"><%= service_name %> <a class="qlink" href="#service_<%= service_name %>">&#128279;</a></h2>
+<ul>
+<%     service(service_name).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
+  tags = snode['Service']['Tags'].sort
+  addr = snode['Node']['Address']
+  port_num = snode['Service']['Port'].to_i
+  port = port_num && port_num > 0 ? ":#{port_num}" : ''
+  url = if tags.include? 'https'
+          "https://#{addr}#{port}"
+        elsif tags.include? 'http'
+          "http://#{addr}#{port}"
+        elsif tags.include? 'ftp'
+          "ftp://#{addr}#{port}"
+        else
+          nil
+        end
+%><li><a <%= url ? "href=\"#{url}\"" : nil %>><%=
+  snode['Node']['Node'] %><%= port %></a>
+  <span class="tags"><%= snode['Service']['Tags'].sort %></tag>
+  <span class="statuses"><%
+  snode['Checks'].each do |c| %> <span title="<%= c['Name']%>" class="<%= c['Status'] %>"><%= c['Status']
+  %></span><% end if snode['Checks'] %></span></li>
+<% end%>
+</ul>
+<% end%>
+
+
+<h1 id="nodes">List all nodes for DC, sorted by name</h1>
+<ul>
+<% nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |snode|
+%> <li id="node_#{snode['ID']"><%= snode['Address'].ljust(16) %> <%= snode['Node'] %></li>
+<% end %>
+</ul>
+
+<h1 id="kv">KV of Current DC</h1>
+<ul>
+<% kv(keys:true).each do |key|
+%><li id="kv_#{key}"><%= key %></li>
+<% end %>
+</ul>
+<%= render_file 'common/footer.html.erb' %>

@@ -1,0 +1,89 @@
+<% require 'base64'
+   require 'json'
+   require 'date'
+   @current_time = Time.now.utc
+%>
+<%= render_file 'common/header.html.erb' %>
+<main role="main" class="container">
+  <div>
+  <h1>Show all choregraphie information</h1>
+  <div>This page only show choregraphie when at least one holder exists.</div>
+<%
+  def display_holder(holder, value)
+    begin
+      holder_date = Time.parse(value)
+      status = 'success'
+      diff = (@current_time - holder_date).round(0)
+      status = 'warning' if diff > 3600
+      status = 'danger' if diff > 7200
+      diff_txt = "#{diff % 3600} seconds"
+      diff_txt = "#{(diff % 86400) / 3600} hours, #{diff_txt}" if diff > 3600
+      diff_txt = "#{diff / 86400} days, #{diff_txt}" if diff > 86400
+    rescue StandardError => e
+      status = 'info'
+      holder_date = "Cannot parse date: #{e}"
+      diff_txt = "Error Parsing date #{value}"
+    end
+   "<li class=\"list-group-item list-group-item-#{status}\">#{holder}: #{holder_date} : #{diff_txt} ago"
+  end
+%>
+
+<div id="accordion">
+<% kv('choregraphie', recurse:true).each do |tuple| %>
+  <!-- <%= tuple['Key'] %> -->
+  <%
+    key = tuple['Key'].gsub('/', '-')
+    if tuple['Value'].nil?
+      json = []
+      holders = []
+    %>
+    <div class="alert alert-warning" role="alert">
+      Invalid Choregraphie data: <%= tuple %>
+    </div>
+  <%
+    else
+      json = JSON.parse(Base64.decode64(tuple['Value']))
+      holders = json['holders']
+    end
+  %>
+  <% if holders.count > 0 %>
+
+    <div class="card">
+      <div class="card-header" id="heading-<%= key %>">
+        <span class="badge badge-pill badge-primary float-right"><%= holders.count%>/<%= json['concurrency'] %></span>
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse-<%= key %>" aria-expanded="true" aria-controls="collapse-<%= key %>">
+            <%= tuple['Key'] %>
+          </button>
+        </h5>
+      </div>
+      <div id="collapse-<%= key %>" class="collapse" aria-labelledby="heading-<%= key %>" data-parent="#accordion">
+        <div class="card-body">
+          <pre class="pre-scrollable"><code><%= JSON.pretty_generate(json) %></code></pre>
+          <ul class="list-group">
+            <%
+              holders.each_pair do |key, value|
+              if value.is_a?(Hash)
+            %>
+              <li><u><%= key %>:</u>
+                <ul class="list-group">
+                  <%
+                    # Other way of handling holders
+                    value.each_pair do |k,v|
+                    %>
+                      <%= display_holder(k, v) %>
+                    <% end %>
+                </ul>
+              </li>
+            <% else %>
+              <%= display_holder(key, value) %>
+            <% end %>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+</div>
+<%= render_file 'common/footer.html.erb' %>

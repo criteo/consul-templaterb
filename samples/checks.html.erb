@@ -1,0 +1,96 @@
+<%
+# This template can be configure the following way with environment variables
+# Environment variables to filter services/instances
+#   SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
+  services_tag_filter = ENV['SERVICES_TAG_FILTER']
+  def status_to_class(status)
+    if status == 'passing'
+      'success'
+    elsif status == 'warning'
+      'warning'
+    elsif status == 'critical'
+      'danger'
+    else
+      'info'
+    end
+  end
+  %>
+<%= render_file 'common/header.html.erb' %>
+<style type="text/css">
+.check {
+  transition: opacity 1s ease-out;
+}
+</style>
+<script type="text/javascript">
+  function updateStates() {
+    states = ['passing', 'warning', 'critical']
+    stylesheet = document.getElementById('css-states');
+    txt = "";
+    for (var i in states) {
+      var s = states[i];
+      is_checked = document.getElementById('show_'+s).checked
+      var to_append = "." + s + " { ";
+      if (is_checked) {
+        to_append += "opacity: 1; height: auto;"
+      } else {
+        to_append += "opacity: 0; height: 0; overflow: hidden;"
+      }
+      to_append += " }\r\n"
+      txt +=  to_append;
+    }
+    stylesheet.textContent = txt;
+  }
+</script>
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-2">
+      <ul>
+        <%
+          all_services = services(tag: services_tag_filter)
+          all_services.each do |service_name, tags|
+        %>
+        <li><a href="#service_<%= service_name %>"><%= service_name %></a></li>
+        <% end %>
+      </ul>
+    </nav>
+    <main class="col-10">
+      <div class="float-right">
+        <div class="state-selector">
+          <input id="show_passing" type="checkbox" class="checks-visibility" value="passing" checked="checked" onchange="updateStates()"/>
+          <label for="show_passing"><span class="badge badge-success">Passing</span></label>
+        </div>
+        <div class="state-selector">
+          <input id="show_warning" type="checkbox" class="checks-visibility" value="warning" checked="checked" onchange="updateStates()"/>
+          <label for="show_warning"><span class="badge badge-warning">Warning</span></label>
+        </div>
+        <div class="state-selector">
+          <input id="show_critical" type="checkbox" class="checks-visibility" value="critical" checked="checked" onchange="updateStates()"/>
+          <label for="show_critical"><span class="badge badge-danger">Critical</span></label>
+        </div>
+    </div>
+
+      <h1 id="services">Services <%= services_tag_filter ? " tag: #{services_tag_filter}" : 'No filtering' %></h1>
+      <% all_services.each do |service_name, tags| %>
+      <div class="service" id="service_<%= service_name %>">
+        <h2>Service <%= service_name %></h2>
+        <div class="list-group">
+          <% checks_for_service(service_name).each do |check| %>
+          <div class="list-group-item check check['Status'] %>" id="<%= check['CheckID'] %>">
+            <div class="d-flex align-items-center justify-content-between">
+              <h5>
+                <%= check['Name'] %> / <%= check['Node'] %>
+              </h5>
+              <span class="badge badge-pill badge-<%= status_to_class(check['Status']) %>"><%= check['Status'] %></span>
+            </div>
+            <p><%= ERB::Util.html_escape(check['Notes']) %></p>
+            <code><%= ERB::Util.html_escape(check['Output']) %></code>
+          </div>
+          <% end %>
+        </div>
+      </div>
+      <% end %>
+    </main>
+  </div>
+</div>
+<script type="text/javascript">updateStates();</script>
+<%= render_file 'common/footer.html.erb' %>

@@ -1,0 +1,40 @@
+<%= render_file 'common/header.html.erb' %>
+<% path = ENV['kv_path'] || 'services-data' %>
+  <body>
+<% require 'base64'
+   require 'json'
+   require 'date'
+%>
+<main role="main" class="container">
+<div>
+<h1>Show all keys under hierarchy <%= path %></h1>
+<div id="accordion">
+<% kv(path, recurse:true).each do |tuple|
+     key = tuple['Key']
+     val = "NO_VALUE"
+     if !tuple['Value'].nil?
+       begin
+         val = Base64.decode64(tuple['Value'])
+       rescue StdError => e
+         val = "#{e.inspect} for tuple['Value']"
+       end
+     end
+%>
+    <div class="card">
+      <div class="card-header" id="heading-<%= key %>">
+      <h5 class="mb-0">
+        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse-<%= key %>" aria-expanded="true" aria-controls="collapse-<%= key %>">
+          <%= key %>
+        </button>
+      </h5>
+      <div id="collapse-<%= key %>" class="collapse" aria-labelledby="heading-<%= key %>" data-parent="#accordion">
+        <div class="card-body">
+          <pre class="pre-scrollable"><%= val %></pre>
+        </div>
+      </div>
+    </div>
+<% end %>
+</div>
+</div>
+</main>
+<%= render_file 'common/footer.html.erb' %>

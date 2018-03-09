@@ -1,0 +1,46 @@
+<%
+  # This template can be configure the following way with environment variables
+  # CONSUL_TOOLS_SUFFIX: suffix for the address of consul tools
+  # CONSUL_TOOLS_PREFIX: prefix for the address of consul tools
+  # CONSUL_TOOLS: comma sperated list of consul tools
+  tools = (ENV['CONSUL_TOOLS'] || 'criteo_choregraphies,checks,services,nodes,keys').split(",")
+  suffix = ENV['CONSUL_TOOLS_PREFIX'] || '.html'
+  prefix = ENV['CONSUL_TOOLS_SUFFIX'] || ''
+%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Display Consul information">
+    <meta name="author" content="Criteo">
+    <meta http-equiv="refresh" content="<%= ENV['REFRESH'] || '600' %>"/>
+
+    <title><%= ENV['TITLE'] || 'Consul Real Time information'%></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style type="text/css">
+      body {
+      padding-top: 5rem;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">Consul</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <% tools.each do |tool| %>
+          <li class="nav-item">
+            <a class="nav-link" href="<%= prefix + tool + suffix %>"><%= tool.gsub('_', ' ') %></a>
+          </li>
+          <% end %>
+        </ul>
+      </div>
+    </nav>
