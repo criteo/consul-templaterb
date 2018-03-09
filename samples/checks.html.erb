@@ -75,7 +75,7 @@
         <h2>Service <%= service_name %></h2>
         <div class="list-group">
           <% checks_for_service(service_name).each do |check| %>
-          <div class="list-group-item check check['Status'] %>" id="<%= check['CheckID'] %>">
+          <div class="list-group-item check <%= check['Status'] %>" id="<%= check['CheckID'] %>">
             <div class="d-flex align-items-center justify-content-between">
               <h5>
                 <%= check['Name'] %> / <%= check['Node'] %>
