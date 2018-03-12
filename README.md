@@ -31,7 +31,7 @@ has support for Hashicorp's Vault), but consul-templaterb focuses on getting
 more power with the generation of templates and more performance.
 
 Consul Template uses Go templates which is very limited in its set of
-features is quite limited: it is complicated to sort, apply real transformations
+features: it is complicated to sort, apply real transformations
 using code and even interact with the OS (ex: get the current date, format
 timestamps...).
 
@@ -85,7 +85,28 @@ have to install first: ruby and ruby dev.
 sudo apt-get install ruby ruby-dev && sudo gem install consul-templaterb
 ```
 
-You can now use it directly using the binary `consul-templaterb` in your path
+You can now use it directly using the binary `consul-templaterb` in your path.
+
+### Playing with the samples templates
+
+Samples are installed with the GEM, you can either
+[download](https://github.com/criteo/consul-templaterb/tree/master/samples) them or
+simply use the ones installed with the gem. To figure out where the templates are
+installed:
+
+```shell
+$ gem contents consul-templaterb|grep samples
+```
+
+Will output the path where the samples are being installed, you can copy the directory
+somewhere and then issue the command:
+
+```shell
+$ consul-templaterb samples/*.html.erb
+```
+
+It will render a full web site you may browse to look in real time the status of your
+Consul Cluster.
 
 ## Usage of consul-templaterb
 
