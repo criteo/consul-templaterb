@@ -1,6 +1,5 @@
 <%= render_file 'common/header.html.erb' %>
 <% path = ENV['kv_path'] || 'services-data' %>
-  <body>
 <% require 'base64'
    require 'json'
    require 'date'
@@ -21,20 +20,19 @@
      end
 %>
     <div class="card">
-      <div class="card-header" id="heading-<%= key %>">
+     <div class="card-header" id="heading-<%= key %>">
       <h5 class="mb-0">
-        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse-<%= key %>" aria-expanded="true" aria-controls="collapse-<%= key %>">
+        <a href="#<%= key %>" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse-<%= key %>" aria-expanded="true" aria-controls="collapse-<%= key %>">
           <%= key %>
-        </button>
+        </a>
       </h5>
       <div id="collapse-<%= key %>" class="collapse" aria-labelledby="heading-<%= key %>" data-parent="#accordion">
         <div class="card-body">
           <pre class="pre-scrollable"><%= val %></pre>
         </div>
       </div>
+     </div>
     </div>
 <% end %>
 </div>
-</div>
-</main>
 <%= render_file 'common/footer.html.erb' %>
