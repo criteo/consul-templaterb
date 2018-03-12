@@ -6,6 +6,8 @@ deploy:
   api_key:
     secure: l78H6Ow9HCeEz0hcAP2XCXaGGBNRXZ/QLFPNzwyNmHToko9WqZj6mbiNIcVwZ8aCcZEzFmtcB7m1lC1l+mvot3Snfh4OUErK7EXMLiNxUWybtA4qJqmsb2J8JGS69pTohPKagi1YyRbyVs2tJpM5OVazcNxEQDAVkWVxJuPVz6tsn4rXZsL77nTSVyB6YGKgguRGhtS/3M0ufk1ymOpuk8pxXKaotlYGRXmht2OHW+FDQczTMgqu6jiZubjWlNHVxtYn+CsLYNj1BswzD6fF1uous6nchV0if2QW5N4OJVyZCx3yEQ0RswfI8G1kG/Jm8wd2lSknY2wpnd1qkRnAcFlKBpUv8aQd6SdbSO84GTAOvucgK7Mcf0LRvYSE2FyagaAPFSfMybWd+GS26g5AuRPpkhtsS9ijfdIzpudiF18pvnJ+wQj+hWM/THWowYNyKv9NeckxdrULaHPisA346r5eM/EADOhyEUtPm11PFgcheGjff1H4qXGc9gcm50u6mNNHkWv38oGhAPpRk/bU7qybTKqRKNGWGP0MiT4WVIFXp62/JMY7AmufOdJx5Ca5JVsaWoN4fsS9r3+R+FxvRtV9NOrRJVKKaQhzi4UHEUDQ2hQjpLDijD5L0vUsl6arl+nufTt5G5jp9QvdY7fhYT1mpGgWj0hTBd8Pxsl3N8U=
   gem: consul-templaterb
+  edge:
+    branch: v1.8.47
   on:
     tags: true
     repo: criteo/consul-templaterb
