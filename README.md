@@ -257,4 +257,4 @@ This project is intended to be a safe, welcoming space for collaboration, and co
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the Apache v2 license. See LICENSE.txt file.
