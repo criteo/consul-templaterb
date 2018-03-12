@@ -151,6 +151,16 @@ by consul-templaterb.
 
 Have a look into the [samples/](samples/) directory to browse example files.
 
+If you want to test it quickly, you might try with (assuming you consul agent is listening on
+http://localhost:8500):
+
+```
+$ be bin/consul-templaterb -c 'http://localhost:8500' samples/*.html.erb
+```
+
+It will generate a full website in samples/ directory with lots of Consul information ready to
+use (website updated automagically when values to change).
+
 ## Template development
 
 Here are the various functions you might use in your templates.
@@ -197,7 +207,7 @@ name or its ID. If DC is specified, will lookup for given node in another datace
 ### kv(name = nil, dc: nil, keys: nil, recurse: false)
 
 [Read keys from KV Store](https://www.consul.io/api/kv.html#read-key). It can be used for both listing the keys and
-getting the values. See samples/dump_keys.html.erb for a working example.
+getting the values. See the file in samples [keys.html.erb](samples/keys.html.erb) for a working example.
 
 ### agent_metrics()
 
@@ -251,7 +261,7 @@ Here are the known bugs of the application:
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/consul-templaterb.
+Bug reports and pull requests are welcome on GitHub at https://github.com/criteo/consul-templaterb.
 This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the
 [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
