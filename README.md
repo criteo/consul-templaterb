@@ -76,6 +76,17 @@ $ gem install consul-templaterb
 [...]
 ```
 
+If you simply want to use the executable on your favorite linux distribution, you
+have to install first: ruby and ruby dev.
+
+### Quick install on Ubuntu
+
+```shell
+sudo apt-get install ruby ruby-dev && sudo gem install consul-templaterb
+```
+
+You can now use it directly using the binary `consul-templaterb` in your path
+
 ## Usage of consul-templaterb
 
 ### Show help
