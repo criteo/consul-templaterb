@@ -6,6 +6,9 @@ AllCops:
 Metrics/AbcSize:
   Max: 80
 
+Metrics/BlockLength:
+  Max: 120
+
 Metrics/BlockNesting:
   Max: 4
 
@@ -34,4 +37,7 @@ Style/FrozenStringLiteralComment:
   Enabled: false
 
 Style/MultilineBlockChain:
+  Enabled: false
+
+Style/VariableNumber:
   Enabled: false

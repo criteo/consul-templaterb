@@ -253,9 +253,11 @@ module Consul
                 retry_in = modified ? conf.min_duration : conf.retry_on_non_diff
               end
               retry_in = 0.1 if retry_in < 0.1
-              EventMachine.add_timer(retry_in) do
-                queue.push(n_consul_index)
-              end unless @stopping
+              unless @stopping
+                EventMachine.add_timer(retry_in) do
+                  queue.push(n_consul_index)
+                end
+              end
               result = ConsulResult.new(new_content, modified, http_result, n_consul_index, stats, retry_in)
               @last_result = result
               @ready = true

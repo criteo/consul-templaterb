@@ -1,4 +1,5 @@
 # coding: utf-8
+
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'consul/async/version'
@@ -30,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec_junit_formatter'
-  spec.add_development_dependency 'rubocop', '0.42.0'
+  spec.add_development_dependency 'rubocop', '0.49.0'
   spec.add_development_dependency 'rubocop-junit-formatter'
   spec.add_development_dependency 'webmock'
 end

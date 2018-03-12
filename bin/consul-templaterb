@@ -87,7 +87,7 @@ optparse = OptionParser.new do |opts|
                                                   '[die (kill daemon on hot reload failure), '\
                                                   'keep (on error, keep running), '\
                                                   'disable (hot reload disabled)] ') do |hot_reload_behaviour|
-    consul_engine.hot_reload_failure = 'die' == hot_reload_behaviour ? nil : hot_reload_behaviour
+    consul_engine.hot_reload_failure = hot_reload_behaviour == 'die' ? nil : hot_reload_behaviour
   end
 
   def compute_signal(val, none_value)
@@ -99,12 +99,12 @@ optparse = OptionParser.new do |opts|
   end
 
   opts.on('-K', '--sig-term=kill_signal', String,
-          'Signal to sent to next --exec command on kill, default=#{cur_sig_term}') do |sig|
+          "Signal to sent to next --exec command on kill, default=#{cur_sig_term}") do |sig|
     cur_sig_term = compute_signal(sig, nil)
   end
 
   opts.on('-R', '--sig-reload=reload_signal', String,
-          'Signal to sent to next --exec command on reload (NONE supported), default=#{cur_sig_reload}') do |sig|
+          "Signal to sent to next --exec command on reload (NONE supported), default=#{cur_sig_reload}") do |sig|
     cur_sig_reload = compute_signal(sig, 'NONE')
   end
 
@@ -231,7 +231,7 @@ ARGV.each do |tpl|
 end
 
 # Ensure to kill child process if any
-%w(INT PIPE TERM).each do |sig|
+%w[INT PIPE TERM].each do |sig|
   Signal.trap(sig) do
     STDERR.puts "[KILL] received #{sig}, stopping myself"
     kill_program

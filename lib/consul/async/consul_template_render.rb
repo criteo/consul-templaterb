@@ -63,14 +63,16 @@ module Consul
 
       def hot_reload_if_needed
         new_time = File.ctime(template_file)
-        begin
-          @template_file_ctime = new_time
-          return update_template(load_template)
-        rescue Consul::Async::InvalidTemplateException => e
-          STDERR.puts "****\n[ERROR] HOT Reload of template #{template_file} did fail due to #{e}\n****\n"
-          raise e unless hot_reload_failure == 'keep'
-          STDERR.puts "[WARN] Hot reload of #{template_file} was not taken into account, keep running with previous version"
-        end if template_file_ctime != new_time
+        if template_file_ctime != new_time
+          begin
+            @template_file_ctime = new_time
+            return update_template(load_template)
+          rescue Consul::Async::InvalidTemplateException => e
+            STDERR.puts "****\n[ERROR] HOT Reload of template #{template_file} did fail due to #{e}\n****\n"
+            raise e unless hot_reload_failure == 'keep'
+            STDERR.puts "[WARN] Hot reload of #{template_file} was not taken into account, keep running with previous version"
+          end
+        end
         false
       end
     end

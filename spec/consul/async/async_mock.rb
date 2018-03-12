@@ -24,7 +24,7 @@ module Consul
 
     def mock_all
       results = {}
-      %w(v1/agent/metrics
+      %w[v1/agent/metrics
          v1/agent/self
          v1/catalog/datacenters
          v1/catalog/nodes
@@ -35,7 +35,7 @@ module Consul
          v1/health/service/consul
          v1/kv/
          v1/kv/choregraphies
-         v1/kv/services-data/web-preview/network-service).each do |path|
+         v1/kv/services-data/web-preview/network-service].each do |path|
         results[path] = mock_path path
       end
       results
