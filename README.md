@@ -65,7 +65,7 @@ gem 'consul-templaterb'
 And then execute:
 
 ```shell
-    $ bundle
+$ bundle
 [...]
 ```
 
@@ -257,7 +257,8 @@ queries mechanism.
 
 This allow to include a template file into another one. Beware, it does not check for infinite recursion!
 The template can be either a static file either another template. The file has to be a valid template, but
-can also be raw text (if it is a valid template.
+can also be raw text (if it is a valid template) and is resolved with a relative path regarding the file
+including it.
 
 Example:
 
@@ -271,7 +272,7 @@ We recommend using bundle using `bundle install`, you can now run `bundle exec b
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the
 version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version,
-push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org/gems/consul-templaterb).
 
 ## Known bugs
 
@@ -299,4 +300,4 @@ This project is intended to be a safe, welcoming space for collaboration, and co
 
 ## License
 
-The gem is available as open source under the terms of the Apache v2 license. See LICENSE.txt file.
+The gem is available as open source under the terms of the Apache v2 license. See [LICENSE.txt](LICENSE.txt) file.
