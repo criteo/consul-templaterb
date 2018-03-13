@@ -2,13 +2,13 @@
 
 This GEM is both a library and an executable that allows to generate files
 using data from Consul (Discovery and Key/Value Store) easily using ruby's
-erb templates. It also support launching programs and babysitting processes
+erb templates. It also support launching programs and baby-sitting processes
 when rendering the files, thus notifying programs when data do change.
 
 It is intended for user accustomed to expressiveness or Ruby templating (ERB),
-allowing for more flexibility and than Go Templating.
+allowing for more flexibility and features than Go templates.
 
-It also allow to use all of ruby language, especially usefull for generating
+It also allows to use all of ruby language, especially useful for generating
 files in several formats (JSON, XML) where text substitutions are hard to get
 right.
 
@@ -16,7 +16,7 @@ It also focuses on good performance and lightweight usage of bandwidth,
 especially for very large clusters and watching lots of services.
 
 For complicated rendering of templates and large Consul Clusters, it usually
-render faster with a more predictible way the template than the original
+renders faster with a more predictable way the template than the original
 consul-template.
 
 ## Differences with HashiCorp's consul-template
@@ -35,8 +35,8 @@ features: it is complicated to sort, apply real transformations
 using code and even interact with the OS (ex: get the current date, format
 timestamps...).
 
-The sort feature for instances allow you to create predictible output (i.e: meaning
-that the order of nodes is predictible), thus it might offer better performance
+The sort feature for instances allow you to create predictable output (i.e: meaning
+that the order of nodes is predictable), thus it might offer better performance
 since the reload of processes if happening ONLY when the files are binary
 different. Thus, if using consul-templaterb, you will reload less your haproxy or
 load-balancer than you would do with consul-template.
@@ -44,19 +44,19 @@ load-balancer than you would do with consul-template.
 Compared to consul-template, consul-templaterb offers the following features:
 
 * Hot-Reload of template files
-* Bandwith limitation per endpoint (will soon support dynamic bandwith limiter)
+* Bandwidth limitation per endpoint (will soon support dynamic bandwidth limiter)
 * Supports baby sitting of multiple processes
 * Supports all Ruby features (ex: base64, real JSON/XML generation...)
 * Information about bandwidth
 
 The executable supports close semantics to Consul template, it also supports
-commands when files are modified and babysitting of multiple processes with
-ability to send signals to those processes whenever the files do change.
+commands when files are modified and supervision of multiple processes with
+ability to send signals to those processes when the files do change.
 
 ## Installation
 
-You might either use the executable direcly OR use this GEM as a library by
-adding this line to your application's Gemfile:
+You might either use the executable directly OR use this GEM as a library by
+adding this line to your application's `Gemfile`:
 
 ```ruby
 gem 'consul-templaterb'
@@ -79,7 +79,7 @@ $ gem install consul-templaterb
 If you simply want to use the executable on your favorite linux distribution, you
 have to install first: ruby and ruby dev.
 
-### Quick install on Ubuntu
+### Quick install on Ubuntu-Linux
 
 ```shell
 sudo apt-get install ruby ruby-dev && sudo gem install consul-templaterb
@@ -131,6 +131,14 @@ USAGE: bin/consul-templaterb [[options]]
         --once                       Do not run the process as a daemon
 ```
 
+When launched with file arguments ending with .erb, the executable will assume
+the file is a template and will render the corresponding file without the
+`.erb` extension.
+
+It means that you can call consul-templaterb with *.erb arguments, the shell
+will then substitute all files and render it by removing the .erb extension as
+if the `--template my_file.ext.erb:myfile.ext` was used.
+
 ### Generate multiple templates
 
 In the same way as consul-template, consul-templaterb supports multiple templates and executing
@@ -153,7 +161,7 @@ $ consul-templaterb \\
 
 ### Process management and signalisation of configuration files
 
-With the --exec argument (can be specified multiple times), consul-templaterb will launch
+With the `--exec` argument (can be specified multiple times), consul-templaterb will launch
 the process specified when all templates have been generated and will send a reload signal
 if the content of any of the files do change (the signal will be sent atomically however,
 meaning that if 2 results of templates are modified at the same time, the signal will be
@@ -175,7 +183,7 @@ By design, the GEM supports limiting the number of requests per endpoints (see c
 `bin/consul-templaterb` file). It avoids using too much network to fetch data from Consul
 in large Consul Clusters (especially when watching lots of files).
 
-The limitation is currently static, but fair dynamic bandwidth allocation will allow to limit
+The limitation is static for now, but fair dynamic bandwidth allocation will allow to limit
 the bandwidth used to get information for all services by capping the global bandwidth used
 by consul-templaterb.
 
@@ -197,12 +205,12 @@ use (website updated automagically when values to change).
 
 Here are the various functions you might use in your templates.
 
-For each function, mandatory arguments are specified at the begining while optional ones are marked with `[]`.
+For each function, mandatory arguments are specified at the beginning while optional ones are marked with `[]`.
 Most of them support the optional dc attribute to access data from another datacenter. If the `dc`
 attribute is not specified, the function will output data from the current datacenter.
 
 To ease template development, `consul-templaterb` supports HOT reload of templates, thus it is possible to
-develop the templates interactivelly. While developping, it is possible to use the switch `--hot-reload=keep`,
+develop the templates interactively. While developing, it is possible to use the switch `--hot-reload=keep`,
 thus the application will display a warning if the template is invalid and won't stop
 (`--hot-reload=die` is the default, thus if the hot-reloaded template has issue, the application will die).
 
@@ -249,9 +257,9 @@ mechanism.
 
 ### agent_self()
 
-[Get the configuration of Consul Agent](https://www.consul.io/api/agent.html#read-configuration). Since this
-endpoint does not support blocking queries, data will be refreshed every few seconds, but will not use blocking
-queries mechanism.
+[Get the configuration of Consul Agent](https://www.consul.io/api/agent.html#read-configuration).
+Since this endpoint does not support blocking queries, data will be refreshed every few seconds,
+but will not use blocking queries mechanism.
 
 ### render_file RELATIVE_PATH_TO_ERB_FILE
 
@@ -282,7 +290,7 @@ Here are the known bugs of the application:
   watches) at the same time. This bug is
   [probably a race condition in `em-http-request`](https://github.com/igrigorik/em-http-request/issues/315). Only visible
   on very large clusters or when watching thousands of individual KV keys.
-* [ ] render_file might create an infinite recusion if a template includes itself indirectly.
+* [ ] render_file might create an infinite recursion if a template includes itself indirectly.
 
 ## TODO
 
@@ -291,7 +299,7 @@ Here are the known bugs of the application:
 * [ ] More samples: apache, nginx, full website displaying consul information...
 * [ ] Optimize rendering speed at startup: an iteration is done very second by default, but it would be possible to speed
       up rendering by iterating with higher frequency until the first write of result has been performed.
-* [ ] Allow to tune bandwith using a simple config file (while it should not be necessary for 90% of use-cases)
+* [ ] Allow to tune bandwidth using a simple config file (while it should not be necessary for 90% of use-cases)
 
 ## Contributing
 
