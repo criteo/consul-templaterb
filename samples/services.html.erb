@@ -25,8 +25,6 @@
     <li><a href="#datacenters">DataCenters</a></li>
     <li><a href="#list_services">List of services</a></li>
     <li><a href="#services">Services with instances</a></li>
-    <li><a href="#nodes">All Nodes</a></li>
-    <li><a href="#kv">Key/Value Store</a></li>
   </ul>
 </nav>
 <h1 id="datacenters">List of all datacenters</h1>
@@ -71,19 +69,4 @@
 <% end%>
 </ul>
 <% end%>
-
-
-<h1 id="nodes">List all nodes for DC, sorted by name</h1>
-<ul>
-<% nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |snode|
-%> <li id="node_#{snode['ID']"><%= snode['Address'].ljust(16) %> <%= snode['Node'] %></li>
-<% end %>
-</ul>
-
-<h1 id="kv">KV of Current DC</h1>
-<ul>
-<% kv(keys:true).each do |key|
-%><li id="kv_#{key}"><%= key %></li>
-<% end %>
-</ul>
 <%= render_file 'common/footer.html.erb' %>
