@@ -3,7 +3,7 @@
    require 'date'
    @current_time = Time.now.utc
 %><%= render_file 'common/header.html.erb' %>
-<main role="main" class="container">
+<main class="container">
   <div>
   <h1>Show all choregraphie information</h1>
   <div>This page only show choregraphie when at least one holder exists.</div>
@@ -87,4 +87,6 @@
   <% end %>
 <% end %>
 </div>
+</div>
+</main>
 <%= render_file 'common/footer.html.erb' %>

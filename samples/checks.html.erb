@@ -1,3 +1,4 @@
+<%= render_file 'common/header.html.erb' %>
 <%
 # This template can be configure the following way with environment variables
 # Environment variables to filter services/instances
@@ -14,13 +15,13 @@
       'info'
     end
   end
-  %><%= render_file 'common/header.html.erb' %>
-<style type="text/css">
+  %>
+<style>
 .check {
   transition: opacity 1s ease-out;
 }
 </style>
-<script type="text/javascript">
+<script>//<!--
   function updateStates() {
     states = ['passing', 'warning', 'critical']
     stylesheet = document.getElementById('css-states');
@@ -32,13 +33,14 @@
       if (is_checked) {
         to_append += "opacity: 1; height: auto;"
       } else {
-        to_append += "opacity: 0; height: 0; overflow: hidden;"
+        to_append += "opacity: 0; height: 0; overflow: hidden; padding: 0; border: none;"
       }
       to_append += " }\r\n"
       txt +=  to_append;
     }
     stylesheet.textContent = txt;
   }
+//->
 </script>
 <div class="container-fluid">
   <div class="row">
@@ -54,27 +56,51 @@
     </nav>
     <main class="col-10">
       <div class="float-right">
-        <div class="state-selector">
+        <span class="state-selector">
           <input id="show_passing" type="checkbox" class="checks-visibility" value="passing" checked="checked" onchange="updateStates()"/>
           <label for="show_passing"><span class="badge badge-success">Passing</span></label>
-        </div>
-        <div class="state-selector">
+        </span>
+        <span class="state-selector">
           <input id="show_warning" type="checkbox" class="checks-visibility" value="warning" checked="checked" onchange="updateStates()"/>
           <label for="show_warning"><span class="badge badge-warning">Warning</span></label>
-        </div>
-        <div class="state-selector">
+        </span>
+        <span class="state-selector">
           <input id="show_critical" type="checkbox" class="checks-visibility" value="critical" checked="checked" onchange="updateStates()"/>
           <label for="show_critical"><span class="badge badge-danger">Critical</span></label>
-        </div>
-    </div>
+        </span>
+      </div>
 
       <h1 id="services">Services <%= services_tag_filter ? " tag: #{services_tag_filter}" : 'No filtering' %></h1>
-      <% all_services.each do |service_name, tags| %>
-      <div class="service" id="service_<%= service_name %>">
-        <h2>Service <%= service_name %></h2>
+      <% all_services.each do |service_name, tags|
+        passing = 0
+        warning = 0
+        critical = 0
+        service_state = 'passing'
+        checks_for_service(service_name).each do |check|
+          st = check['Status']
+          case st
+          when 'warn'
+            warning += 1
+          when 'passing'
+            passing += 1
+          else
+            critical += 1
+          end
+        end
+        service_state = 'warn' if warning > 0
+        service_state = 'critical' if critical > 0
+      %>
+      <div class="service <%= service_state %>" id="service_<%= service_name %>">
+        <h2 class="service-name text-<%= status_to_class(service_state) %>">Service <%= service_name %>
+          <span class="float-right">
+            <span class="badge badge-pill badge-success"><%= passing > 0 ? passing : nil %></span>
+            <span class="badge badge-pill badge-warning"><%= warning > 0 ? warning : nil %></span>
+            <span class="badge badge-pill badge-danger"><%= critical > 0 ? critical : nil %></span>
+          </span>
+        </h2>
         <div class="list-group">
           <% checks_for_service(service_name).each do |check| %>
-          <div class="list-group-item check <%= check['Status'] %>" id="<%= check['CheckID'] %>">
+          <div class="list-group-item check <%= check['Status'] %>" id="<%= check['Node'] + check['CheckID'] %>">
             <div class="d-flex align-items-center justify-content-between">
               <h5>
                 <%= check['Name'] %> / <%= check['Node'] %>
@@ -91,5 +117,5 @@
     </main>
   </div>
 </div>
-<script type="text/javascript">updateStates();</script>
+<script>updateStates();</script>
 <%= render_file 'common/footer.html.erb' %>

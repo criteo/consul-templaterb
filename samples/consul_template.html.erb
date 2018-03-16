@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
   <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="refresh" content="300"/>
     <title>Consul Full Info</title>
-    <style type="text/css">
+    <style>
 .passing {
   color:green;
 }
@@ -50,7 +50,7 @@
 
 <h1 id="services">List all services instances sorted by node name</h1>
 <% services.each do |service_name, tags|
-%><h2 id="service_<%= service_name %>" title="<%= tags %>"><%= service_name %> <a class="qlink" href="#service_<%= service_name %>">&#128279;</a></h2>
+%><h2 id="service_<%= service_name %>" title="<%= tags.join(', ') %>"><%= service_name %> <a class="qlink" href="#service_<%= service_name %>">&#128279;</a></h2>
 <ul>
 <%     service(service_name).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
   tags = snode['Service']['Tags'].sort
@@ -68,7 +68,7 @@
         end
 %><li><a <%= url ? "href=\"#{url}\"" : nil %>><%=
   snode['Node']['Node'] %><%= port %></a>
-  <span class="tags"><%= snode['Service']['Tags'].sort %></tag>
+  <span class="tags"><%= snode['Service']['Tags'].sort %></span>
   <span class="statuses"><%
   snode['Checks'].each do |c| %> <span title="<%= c['Name']%>" class="<%= c['Status'] %>"><%= c['Status']
   %></span><% end if snode['Checks'] %></span></li>
@@ -80,14 +80,14 @@
 <h1 id="nodes">List all nodes for DC, sorted by name</h1>
 <ul>
 <% nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |snode|
-%> <li id="node_#{snode['ID']"><%= snode['Address'].ljust(16) %> <%= snode['Node'] %></li>
+%> <li id="node_<%= snode['ID'] %>"><%= snode['Address'].ljust(16) %> <%= snode['Node'] %></li>
 <% end %>
 </ul>
 
 <h1 id="kv">KV of Current DC</h1>
 <ul>
 <% kv(keys:true).each do |key|
-%><li id="kv_#{key}"><%= key %></li>
+%><li id="kv_<%= key %>"><%= key %></li>
 <% end %>
 </ul>
 </body>

@@ -1,12 +1,12 @@
 <%= render_file 'common/header.html.erb' %>
-<% path = ENV['kv_path'] || 'services-data' %>
+<% path = ENV['kv_path'] || '' %>
 <% require 'base64'
    require 'json'
    require 'date'
 %>
-<main role="main" class="container">
+<main class="container">
 <div>
-<h1>Show all keys under hierarchy <%= path %></h1>
+<h1>Show all keys <%= path == '' ? '' : "under hierarchy #{path}" %></h1>
 <div id="accordion">
 <% kv(path, recurse:true).each do |tuple|
      key = tuple['Key']
@@ -28,11 +28,13 @@
       </h5>
       <div id="collapse-<%= key %>" class="collapse" aria-labelledby="heading-<%= key %>" data-parent="#accordion">
         <div class="card-body">
-          <pre class="pre-scrollable"><%= val %></pre>
+          <pre class="pre-scrollable"><%= ERB::Util.html_escape(val) %></pre>
         </div>
       </div>
      </div>
     </div>
 <% end %>
 </div>
+</div>
+</main>
 <%= render_file 'common/footer.html.erb' %>
