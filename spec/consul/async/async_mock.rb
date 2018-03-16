@@ -17,7 +17,7 @@ module Consul
 
     def mock_path(path)
       body = read("#{path}.json")
-      stub_request(:get, %r{http://locahost:8500/#{path}?.*})
+      stub_request(:get, %r{http://localhost:8500/#{path}?.*})
         .to_return(body: body, status: 200)
       body
     end

@@ -117,7 +117,7 @@ $ consul-templaterb --help
 USAGE: bin/consul-templaterb [[options]]
     -h, --help                       Show help
     -v, --version                    Show Version
-    -c, --consul-addr=<address>      Address of Consul, eg: http://locahost:8500
+    -c, --consul-addr=<address>      Address of Consul, eg: http://localhost:8500
         --consul-token=<token>       Use a token to connect to Consul
     -w, --wait=<min_duration>        Wait at least n seconds before each template generation
     -r, --retry-delay=<min_duration> Min Retry delay on Error/Missing Consul Index

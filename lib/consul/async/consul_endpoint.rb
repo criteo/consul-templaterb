@@ -7,7 +7,7 @@ module Consul
     class ConsulConfiguration
       attr_reader :base_url, :token, :retry_duration, :min_duration, :wait_duration, :max_retry_duration, :retry_on_non_diff,
                   :missing_index_retry_time_on_diff, :missing_index_retry_time_on_unchanged, :debug
-      def initialize(base_url: 'http://locahost:8500',
+      def initialize(base_url: 'http://localhost:8500',
                      debug: { network: false },
                      token: nil,
                      retry_duration: 10,

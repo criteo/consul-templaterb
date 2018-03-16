@@ -67,7 +67,7 @@ optparse = OptionParser.new do |opts|
     exit 0
   end
 
-  opts.on('-c', '--consul-addr=<address>', String, 'Address of Consul, eg: http://locahost:8500') do |consul_url|
+  opts.on('-c', '--consul-addr=<address>', String, 'Address of Consul, eg: http://localhost:8500') do |consul_url|
     options[:consul][:base_url] = consul_url
   end
 
