@@ -12,9 +12,13 @@ Gem::Specification.new do |spec|
   spec.email         = ['sre-core-services@criteo.com']
 
   spec.summary       = 'Implementation of Consul template using Ruby and .erb templating language'
-  spec.homepage      = 'https://github.com/criteo/consul-templaterb'
-  spec.description   = 'A ruby implementation of Consul Template with support of erb templating'
-
+  spec.homepage      = 'https://rubygems.org/gems/consul-templaterb'
+  spec.description   = 'A ruby implementation of Consul Template with support of erb templating ' \
+                       'with hi-performance on large clusters and advanced process management features.'
+  spec.metadata      = { 'bug_tracker_uri' => 'https://github.com/criteo/consul-templaterb/issues',
+                         'changelog_uri'   => 'https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md',
+                         'homepage_uri'    => 'https://github.com/criteo/consul-templaterb',
+                         'source_code_uri' => 'https://github.com/criteo/consul-templaterb' }
   spec.license       = 'Apache v2'
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|

@@ -212,6 +212,10 @@ def find_max_descriptors(max_descripors)
   max_size
 end
 
+unless options[:consul][:base_url].start_with? 'http'
+  options[:consul][:base_url] = "http://#{options[:consul][:base_url]}"
+end
+
 # Since we might be using a lots of descriptors, document this
 new_size = find_max_descriptors(65_536)
 STDERR.puts "Max number of descriptors set to #{new_size}" if options[:consul][:debug][:network]

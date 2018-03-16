@@ -1,18 +1,23 @@
 ## (UNRELEASED)
 
+## 1.0.6 (March 16, 2018)
+
 IMPROVEMENTS:
 
+* Adds http:// to Consul URL if missing since `$CONSUL_HTTP_ADDR` environment
+  variable might not have it
+* Updated gem description with more accurate information
 * samples: removed KV/nodes from services.html.erb
 * Fixed typos in README.md
 * Added CHANGELOG.md
 
-## 1.0.5 (March 12, 2018) 3c71d1f6461c6f211c61d7ef028f3ad379af4875
+## 1.0.5 (March 12, 2018)
 
 BUG FIXES:
 
 * fixed default value for parameter -c to http://localhost:8500
 
-## 1.0.4 (March 12, 2018) f1024e748e278a518bcae1e558dee45e3a760be1
+## 1.0.4 (March 12, 2018)
 
 BUG FIXES:
 
