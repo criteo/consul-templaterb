@@ -102,9 +102,9 @@
         </h2>
         <% if sum > 0
         %><div class="progress">
-            <div title="<%= "#{passing} / #{sum}" %>" class="progress-bar bg-success" role="progressbar" style="width:<%= (100 * passing / sum).round %>%" aria-valuenow="<%= passing %>" aria-valuemin="0" aria-valuemax="<%= sum %>"></div>
-            <div title="<%= "#{warning} / #{sum}" %>" class="progress-bar bg-warning" role="progressbar" style="width:<%= (100 * warning / sum).round %>%" aria-valuenow="<%= warning %>" aria-valuemin="0" aria-valuemax="<%= sum %>"></div>
-            <div title="<%= "#{critical} / #{sum}" %>" class="progress-bar bg-danger" role="progressbar" style="width:<%= (100 * critical / sum).round %>%" aria-valuenow="<%= critical %>" aria-valuemin="0" aria-valuemax="<%= sum %>"></div>
+            <div title="<%= "#{passing} / #{sum}" %>" class="progress-bar bg-success" role="progressbar" style="width:<%= (100.0 * passing / sum).round(2) %>%" aria-valuenow="<%= passing %>" aria-valuemin="0" aria-valuemax="<%= sum %>"></div>
+            <div title="<%= "#{warning} / #{sum}" %>" class="progress-bar bg-warning" role="progressbar" style="width:<%= (100.0 * warning / sum).round(2) %>%" aria-valuenow="<%= warning %>" aria-valuemin="0" aria-valuemax="<%= sum %>"></div>
+            <div title="<%= "#{critical} / #{sum}" %>" class="progress-bar bg-danger" role="progressbar" style="width:<%= (100.0 * critical / sum).round(2) %>%" aria-valuenow="<%= critical %>" aria-valuemin="0" aria-valuemax="<%= sum %>"></div>
           </div>
         <% end %>
         <div class="list-group">
