@@ -27,6 +27,7 @@ module Consul
         @output_file = output_file
         @template_manager = template_manager
         @last_result = ''
+        @last_result = File.read(output_file) if File.exist? output_file
         @template = load_template
       end
 

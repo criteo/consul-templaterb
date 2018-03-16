@@ -1,5 +1,15 @@
 ## (UNRELEASED)
 
+## 1.0.7 (March 16, 2018)
+
+BUG FIXES:
+
+* Do not execute reload command at startup if destination file exists and is unchanged
+
+IMPROVEMENTS:
+
+* samples/*.html.erb files have doctype as first line
+
 ## 1.0.6 (March 16, 2018)
 
 IMPROVEMENTS:
