@@ -1,4 +1,4 @@
-# Consul::Templaterb
+# Consul::Templaterb [![Build Status](https://api.travis-ci.org/criteo/consul-templaterb.svg?branch=master)](https://travis-ci.org/criteo/consul-templaterb)
 
 This GEM is both a library and an executable that allows to generate files
 using data from Consul (Discovery and Key/Value Store) easily using ruby's
