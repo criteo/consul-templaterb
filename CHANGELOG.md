@@ -1,5 +1,9 @@
 ## (UNRELEASED)
 
+IMPROVEMENTS:
+
+* More clever behaviour regarding processes on First completed rendering phase
+
 ## 1.0.7 (March 16, 2018)
 
 BUG FIXES:

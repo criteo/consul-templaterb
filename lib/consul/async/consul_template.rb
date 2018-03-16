@@ -141,7 +141,7 @@ module Consul
         end
         if not_ready.count.positive?
           STDERR.print "[INFO] Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}..."
-          return [false, false, '']
+          return [false, false, nil]
         end
         if to_cleanup.count > 1
           STDERR.puts "[INFO] Cleaned up #{to_cleanup.count} endpoints: #{to_cleanup}"

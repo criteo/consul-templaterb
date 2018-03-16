@@ -58,7 +58,8 @@ module Consul
       end
 
       def write
-        success, modified, @last_result = @template_manager.write(@output_file, @template, @last_result, template_file)
+        success, modified, last_res = @template_manager.write(@output_file, @template, @last_result, template_file)
+        @last_result = last_res if last_res
         [success, modified, @last_result]
       end
 

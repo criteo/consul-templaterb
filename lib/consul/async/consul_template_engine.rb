@@ -14,6 +14,7 @@ module Consul
         @templates = []
         @template_callbacks = []
         @hot_reload_failure = 'die'
+        @all_templates_rendered = false
       end
 
       def add_template_callback(&block)
@@ -36,12 +37,16 @@ module Consul
             begin
               results = template_renders.map(&:run)
               all_ready = results.reduce(true) { |a, e| a && e.ready? }
+              if !@all_templates_rendered && all_ready
+                @all_templates_rendered = true
+                STDERR.puts "[INFO] First rendering of #{results.count} templates completed"
+              end
               begin
                 @template_callbacks.each do |c|
                   c.call([all_ready, template_manager, results])
                 end
               rescue StandardError => cbk_error
-                STDERR.puts "Error in callback: #{cbk_error.inspect}"
+                STDERR.puts "[ERROR] callback error: #{cbk_error.inspect}"
                 raise cbk_error
               end
             rescue StandardError => e
