@@ -31,9 +31,9 @@
       is_checked = document.getElementById('show_'+s).checked
       var to_append = "." + s + " { ";
       if (is_checked) {
-        to_append += "opacity: 1; height: auto;"
+        to_append += "display: block"
       } else {
-        to_append += "opacity: 0; height: 0; overflow: hidden; padding: 0; border: none;"
+        to_append += "display:none"
       }
       to_append += " }\r\n"
       txt +=  to_append;
@@ -76,10 +76,12 @@
         warning = 0
         critical = 0
         service_state = 'passing'
+        sum = 0
         checks_for_service(service_name).each do |check|
           st = check['Status']
+          sum += 1
           case st
-          when 'warn'
+          when 'warning'
             warning += 1
           when 'passing'
             passing += 1
@@ -87,7 +89,7 @@
             critical += 1
           end
         end
-        service_state = 'warn' if warning > 0
+        service_state = 'warning' if warning > 0
         service_state = 'critical' if critical > 0
       %>
       <div class="service <%= service_state %>" id="service_<%= service_name %>">
@@ -98,6 +100,13 @@
             <span class="badge badge-pill badge-danger"><%= critical > 0 ? critical : nil %></span>
           </span>
         </h2>
+        <% if sum > 0
+        %><div class="progress">
+            <div title="<%= "#{passing} / #{sum}" %>" class="progress-bar bg-success" role="progressbar" style="width:<%= (100 * passing / sum).round %>%" aria-valuenow="<%= passing %>" aria-valuemin="0" aria-valuemax="<%= sum %>"></div>
+            <div title="<%= "#{warning} / #{sum}" %>" class="progress-bar bg-warning" role="progressbar" style="width:<%= (100 * warning / sum).round %>%" aria-valuenow="<%= warning %>" aria-valuemin="0" aria-valuemax="<%= sum %>"></div>
+            <div title="<%= "#{critical} / #{sum}" %>" class="progress-bar bg-danger" role="progressbar" style="width:<%= (100 * critical / sum).round %>%" aria-valuenow="<%= critical %>" aria-valuemin="0" aria-valuemax="<%= sum %>"></div>
+          </div>
+        <% end %>
         <div class="list-group">
           <% checks_for_service(service_name).each do |check| %>
           <div class="list-group-item check <%= check['Status'] %>" id="<%= check['Node'] + check['CheckID'] %>">
