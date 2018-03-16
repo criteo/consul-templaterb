@@ -1,6 +1,7 @@
-# Consul::Templaterb [![Build Status](https://api.travis-ci.org/criteo/consul-templaterb.svg?branch=master)](https://travis-ci.org/criteo/consul-templaterb)
+# consul-templaterb [![Build Status](https://api.travis-ci.org/criteo/consul-templaterb.svg?branch=master)](https://travis-ci.org/criteo/consul-templaterb)
 
-This GEM is both a library and an executable that allows to generate files
+The ruby GEM [consul-templaterb](https://rubygems.org/gems/consul-templaterb)
+is both a library and an executable that allows to generate files
 using data from Consul (Discovery and Key/Value Store) easily using ruby's
 erb templates. It also support launching programs and baby-sitting processes
 when rendering the files, thus notifying programs when data do change.
@@ -291,6 +292,8 @@ Here are the known bugs of the application:
   [probably a race condition in `em-http-request`](https://github.com/igrigorik/em-http-request/issues/315). Only visible
   on very large clusters or when watching thousands of individual KV keys.
 * [ ] render_file might create an infinite recursion if a template includes itself indirectly.
+
+Please consult [CHANGELOG.md](CHANGELOG.md) for fixed bugs.
 
 ## TODO
 
