@@ -7,6 +7,7 @@
 /pkg/
 /spec/reports/
 /tmp/
+/samples/ready
 /samples/*.json
 /samples/*.xml
 /samples/*.html
@@ -21,5 +22,5 @@
 
 # rspec failure tracking
 .rspec_status
-# Max OS
+# Mac OS
 .DS_Store
