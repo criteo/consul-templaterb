@@ -22,7 +22,7 @@ options = {
       network: false
     },
     base_url: ENV['CONSUL_HTTP_ADDR'] || 'http://localhost:8500',
-    token: nil,
+    token: ENV['CONSUL_HTTP_TOKEN'] || nil,
     retry_duration: 10,      # On error, retry after n seconds
     min_duration: 5,         # On sucess and when differences are found
     retry_on_non_diff: 3,    # On success but when there are not differences
