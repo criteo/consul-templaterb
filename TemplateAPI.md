@@ -1,9 +1,10 @@
-# Template API for writting templates
+# Template API for writing templates
 
 Here are the various functions you might use in your templates.
 
-For each function, mandatory arguments are specified at the beginning while optional ones are marked with `[]`.
-Most of them support the optional dc attribute to access data from another datacenter. If the `dc`
+For each function, documentation specifies mandatory arguments at the beginning while optional ones are
+annoted with `[]`.
+Most of them support the optional dc attribute to use data from another datacenter. If the `dc`
 attribute is not specified, the function will output data from the current datacenter.
 
 To ease template development, `consul-templaterb` supports HOT reload of templates, thus it is possible to

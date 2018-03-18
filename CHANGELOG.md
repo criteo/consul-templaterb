@@ -43,7 +43,7 @@ IMPROVEMENTS:
 
 BUG FIXES:
 
-* fixed default value for parameter -c to http://localhost:8500
+* fixed default value for parameter -c to `http://localhost:8500`
 
 ## 1.0.4 (March 12, 2018)
 
