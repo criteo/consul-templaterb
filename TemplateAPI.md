@@ -82,4 +82,27 @@ the template using `param('title', 'My default Value')` in the `header.html.erb`
 Can be used within a template to access a parameter. Parameters can be specified with `render_file`
 directive. Optional value `default_value` allow to get a value if parameter has not been set.
 
+It allows to create re-usable sub-templates that might be used in several places with several types
+of parameters. Thus, templates can be called like kind of functions and generate output based on
+the parameters provided.
+
+Example:
+
+```erb
+render_file('show_service.html.erb', {service_name: 'service1',  title: 'My Nice Service'})
+[...]
+render_file('show_service.html.erb', {service_name: 'service2',  title: 'My Nicer Service'})
+```
+
+Note that you can also add parameters into a top level service using the command line:
+
+```sh
+consul-templaterb --template "source.html.erb:dest.html:reload_command:params.yaml"
+[...]
+```
+
+In that case, it would load the content of params.yaml and inject it as params when evaluating
+template `source.html.erb`. Injection of params using 4th parameter of `--template` supports
+YAML as well as JSON format. Those parameter files are NOT automatically reloaded however.
+
 See [samples/common/header.html.erb](samples/common/header.html.erb) for example of usage.
