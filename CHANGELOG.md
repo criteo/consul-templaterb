@@ -1,4 +1,10 @@
+# CHANGELOG
+
 ## (UNRELEASED)
+
+IMPROVEMENTS:
+
+* Documentation improvements
 
 ## 1.0.8 (March 18, 2018)
 
