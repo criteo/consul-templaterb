@@ -272,7 +272,7 @@ including it.
 Example:
 
 ```erb
-<%= render_file('header.html.erb', title: 'My Title') %>
+<%= render_file('common/header.html.erb', title: 'My Title') %>
 ```
 
 Will render header.html.erb with parameter title = 'My Title'. `title` can then be accessed within
@@ -283,7 +283,7 @@ the template using `param('title', 'My default Value')` in the `header.html.erb`
 Can be used within a template to access a parameter. Parameters can be specified with `render_file`
 directive. Optional value `default_value` allow to get a value if parameter has not been set.
 
-See [samples/header.html.erb](samples/header.html.erb) for example of usage.
+See [samples/common/header.html.erb](samples/common/header.html.erb) for example of usage.
 
 ## Development
 
