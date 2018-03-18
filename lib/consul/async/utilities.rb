@@ -1,4 +1,6 @@
+require 'tempfile'
 require 'yaml'
+require 'json'
 module Consul
   module Async
     class Utilities
