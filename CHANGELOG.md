@@ -16,7 +16,7 @@ IMPROVEMENTS:
 * Added optional parameters to sub-template in `render_file`
 * Added `param(name, default_value)` to retrieve parameter from sub-template
 * Use `CONSUL_HTTP_TOKEN` if present in environment variables to get the token
-* Added [TemplateAPI.md](TemplateAPI.md] for documenting functions
+* Added [TemplateAPI.md](TemplateAPI.md) for documenting functions
 
 ## 1.0.7 (March 16, 2018)
 
