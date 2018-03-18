@@ -1,4 +1,7 @@
-# consul-templaterb [![Build Status](https://api.travis-ci.org/criteo/consul-templaterb.svg?branch=master)](https://travis-ci.org/criteo/consul-templaterb)
+# consul-templaterb
+[![Build Status](https://api.travis-ci.org/criteo/consul-templaterb.svg?branch=master)](https://travis-ci.org/criteo/consul-templaterb)
+[![Gem Version](https://badge.fury.io/rb/consul-templaterb.svg)](http://github.com/criteo/consul-templaterb/releases)
+[![License](https://img.shields.io/badge/license-ApacheV2-yellowgreen.svg)](#license)
 
 The ruby GEM [consul-templaterb](https://rubygems.org/gems/consul-templaterb)
 is both a library and an executable that allows to generate files
