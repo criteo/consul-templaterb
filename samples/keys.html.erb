@@ -1,4 +1,4 @@
-<%= render_file 'common/header.html.erb' %>
+<%= render_file('common/header.html.erb', title: 'Keys') %>
 <% path = ENV['kv_path'] || '' %>
 <% require 'base64'
    require 'json'

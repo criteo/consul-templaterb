@@ -4,7 +4,9 @@ IMPROVEMENTS:
 
 * More clever behaviour regarding processes on First completed rendering phase
 * All samples/*.html.erb templates are w3c compatibles without errors
-* Look and features improvements for samples/checks.html.erb
+* Look and features improvements for samples/*.html.erb
+* Added optional parameters to sub-template in `render_file`
+* Added `param(name, default_value)` to retrieve parameter from sub-template
 
 ## 1.0.7 (March 16, 2018)
 
@@ -20,7 +22,7 @@ IMPROVEMENTS:
 
 IMPROVEMENTS:
 
-* Adds http:// to Consul URL if missing since `$CONSUL_HTTP_ADDR` environment
+* Adds `http://` to Consul URL if missing since `$CONSUL_HTTP_ADDR` environment
   variable might not have it
 * Updated gem description with more accurate information
 * samples: removed KV/nodes from services.html.erb

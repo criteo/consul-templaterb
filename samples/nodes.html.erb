@@ -1,4 +1,4 @@
-<%= render_file 'common/header.html.erb' %>
+<%= render_file('common/header.html.erb', title: 'Nodes') %>
 <h1 id="nodes">List all nodes for DC, sorted by name</h1>
 <ul>
 <% nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |snode|

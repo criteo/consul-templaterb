@@ -24,6 +24,10 @@ module Consul
           errors: 0,
           bytes_read: 0
         }
+        @context = {
+          current_erb_path: nil,
+          params: {}
+        }
       end
 
       # https://www.consul.io/api/health.html#list-nodes-for-service
@@ -79,6 +83,14 @@ module Consul
         create_if_missing(path, query_params) { ConsulAgentMetrics.new(ConsulEndpoint.new(conf, path, true, query_params, default_value)) }
       end
 
+      # Return a param of template
+      def param(key, default_value = nil)
+        v = @context[:params][key]
+        v = @context[:params][key.to_sym] unless v
+        v = default_value unless v
+        v
+      end
+
       # https://www.consul.io/api/catalog.html#list-services
       def services(dc: nil, tag: nil)
         path = '/v1/catalog/services'
@@ -107,18 +119,22 @@ module Consul
         create_if_missing(path, query_params) { ConsulTemplateKV.new(ConsulEndpoint.new(conf, path, true, query_params, default_value), name) }
       end
 
-      def render_file(path)
-        new_path = File.expand_path(path, File.dirname(@current_erb_path))
+      # render a relative file with the given params accessible from template
+      def render_file(path, params = {})
+        new_path = File.expand_path(path, File.dirname(@context[:current_erb_path]))
         raise "render_file ERROR: #{path} is resolved as #{new_path}, but the file does not exists" unless File.exist? new_path
-        render(File.read(new_path), new_path)
+        render(File.read(new_path), new_path, params)
       end
 
-      def render(tpl, tpl_file_path)
+      def render(tpl, tpl_file_path, params = {})
         # Ugly, but allow to use render_file well to support stack of calls
-        old_value = @current_erb_path
-        @current_erb_path = tpl_file_path
+        old_value = @context
+        @context = {
+          current_erb_path: tpl_file_path,
+          params: params
+        }
         result = ERB.new(tpl).result(binding)
-        @current_erb_path = old_value
+        @context = old_value
         result
       rescue StandardError => e
         e2 = InvalidTemplateException.new e

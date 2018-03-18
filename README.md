@@ -262,7 +262,7 @@ mechanism.
 Since this endpoint does not support blocking queries, data will be refreshed every few seconds,
 but will not use blocking queries mechanism.
 
-### render_file RELATIVE_PATH_TO_ERB_FILE
+### render_file(RELATIVE_PATH_TO_ERB_FILE, [params={}])
 
 This allow to include a template file into another one. Beware, it does not check for infinite recursion!
 The template can be either a static file either another template. The file has to be a valid template, but
@@ -272,8 +272,18 @@ including it.
 Example:
 
 ```erb
-<%= render_file 'header.html.erb' %>
+<%= render_file('header.html.erb', title: 'My Title') %>
 ```
+
+Will render header.html.erb with parameter title = 'My Title'. `title` can then be accessed within
+the template using `param('title', 'My default Value')` in the `header.html.erb` file.
+
+### param(parameter_name, [default_value: nil])
+
+Can be used within a template to access a parameter. Parameters can be specified with `render_file``
+directive. Optional value `default_value` allow to get a value if parameter has not been set.
+
+See [samples/header.html.erb](samples/header.html.erb) for example of usage.
 
 ## Development
 

@@ -1,4 +1,4 @@
-<%= render_file 'common/header.html.erb' %>
+<%= render_file('common/header.html.erb', title: 'Consul Checks') %>
 <%
 # This template can be configure the following way with environment variables
 # Environment variables to filter services/instances
@@ -50,7 +50,7 @@
           all_services = services(tag: services_tag_filter)
           all_services.each do |service_name, tags|
         %>
-        <li><a href="#service_<%= service_name %>"><%= service_name %></a></li>
+        <li><a title="<%= tags.sort.join(', ') %>" href="#service_<%= service_name %>"><%= service_name %></a></li>
         <% end %>
       </ul>
     </nav>
@@ -127,4 +127,4 @@
   </div>
 </div>
 <script>updateStates();</script>
-<%= render_file 'common/footer.html.erb' %>
+<%= render_file('common/footer.html.erb') %>
