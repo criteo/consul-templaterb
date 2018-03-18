@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   end
   spec.bindir        = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  spec.extra_rdoc_files = ['README.md', 'TemplateAPI.md']
   spec.require_paths = ['lib']
 
   spec.require_paths = ['lib']
