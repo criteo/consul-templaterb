@@ -10,7 +10,7 @@ It is intended for user accustomed to expressiveness or Ruby templating (ERB),
 allowing for more flexibility and features than Go templates.
 
 It also allows to use all of ruby language, especially useful for generating
-files in several formats ([JSON](samples/consul_template.json.erb],
+files in several formats ([JSON](samples/consul_template.json.erb),
 [XML](samples/consul_template.xml.erb)) where text substitutions are hard to get
 right.
 
