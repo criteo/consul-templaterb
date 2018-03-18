@@ -280,7 +280,7 @@ the template using `param('title', 'My default Value')` in the `header.html.erb`
 
 ### param(parameter_name, [default_value: nil])
 
-Can be used within a template to access a parameter. Parameters can be specified with `render_file``
+Can be used within a template to access a parameter. Parameters can be specified with `render_file`
 directive. Optional value `default_value` allow to get a value if parameter has not been set.
 
 See [samples/header.html.erb](samples/header.html.erb) for example of usage.
