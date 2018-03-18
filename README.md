@@ -10,7 +10,8 @@ It is intended for user accustomed to expressiveness or Ruby templating (ERB),
 allowing for more flexibility and features than Go templates.
 
 It also allows to use all of ruby language, especially useful for generating
-files in several formats (JSON, XML) where text substitutions are hard to get
+files in several formats ([JSON](samples/consul_template.json.erb],
+[XML](samples/consul_template.xml.erb)) where text substitutions are hard to get
 right.
 
 It also focuses on good performance and lightweight usage of bandwidth,
@@ -169,8 +170,8 @@ meaning that if 2 results of templates are modified at the same time, the signal
 sent only once (it is helpful for instance if your app is using several configurations
 files that must be consistent all together).
 
-Signals can be customized per process. Two signals are supported with options --sig-reload and
---sig-term. When the option is added, the next --exec options to start a process will use the
+Signals can be customized per process. Two signals are supported with options `--sig-reload` and
+`--sig-term`. When the option is added, the next `--exec` options to start a process will use the
 given signal. By default, HUP will be sent to reload events (you can use NONE to avoid sending any
 reload signal), TERM will be used when leaving consul-templaterb.
 
@@ -190,10 +191,20 @@ by consul-templaterb.
 
 ### Samples
 
-Have a look into the [samples/](samples/) directory to browse example files.
+Have a look into the [samples/](samples/) directory to browse example files which contains those
+examples:
+
+1. [List all nodes on Cluster](samples/nodes.html.erb)
+2. [Show all services in Cluster](samples/services.html.erb)
+3. [Show all Service Checks and their output](samples/checks.html.erb)
+4. [Show all Key/Values nicely](samples/keys.html.erb)
+5. [Show Choregraphies  - work on content of K/V with JSON](samples/criteo_choregraphies.html.erb)
+6. [Services in XML](samples/consul_template.xml.erb)
+7. [Services in JSON](samples/consul_template.json.erb)
+8. [Generate HaProxy Configuration](samples/ha_proxy.cfg.erb)
 
 If you want to test it quickly, you might try with (assuming you consul agent is listening on
-http://localhost:8500):
+`http://localhost:8500`):
 
 ```
 $ be bin/consul-templaterb -c 'http://localhost:8500' samples/*.html.erb
@@ -262,7 +273,7 @@ mechanism.
 Since this endpoint does not support blocking queries, data will be refreshed every few seconds,
 but will not use blocking queries mechanism.
 
-### render_file(RELATIVE_PATH_TO_ERB_FILE, [params={}])
+### render_file(relative_path_to_erb_file, [params={}])
 
 This allow to include a template file into another one. Beware, it does not check for infinite recursion!
 The template can be either a static file either another template. The file has to be a valid template, but
