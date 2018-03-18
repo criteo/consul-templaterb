@@ -160,12 +160,15 @@ if the `--template my_file.ext.erb:myfile.ext` was used.
 ### Generate multiple templates
 
 In the same way as consul-template, consul-templaterb supports multiple templates and executing
-commands when the files do change. The parameter `--template <ERB>:<DEST>:[reload_command]` works
+commands when the files do change. The parameter `--template <ERB>:<DEST>:[reload_command]:params_file` works
 in the following way:
 
 * ERB : the ERB file to use as a template
 * DEST: the destination file
 * reload_command: optional shell command executed whenever the file has been modified
+* params_file: JSON or YAML file to load and to use as parameter for template (see
+  [param() function](TemplateAPI.md#paramparameter_name-default_value-nil) to retrieve
+  the values)
 
 The argument can be specified multiple times, ex:
 

@@ -1,3 +1,4 @@
+require 'yaml'
 module Consul
   module Async
     class Utilities
@@ -10,6 +11,18 @@ module Consul
           "#{(bytes / 1_048_576.0).round(2)} Mb"
         else
           "#{(bytes / 1_073_741_824.0).round(2)} Gb"
+        end
+      end
+
+      # Loads parameters from a file, supports JSON and YAML
+      def self.load_parameters_from_file(parameters_file)
+        raise "Parameters file #{parameters_file} does not exists" unless File.exist? parameters_file
+        if parameters_file.downcase.end_with?('.yaml', '.yml')
+          YAML.load_file(parameters_file)
+        elsif parameters_file.downcase.end_with?('.json')
+          JSON.parse(File.read(parameters_file))
+        else
+          raise "Don't know how to load parameters file #{parameters_file}: JSON and YAML supported"
         end
       end
     end

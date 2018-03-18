@@ -4,6 +4,8 @@
 
 IMPROVEMENTS:
 
+* Added optional params_file to `--template` flag to create parameters for templates
+
 * Documentation improvements
 
 ## 1.0.8 (March 18, 2018)

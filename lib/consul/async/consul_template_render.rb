@@ -20,8 +20,8 @@ module Consul
       end
     end
     class ConsulTemplateRender
-      attr_reader :template_file, :output_file, :template_file_ctime, :hot_reload_failure
-      def initialize(template_manager, template_file, output_file, hot_reload_failure: 'die')
+      attr_reader :template_file, :output_file, :template_file_ctime, :hot_reload_failure, :params
+      def initialize(template_manager, template_file, output_file, hot_reload_failure: 'die', params: {})
         @hot_reload_failure = hot_reload_failure
         @template_file = template_file
         @output_file = output_file
@@ -29,10 +29,11 @@ module Consul
         @last_result = ''
         @last_result = File.read(output_file) if File.exist? output_file
         @template = load_template
+        @params = params
       end
 
       def render(tpl = @template)
-        @template_manager.render(tpl, template_file)
+        @template_manager.render(tpl, template_file, params)
       end
 
       def run
@@ -58,7 +59,7 @@ module Consul
       end
 
       def write
-        success, modified, last_res = @template_manager.write(@output_file, @template, @last_result, template_file)
+        success, modified, last_res = @template_manager.write(@output_file, @template, @last_result, template_file, params)
         @last_result = last_res if last_res
         [success, modified, @last_result]
       end

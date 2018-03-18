@@ -21,17 +21,18 @@ module Consul
         @template_callbacks << block
       end
 
-      def add_template(source, dest)
-        @templates.push([source, dest])
+      def add_template(source, dest, params = {})
+        @templates.push([source, dest, params])
       end
 
       def run(template_manager)
         @template_manager = template_manager
         EventMachine.run do
           template_renders = []
-          @templates.each do |template_file, output_file|
+          @templates.each do |template_file, output_file, params|
             template_renders << Consul::Async::ConsulTemplateRender.new(template_manager, template_file, output_file,
-                                                                        hot_reload_failure: hot_reload_failure)
+                                                                        hot_reload_failure: hot_reload_failure,
+                                                                        params: params)
           end
           EventMachine.add_periodic_timer(1) do
             begin

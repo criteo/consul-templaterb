@@ -141,8 +141,8 @@ module Consul
         raise e2, "Template contains errors: #{e.message}", e.backtrace
       end
 
-      def write(file, tpl, last_result, tpl_file_path)
-        data = render(tpl, tpl_file_path)
+      def write(file, tpl, last_result, tpl_file_path, params = {})
+        data = render(tpl, tpl_file_path, params)
         not_ready = []
         ready = 0
         @iteration = Time.now.utc - @start_time
