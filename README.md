@@ -11,8 +11,8 @@ allowing for more flexibility and features than Go templates.
 
 It also allows to use all of ruby language, especially useful for generating
 files in several formats ([JSON](samples/consul_template.json.erb),
-[XML](samples/consul_template.xml.erb)) where text substitutions are hard to get
-right.
+[XML](samples/consul_template.xml.erb)) for which text substitutions are hard
+to get right (escaping, attributes encoding...).
 
 It also focuses on good performance and lightweight usage of bandwidth,
 especially for very large clusters and watching lots of services.
@@ -20,6 +20,9 @@ especially for very large clusters and watching lots of services.
 For complicated rendering of templates and large Consul Clusters, it usually
 renders faster with a more predictable way the template than the original
 consul-template.
+
+It provides a very [simple API](TemplateAPI.md) to write your own templates
+with fully [working examples](samples/).
 
 ## Differences with HashiCorp's consul-template
 
@@ -47,13 +50,16 @@ Compared to consul-template, consul-templaterb offers the following features:
 
 * Hot-Reload of template files
 * Bandwidth limitation per endpoint (will soon support dynamic bandwidth limiter)
-* Supports baby sitting of multiple processes
+* Supports launch and supervision of multiple child processes
+* Supports launching commands when files do change on disk (reload commands...)
 * Supports all Ruby features (ex: base64, real JSON/XML generation...)
 * Information about bandwidth
 
-The executable supports close semantics to Consul template, it also supports
-commands when files are modified and supervision of multiple processes with
-ability to send signals to those processes when the files do change.
+The executable supports semantics and command line flags and options similar to
+HashiCorp's Consul-template, so many flags you might use in consul-template will
+work in a similar way. It also supports the same environment variable
+`CONSUL_HTTP_ADDR` to find the Consul Agent to query and 'CONSUL_HTTP_TOKEN' to
+get the token.
 
 ## Installation
 
@@ -98,6 +104,7 @@ installed:
 
 ```shell
 $ gem contents consul-templaterb|grep samples
+[...]
 ```
 
 Will output the path where the samples are being installed, you can copy the directory
@@ -105,10 +112,15 @@ somewhere and then issue the command:
 
 ```shell
 $ consul-templaterb samples/*.html.erb
+Using samples/checks.html output for samples/checks.html.erb
+[...]
 ```
 
 It will render a full web site you may browse to look in real time the status of your
 Consul Cluster.
+
+You can now have a look to the [API Documentation](TemplateAPI.md) to modify existing
+templates or write your owns, it is very easy!
 
 ## Usage of consul-templaterb
 
