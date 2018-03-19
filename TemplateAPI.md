@@ -44,10 +44,73 @@ name or its ID. If DC is specified, will lookup for given node in another datace
 
 [Find all the checks](https://www.consul.io/api/health.html#list-checks-for-service) of a given service.
 
-## kv(name = nil, dc: nil, keys: nil, recurse: false)
+## kv(name, [dc: nil], [keys: false], [recurse: false])
 
 [Read keys from KV Store](https://www.consul.io/api/kv.html#read-key). It can be used for both listing the keys and
 getting the values. See the file in samples [keys.html.erb](samples/keys.html.erb) for a working example.
+
+Variants:
+
+* no additional parameter: will only retrieve the key you asked for
+* `keys: true` : will retrieve the hierarchy of keys, but without the values, useful if values might be large, in
+  order to perform simple listings
+* `recurse: true`: will retrieve all hierarchy of keys with their values
+
+
+
+### Using the result of kv
+
+Since KV has several modes, it depends whether you asked for one or several keys.
+
+Thus, we recommend using a helper to get the value (while you might use it directly).
+
+In order to ease the use, 3 helpers are available and all have a optional argument `path`. When path is specified
+and the call is retrieving several keys, it allows to select a specific one.The available helpers are the following:
+
+* `get_value( [path] )` : Get a raw value
+* `get_value_decoded( [path] )` : Get the value decoded from Base64
+* `get_value_json( [path] )` : when your payload is JSON, decode Base64 first and then decode the JSON 
+
+#### Get the result of a single value
+
+The easiest, use the helpers to retrieve the values in the following formats:
+
+* `kv('/my/path/to/value').get_value` : get the raw value of a single key in KV
+* `kv('/my/path/to/value').get_decoded` : get the decoded value of a single key in KV
+* `kv('/my/path/to/value').get_value_json` : get the base64 decoded value and try decoding it as JSON
+
+#### Iterate over values
+
+If you want to iterate amongst all values, you might to it that way:
+
+```erb
+<%`
+kv('/my/multiple/values', recurse: true).each do |tuple|
+  key = tuple['Key']
+  value_decoded = Base64.decode64(tuple['Value'])
+%>
+  <div>Decoded value: <%= value_decoded %>
+  <div>JSON value: <%= JSON.parse( value_decoded ) %>
+<%
+end
+%>
+```
+
+#### Fetch all values at once, but interrested only by a few
+
+When using `kv('/my/multiple/values', recurse: true)`, only a single call is performed, thus,
+it is far more efficient to retrive multiple values from the KV under the same root. Thus,
+in order to display several discreet values, it is possible to do the following:
+
+```erb
+result = kv('/my/multiple/values', recurse: true)
+value1 : <%= result.get_decoded('/my/multiple/values/value1') %>
+value42 : <%= result.get_decoded('/my/multiple/values/value42') %>
+value123 : <%= result.get_decoded('/my/multiple/values/value123') %>
+```
+
+Since `kv('/my/multiple/values', recurse: true)` will retrieve all values at once, it might be more
+efficient in some cases than retrieving all values one by one.
 
 ## agent_metrics()
 
