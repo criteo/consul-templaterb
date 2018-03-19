@@ -62,7 +62,7 @@ Compared to consul-template, consul-templaterb offers the following features:
 The executable supports semantics and command line flags and options similar to
 HashiCorp's Consul-template, so many flags you might use in consul-template will
 work in a similar way. It also supports the same environment variable
-`CONSUL_HTTP_ADDR` to find the Consul Agent to query and 'CONSUL_HTTP_TOKEN' to
+`CONSUL_HTTP_ADDR` to find the Consul Agent to query and `CONSUL_HTTP_TOKEN` to
 get the token.
 
 ## Installation
@@ -132,7 +132,7 @@ templates or write your owns, it is very easy!
 
 ```shell
 $ consul-templaterb --help
-USAGE: bin/consul-templaterb [[options]]
+USAGE: consul-templaterb [[options]]
     -h, --help                       Show help
     -v, --version                    Show Version
     -c, --consul-addr=<address>      Address of Consul, eg: http://localhost:8500
@@ -140,12 +140,12 @@ USAGE: bin/consul-templaterb [[options]]
     -w, --wait=<min_duration>        Wait at least n seconds before each template generation
     -r, --retry-delay=<min_duration> Min Retry delay on Error/Missing Consul Index
     -k, --hot-reload=<behavior>      Control hot reload behaviour, one of :[die (kill daemon on hot reload failure), keep (on error, keep running), disable (hot reload disabled)]
-    -K, --sig-term=kill_signal       Signal to sent to next --exec command on kill, default=#{cur_sig_term}
-    -R, --sig-reload=reload_signal   Signal to sent to next --exec command on reload (NONE supported), default=#{cur_sig_reload}
+    -K, --sig-term=kill_signal       Signal to sent to next --exec command on kill, default=TERM
+    -R, --sig-reload=reload_signal   Signal to sent to next --exec command on reload (NONE supported), default=HUP
     -e, --exec=<command>             Execute the following command
     -d, --debug-network-usage        Debug the network usage
-    -t erb_file:[output]:[command],  Add a erb template, its output and optional reload command
-        --template
+    -t erb_file:[output]:[command]:[params_file],
+        --template                   Add a erb template, its output and optional reload command
         --once                       Do not run the process as a daemon
 ```
 
