@@ -12,6 +12,13 @@ module Consul
       end
     end
 
+    class SyntaxErrorInTemplate < InvalidTemplateException
+      attr_reader :cause
+      def initialize(cause)
+        @cause = cause
+      end
+    end
+
     class ConsulEndPointsManager
       attr_reader :conf, :net_info, :start_time
       def initialize(consul_configuration)
@@ -126,6 +133,14 @@ module Consul
         render(File.read(new_path), new_path, params)
       end
 
+      def find_line(e)
+        return e.message.dup[5..-1] if e.message.start_with? '(erb):'
+        e.backtrace.each do |line|
+          return line[5..-1] if line.start_with? '(erb):'
+        end
+        nil
+      end
+
       def render(tpl, tpl_file_path, params = {})
         # Ugly, but allow to use render_file well to support stack of calls
         old_value = @context
@@ -138,7 +153,10 @@ module Consul
         result
       rescue StandardError => e
         e2 = InvalidTemplateException.new e
-        raise e2, "Template contains errors: #{e.message}", e.backtrace
+        raise e2, "[TEMPLATE EVALUATION ERROR] #{tpl_file_path}#{find_line(e)}: #{e.message}"
+      rescue SyntaxError => e
+        e2 = SyntaxErrorInTemplate.new e
+        raise e2, "[TEMPLATE SYNTAX ERROR] #{tpl_file_path}#{find_line(e)}: #{e.message}"
       end
 
       def write(file, tpl, last_result, tpl_file_path, params = {})

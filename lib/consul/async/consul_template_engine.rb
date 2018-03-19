@@ -50,6 +50,10 @@ module Consul
                 STDERR.puts "[ERROR] callback error: #{cbk_error.inspect}"
                 raise cbk_error
               end
+            rescue Consul::Async::InvalidTemplateException => e
+              STDERR.puts "[FATAL]#{e}"
+              template_manager.terminate
+              EventMachine.stop
             rescue StandardError => e
               STDERR.puts "[ERROR] Fatal error occured: #{e.inspect} - #{e.backtrace}"
               template_manager.terminate
