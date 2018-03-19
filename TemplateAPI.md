@@ -84,7 +84,7 @@ The easiest, use the helpers to retrieve the values in the following formats:
 If you want to iterate amongst all values, you might to it that way:
 
 ```erb
-<%`
+<%
 kv('/my/multiple/values', recurse: true).each do |tuple|
   key = tuple['Key']
   value_decoded = Base64.decode64(tuple['Value'])
