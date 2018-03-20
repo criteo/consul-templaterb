@@ -4,7 +4,7 @@
 
 IMPROVEMENTS:
 
-## 1.0.8 (March 18, 2018)
+## 1.0.9 (March 20, 2018)
 
 IMPROVEMENTS:
 
