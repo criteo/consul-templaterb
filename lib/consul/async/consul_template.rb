@@ -347,10 +347,15 @@ module Consul
       end
 
       # Helper to get the value decoded as JSON
-      def get_value_json(name = root)
+      def get_value_json(name = root, catch_errors: true)
         x = get_value_decoded(name)
         return nil unless x
-        JSON.parse(x)
+        begin
+          JSON.parse(x)
+        rescue JSON::ParserError => e
+          return nil if catch_errors
+          raise StandardError.new(e), "get_value_json() cannot deserialize kv(#{name}) as JSON: #{e.message}", e.backtrace
+        end
       end
     end
   end

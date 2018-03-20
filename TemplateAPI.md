@@ -69,7 +69,11 @@ and the call is retrieving several keys, it allows to select a specific one.The 
 
 * `get_value( [path] )` : Get a raw value
 * `get_value_decoded( [path] )` : Get the value decoded from Base64
-* `get_value_json( [path] )` : when your payload is JSON, decode Base64 first and then decode the JSON 
+* `get_value_json( [path], [catch_errors: true] )` : when your payload is JSON,
+  decode Base64 first and then decode the JSON. If catch_errors is set to true,
+  if will not throw an error during rendering of template and return nil. Otherwise
+  an Error will be thrown and have to be catch if you are unsure if the value is valid
+  JSON
 
 #### Get the result of a single value
 
