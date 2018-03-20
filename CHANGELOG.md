@@ -4,6 +4,11 @@
 
 IMPROVEMENTS:
 
+## 1.0.8 (March 18, 2018)
+
+IMPROVEMENTS:
+
+* Added [samples/sample_keys.html.erb](samples/sample_keys.html.erb)
 * When `get_value_json` is called, allow to catch silently errors
 * Nicer error messages when templates are invalid with exact line of error
 * Added optional params_file to `--template` flag to create parameters for templates
