@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content="Display Consul information"/>
+    <meta name="author" content="Criteo"/>
+    <meta http-equiv="refresh" content="<%= param('refresh', ENV['REFRESH'] || '10') %>"/>
+    <title>This page displays random K/V every 10 seconds %></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+      body {
+        padding-top: 5rem;
+      }
+      .check {
+        transition: opacity 1s ease-out;
+      }
+    </style>
+    <style id="css-states">
+    </style>
+  </head>
+  <body>
+<main class="container">
+<h1>Keys example</h1>
+<div>
+This example shows how to use kv() results. It requires at least one key if the Consul's KV in order to display something.
+</div>
+<%
+  result = kv('', keys:true)
+  num_keys = result.count
+  # We refresh key every 10 seconds only
+  key_index = (Time.now.to_i / 10)
+  prng = Random.new
+  if num_keys > 0
+    key_to_display = result[key_index % num_keys]
+  end
+%>
+<div>
+<h2>Using a single key</h2>
+<div>Found <%= num_keys %> keys in KV/Store</div>
+<%
+if key_to_display
+%>
+  <h1>Display a random single key using helpers</h1>
+  <div>
+    <h3>kv('<%= key_to_display %>').get_value :</h3>
+    <pre><%= kv(key_to_display).get_value %></pre>
+  </div>
+  <div>
+    <h3>kv('<%= key_to_display %>').get_value_decoded</h3>
+    <pre><%= 
+  ERB::Util.html_escape(kv(key_to_display).get_value_decoded)
+  %></pre>
+  </div>
+  <div>
+    <h3>kv('<%= key_to_display %>').get_value_json(catch_errors: true)</h3>
+    <code><% 
+  # catch_errors: true will return nil if data cannot be converted to JSON
+  json = kv(key_to_display).get_value_json(catch_errors: true)
+  %><%= (json ? jERB::Util.html_escape(json) : 'No Valid JSON Data') %></code>
+  </div>
+<%
+end
+%>
+</div>
+<div>
+<h2>Listing all keys (without their values)</h2>
+<ul>
+<%
+result.each do |key_name|
+%>
+  <li><%= key_name %></li>
+<%
+end
+%>
+</ul>
+</div>
+<div>
+<h2>Listing 10 first keys (with their values)</h2>
+<ol>
+<% kv_values = kv('', recurse: true)
+   index = 0
+   kv_values.each do |tuple|
+    index += 1
+    break if index > 10
+    key_name = tuple['Key']
+%>
+    <li><%= key_name %>: <code><%= kv_values.get_value_decoded(key_name) %></code></li>
+<%
+end
+%>
+</ol>
+</div>
+</main>
+</body>
+</html>

@@ -56,7 +56,7 @@ Variants:
   order to perform simple listings
 * `recurse: true`: will retrieve all hierarchy of keys with their values
 
-
+Please have a look at [samples/sample_keys.html.erb](samples/sample_keys.html.erb) for examples on how using it.
 
 ### Using the result of kv
 
