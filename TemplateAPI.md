@@ -14,6 +14,26 @@ thus the application will display a warning if the template is invalid and won't
 
 Have a look to [samples/](samples/) directory to start writing your own templates.
 
+## Common structure of returned objects
+
+All objects returned by those functions described below all share the same structure:
+
+* `.result` : handle the result
+* `.endpoint` : get technical information about how data was retrieved and statistics
+
+## Common re-implemented functions for all objects
+
+Most objects returned by all those functions are contained within a `.result` object. However, in order
+to avoid having to write .result in all templates, some shortcuts have been added:
+* `[]` allow to either access values for map-based data or arrays
+* for all objects: `.each`, `sort`, `.select`, `.each_value`, `.count`, `.empty?`
+* additionnaly, for map based results, the following methods are available: `.keys`,  `.values`, `.each_pair`,
+  `.each_value`
+
+See [lib/consul/async/consul_template.rb:230](lib/consul/async/consul_template.rb#L230) and
+[lib/consul/async/consul_template.rb:260](lib/consul/async/consul_template.rb#L260) for up to date list of
+all those methods.
+
 ## datacenters()
 
 [Get the list of datacenters as string array](https://www.consul.io/api/catalog.html#list-datacenters).
