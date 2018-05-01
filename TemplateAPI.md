@@ -38,11 +38,58 @@ all those methods.
 
 [Get the list of datacenters as string array](https://www.consul.io/api/catalog.html#list-datacenters).
 
+<details><summary>Examples</summary>
+<div class="samples">
+
+### List all datacenters in a text list and count services and nodes within
+
+```erb
+<% datacenters.each do |dc| %>
+  * <%= dc %> with <%= services(dc:dc).keys.count %> services, <%= nodes(dc:dc).count %> nodes
+<% end %>
+```
+
+Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
+
+</div>
+</details>
+
 ## services([dc: datacenter], [tag: tagToFilterWith])
 
 [List the services matching the optional tag filter](https://www.consul.io/api/catalog.html#list-services),
 if tag is not specified, will match all the services. Note that this endpoint performs client side tag
 filtering for services to ease templates development since this feature is not available on Consul's endpoint.
+
+<details><summary>Examples</summary>
+<div class="samples">
+
+### List all services in default datacenter and display its tags
+
+```erb
+<% services.each do |service_name, tags|
+ %>  * <%= service_name %> [ <%= tags %> ]
+<% end %>
+```
+
+Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
+
+### List all services in all datacenters having tag  `http`
+
+```erb
+<%
+  datacenters.each do |dc| %>
+  * Datacenter <%= dc %>
+  <%
+    services(dc:dc, tag:'http').each do |service_name, tags|
+    %>
+    - service <%= service_name %> <%= tags.sort %><%
+    end
+  end
+%>
+```
+
+</div>
+</details>
 
 ## service(serviceName, [dc: datacenter], [tag: tagToFilterWith], [passing: true])
 
@@ -50,10 +97,51 @@ filtering for services to ease templates development since this feature is not a
 optional tag. If no tag is specified, will return all instances of service. By default, it will return all the
 well services that are passing or not. An optional argument passing might be used to retrieve only passing instances.
 
+<details><summary>Examples</summary>
+<div class="samples">
+
+### List all services instances with http tag on current DC, instances sorted by node name
+
+```erb
+<% services.each do |service_name, tags|
+     if tags.include? 'http'
+%>  ++ Service <%= service_name %>
+<%     service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
+%>  * <%= service_name %> -> <%=
+  snode['Node']['Node'] %>:<%= snode['Service']['Port'] %>  <%=
+  snode['Service']['Tags'] %> status: <%
+  snode['Checks'].each do |c| %> <%= c['Status']
+  %><% end if snode['Checks'] %>
+<%     end
+     end
+   end %>
+```
+
+Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
+
+</div>
+</details>
+
 ## nodes([dc: datacenter])
 
 [List all the nodes of selected datacenter](https://www.consul.io/api/catalog.html#list-nodes). No filtering is
 applied.
+
+<details><summary>Examples</summary>
+<div class="samples">
+
+### List all nodes for DC, sorted by name
+
+```erb
+<% nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |snode|
+%>  * <%= snode['Address'].ljust(16) %> <%= snode['Node'] %>
+<% end %>
+```
+
+Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
+
+</div>
+</details>
 
 ## node(nodeNameOrId, [dc: datacenter])
 
