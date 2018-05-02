@@ -21,7 +21,7 @@ end %>
   %><div><%
   if service_per_node.key?(snode['Node'])
     service_per_node[snode['Node']].each do |service_name|
-    %> <span class="badge badge-secondary"><%= service_name %></span>
+    %> <a class="badge badge-secondary" href='services.html#service_<%= service_name %>'><%= service_name %></a>
   <% end
   end
 %></div></li>
