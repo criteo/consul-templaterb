@@ -1,14 +1,45 @@
-<%= render_file('common/header.html.erb', title: 'Nodes') %>
+<%= render_file('common/header.html.erb', title: 'Nodes') %><%
+service_per_node = {}
+services.each do |service_name, tags|
+  service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
+  node_services = service_per_node[snode['Node']['Node']] || []
+  node_services.push(snode)
+  service_per_node[snode['Node']['Node']] = node_services
+  end
+end %>
+
 <h1 id="nodes">List all nodes for DC, sorted by name</h1>
-<ul>
+<ul class="list-group">
 <% nodes.sort {|a,b| a['Node'] <=> b['Node'] }.each do |snode|
-%><li id="node_<%= snode['ID'] %>"><a href="ssh://<%= snode['Address']%>"><%= snode['Address'] %></a> <%= snode['Node'] %><%
+%><li id="node_<%= snode['ID'] %>" class="list-group-item">
+    <a href="ssh://<%= snode['Address']%>"><%= snode['Address'] %></a> <%= snode['Node'] %><%
   snode['Meta'].each do |k,v|
     if v && !v.empty?
 %><span class="badge badge-pill badge-primary float-right"><%= k %>:&nbsp;<%= v%></span><%
     end
   end if snode['Meta']
-%></li>
+  %><div><%
+  if service_per_node.key?(snode['Node'])
+    service_per_node[snode['Node']].each do |service|
+      tags = service['Service']['Tags'].sort
+      addr = service['Node']['Address']
+      port_num = service['Service']['Port'].to_i
+      port = port_num && port_num > 0 ? ":#{port_num}" : ''
+      url = if tags.include? 'https'
+              "https://#{addr}#{port}"
+            elsif tags.include? 'http'
+              "http://#{addr}#{port}"
+            elsif tags.include? 'ftp'
+              "ftp://#{addr}#{port}"
+            else
+              nil
+            end
+    %> <a class="badge badge-secondary" href='<%= url %>'>
+    <%= service['Service']['Service'] %>: <%= port_num %>
+    </a>
+  <% end
+  end
+%></div></li>
 <% end %>
 </ul>
 <%= render_file 'common/footer.html.erb' %>
