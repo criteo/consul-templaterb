@@ -3,7 +3,7 @@ service_per_node = {}
 services.each do |service_name, tags|
   service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
   node_services = service_per_node[snode['Node']['Node']] || []
-  node_services.push("#{service_name}: #{snode['Service']['Port']}") #service_name + snode['Service']['Port'])
+  node_services.push(snode)
   service_per_node[snode['Node']['Node']] = node_services
   end
 end %>
@@ -20,8 +20,23 @@ end %>
   end if snode['Meta']
   %><div><%
   if service_per_node.key?(snode['Node'])
-    service_per_node[snode['Node']].each do |service_name|
-    %> <a class="badge badge-secondary" href='services.html#service_<%= service_name %>'><%= service_name %></a>
+    service_per_node[snode['Node']].each do |service|
+      tags = service['Service']['Tags'].sort
+      addr = service['Node']['Address']
+      port_num = service['Service']['Port'].to_i
+      port = port_num && port_num > 0 ? ":#{port_num}" : ''
+      url = if tags.include? 'https'
+              "https://#{addr}#{port}"
+            elsif tags.include? 'http'
+              "http://#{addr}#{port}"
+            elsif tags.include? 'ftp'
+              "ftp://#{addr}#{port}"
+            else
+              nil
+            end
+    %> <a class="badge badge-secondary" href='<%= url %>'>
+    <%= service['Service']['Service'] %>: <%= port_num %>
+    </a>
   <% end
   end
 %></div></li>
