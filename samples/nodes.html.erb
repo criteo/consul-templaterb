@@ -2,10 +2,9 @@
 service_per_node = {}
 services.each do |service_name, tags|
   service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
-    unless service_per_node.key?(snode['Node']['Node'])
-      service_per_node[snode['Node']['Node']] = []
-    end
-  service_per_node[snode['Node']['Node']].push(service_name)
+  node_services = service_per_node[snode['Node']['Node']] || []
+  node_services.push(service_name)
+  service_per_node[snode['Node']['Node']] = node_services
   end
 end %>
 
