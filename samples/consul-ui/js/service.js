@@ -82,7 +82,6 @@ class ConsulService {
 
   displayService(service) {
     $("#service-title").html(service['name']);
-    $("#service-title").attr('href', 'http://' + service['name'] + '.service.consul');
     $("#instances-list").html("")
 
     for (var key in service['instances']) {
@@ -96,8 +95,6 @@ class ConsulService {
 
       $("#instances-list").append(serviceHtml);
     }
-
-    $("#service-links").html(generateLinks(service['name']));
 
     resizeWrapper('instances-wrapper', 'instances-list');
     $('#instances-list .list-group-item').resize(resizeAll);
@@ -193,25 +190,6 @@ function checksStatusGenerator(instance) {
   }
 
   return checks;
-}
-
-function generateLinks(serviceName) {
-  var dn = ['service.consul', 'service.par.consul'];
-  var links = document.createElement('div');
-  for (var i in dn) {
-    var linkWrapper = document.createElement('div');
-    linkWrapper.setAttribute('class','custom-links');
-
-    var linkElement = document.createElement('a');
-    var link = 'http://' + serviceName + '.' + dn[i]
-    linkElement.appendChild(document.createTextNode(link));
-    linkElement.setAttribute('href', link);
-    linkElement.setAttribute('target', '_blank');
-
-    linkWrapper.appendChild(linkElement);
-    links.appendChild(linkWrapper);
-  }
-  return links;
 }
 
 function resizeAll() {
