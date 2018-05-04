@@ -1,0 +1,57 @@
+.btn:focus, .btn:active, button {
+   outline: none !important;
+   box-shadow: none;
+}
+
+#service-wrapper, #instances-wrapper {
+  overflow: scroll;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-style: solid;
+  border-width: 1px 1px 1px 1px;
+  border-color: rgba(0,0,0,.125);
+}
+
+#service-wrapper  .list-group-item:last-child, #instances-wrapper .list-group-item:last-child {
+  border-bottom-width: 0px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+#service-wrapper  .list-group-item:first-child, #instances-wrapper .list-group-item:first-child {
+  border-top-width: 0px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+#service-wrapper  .list-group-item, #instances-wrapper .list-group-item {
+  border-left: 0px;
+  border-right: 0px;
+}
+
+h2 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+h2 .fas {
+  cursor: pointer;
+  color: rgba( 0, 0, 0, 0.5);
+  font-size: 1.5rem;
+  transition: color .16s linear
+}
+
+h2 .fas:hover {
+  cursor: pointer;
+  color: #007bff;
+  opacity: 1;
+  font-size: 1.5rem;
+}
+
+.custom-links {
+  background-color: #EEEEEE;
+  color: #333333;
+  margin: 3px;
+  padding: 5px;
+  padding-left: 10px;
+}
