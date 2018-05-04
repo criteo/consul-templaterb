@@ -1,0 +1,31 @@
+<% datasource = ENV['SERVICE_DATASOURCE'] || 'consul-template.json' %>
+<%= render_file('common/header.html.erb', title: 'Services') %>
+    <div class="main">
+      <div class="row mx-0">
+        <div id="filter-menu" class="col-4 col-m-3 px-4 pt-4">
+          <div class="form-group">
+            <input id="service-filter" type="text" placeholder="filter" class="form-control" >
+          </div>
+          <div id="service-wrapper" >
+            <ul id="service-list" class="list-group">
+            </ul>
+          </div>
+        </div>
+        <div class="col-8 col-m-9">
+          <h2 class="text-center" id="service-title"></h2>
+          <div id="instances-wrapper">
+            <div id="instances-list" class="list-group"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- Optional JavaScript -->
+  <!-- JavaScript Dependencies: jQuery, Popper.js, Bootstrap JS, Shards JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="js/service.js"></script>
+  <script type="text/javascript">
+    consulService = new ConsulService('<%= datasource %>');
+  </script>
+  </body>
+</html>
