@@ -4,6 +4,13 @@
 
 IMPROVEMENTS:
 
+# 1.0.10
+
+IMPROVEMENTS:
+
+ * [samples/nodes.html.erb](samples/nodes.html.erb) now also displays the services
+ * Added dynamic UI with JSON in directory [samples/consul-ui](samples/consul-ui)
+
 ## 1.0.9 (March 20, 2018)
 
 IMPROVEMENTS:
