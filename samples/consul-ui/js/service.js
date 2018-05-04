@@ -6,6 +6,7 @@ class ConsulService {
     this.serviceFilter = $("#service-filter");
     this.serviceFilter.keyup(this.filterService);
     this.refresh = parseInt(refresh);
+    this.filterStatus = [];
   }
 
   fetchRessource() {
@@ -65,6 +66,16 @@ class ConsulService {
     this.updateURL();
   }
 
+  onClickSort(source) {
+    var status = $(source).attr('status');
+    if (status in this.filterStatus) {
+      this.filterStatus.splice(array.indexOf(status),1);
+    } else {
+      this.filterStatus.push(status);
+    }
+    console.log(this.filterStatus);
+  }
+
   updateURL() {
     var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
     newUrl += '?service=' + $(this.selectedService).html();
@@ -85,7 +96,9 @@ class ConsulService {
 
   displayService(service) {
     $("#service-title").html(service['name']);
-    $("#instances-list").html("")
+    $("#instances-list").html("");
+
+    var serviceStatus = {};
 
     for (var key in service['instances']) {
       var instance = service['instances'][key];
@@ -95,13 +108,32 @@ class ConsulService {
       serviceHtml.appendChild(serviceTitleGenerator(instance));
       serviceHtml.appendChild(tagsGenerator(instance));
       serviceHtml.appendChild(checksStatusGenerator(instance));
+      serviceStatus[nodeState(instance)] = (serviceStatus[nodeState(instance)] || 0) + 1;
+      serviceStatus['total'] = (serviceStatus['total'] || 0) + 1;
 
       $("#instances-list").append(serviceHtml);
     }
+    console.log(serviceStatus);
+
+    $('#service-progress-passing').css('width', (serviceStatus['passing'] || 0) / serviceStatus['total'] * 100 + '%')
+    $('#service-progress-warning').css('width', (serviceStatus['warning'] || 0) / serviceStatus['total'] * 100 + '%')
+    $('#service-progress-critical').css('width', (serviceStatus['critical'] || 0) / serviceStatus['total'] * 100 + '%')
 
     resizeWrapper('instances-wrapper', 'instances-list');
     $('#instances-list .list-group-item').resize(resizeAll);
   }
+}
+
+function nodeState(instance) {
+  status='passing';
+  for (var checkKey in instance.checks) {
+    switch(instance.checks[checkKey]['status']) {
+      case 'passing': break;
+      case 'warning': status='warning'; break;
+      case 'critical': return 'critical'; break;
+    }
+  }
+  return status;
 }
 
 function serviceTitleGenerator(instance) {

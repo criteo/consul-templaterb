@@ -55,3 +55,7 @@ h2 .fas:hover {
   padding: 5px;
   padding-left: 10px;
 }
+
+.progress {
+  border-radius: 0px;
+}
