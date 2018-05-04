@@ -85,5 +85,6 @@
       service[:instances] << server
     end
   end
-  json = { services: json_backends}
+  json_datacenters = datacenters
+  json = { services: json_backends, datacenters: json_datacenters, generated_at: Time.now}
 %><%= JSON.pretty_generate(json) %>

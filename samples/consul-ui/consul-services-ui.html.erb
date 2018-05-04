@@ -1,4 +1,7 @@
-<% datasource = ENV['SERVICE_DATASOURCE'] || 'consul-template.json' %>
+<% datasource = ENV['SERVICE_DATASOURCE'] || 'consul-template.json'
+   # Time to wait before reloading configuration again in seconds (0 = never)
+   refresh = ENV['REFRESH'] || '120' %>
+
 <%= render_file('common/header.html.erb', title: 'Services') %>
     <div class="main">
       <div class="row mx-0">
@@ -25,7 +28,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <script src="js/service.js"></script>
   <script type="text/javascript">
-    consulService = new ConsulService('<%= datasource %>');
+    consulService = new ConsulService('<%= datasource %>','<%= refresh %>');
   </script>
   </body>
 </html>

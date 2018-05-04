@@ -1,27 +1,26 @@
 class ConsulService {
-  constructor(ressourceURL) {
+  constructor(ressourceURL, refresh) {
     this.ressourceURL = ressourceURL;
     this.fetchRessource();
     this.serviceList = $("#service-list");
     this.serviceFilter = $("#service-filter");
-    this.serviceFilter.keyup(this.filterService)
+    this.serviceFilter.keyup(this.filterService);
+    this.refresh = parseInt(refresh);
   }
 
   fetchRessource() {
     $.ajax({url: "consul_template.json", cache: false, dataType: "json", sourceObject: this, success: function(result){
-      if(this.sourceObject.data) {
-        // For autoupdate
-      } else {
-        this.sourceObject.initRessource(result);
-      }
+      consulService.initRessource(result);
     }});
   }
 
   initRessource(data) {
     this.data = data;
     this.reloadServiceList();
-    var urlParam = new URL(location.href).searchParams.get('service')
-    if(urlParam) {
+    console.log('Data generated at: ' + data['generated_at']);
+
+    var urlParam = new URL(location.href).searchParams.get('service');
+    if (urlParam) {
       var nodes = document.getElementById('service-list').childNodes;
       for(var i in nodes) {
         if($(nodes[i]).html() == urlParam) {
@@ -31,6 +30,10 @@ class ConsulService {
       }
     } else {
       this.selectService(document.getElementById('service-list').firstElementChild);
+    }
+
+    if(this.refresh > 0) {
+      setTimeout(this.fetchRessource, this.refresh * 1000);
     }
   }
 
