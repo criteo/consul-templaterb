@@ -38,7 +38,7 @@ h2 .fas {
   cursor: pointer;
   color: rgba( 0, 0, 0, 0.5);
   font-size: 1.5rem;
-  transition: color .16s linear
+  transition: color .16s linear;
 }
 
 h2 .fas:hover {
@@ -58,4 +58,14 @@ h2 .fas:hover {
 
 .progress {
   border-radius: 0px;
+}
+
+.progress-status {
+  transition: background-color .16s linear;
+  cursor: pointer;
+}
+
+.progress-deactivated {
+  background-color: #a5a5a5 !important;
+  color: #f1f1f1 !important;
 }

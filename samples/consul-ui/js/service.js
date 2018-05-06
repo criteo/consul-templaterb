@@ -6,7 +6,7 @@ class ConsulService {
     this.serviceFilter = $("#service-filter");
     this.serviceFilter.keyup(this.filterService);
     this.refresh = parseInt(refresh);
-    this.filterStatus = [];
+    this.filterStatus = null;
   }
 
   fetchRessource() {
@@ -66,14 +66,36 @@ class ConsulService {
     this.updateURL();
   }
 
-  onClickSort(source) {
+  onClickFilter(source) {
     var status = $(source).attr('status');
-    if (status in this.filterStatus) {
-      this.filterStatus.splice(array.indexOf(status),1);
-    } else {
-      this.filterStatus.push(status);
-    }
-    console.log(this.filterStatus);
+    this.filterStatus = (this.filterStatus == status) ? null : status;
+    this.filterInstances();
+  }
+
+  filterInstances() {
+    $('.progress-status').each(function() {
+      var status = $(this).attr('status');
+      if (consulService.filterStatus == null) {
+        $(this).removeClass('progress-deactivated');
+      } else if(consulService.filterStatus == status) {
+        $(this).removeClass('progress-deactivated');
+      } else {
+        $(this).addClass('progress-deactivated');
+      }
+    })
+    $('#instances-list').children('div').each(function() {
+      var status = $(this).attr('status');
+      if (consulService.filterStatus == null) {
+        $(this).removeClass('d-none');
+        $(this).addClass('d-block');
+      } else if (consulService.filterStatus == status) {
+        $(this).removeClass('d-none');
+        $(this).addClass('d-block');
+      } else {
+        $(this).removeClass('d-block');
+        $(this).addClass('d-none');
+      }
+    })
   }
 
   updateURL() {
@@ -108,12 +130,13 @@ class ConsulService {
       serviceHtml.appendChild(serviceTitleGenerator(instance));
       serviceHtml.appendChild(tagsGenerator(instance));
       serviceHtml.appendChild(checksStatusGenerator(instance));
-      serviceStatus[nodeState(instance)] = (serviceStatus[nodeState(instance)] || 0) + 1;
+      var state = nodeState(instance);
+      serviceHtml.setAttribute('status', state);
+      serviceStatus[state] = (serviceStatus[state] || 0) + 1;
       serviceStatus['total'] = (serviceStatus['total'] || 0) + 1;
 
       $("#instances-list").append(serviceHtml);
     }
-    console.log(serviceStatus);
 
     $('#service-progress-passing').css('width', (serviceStatus['passing'] || 0) / serviceStatus['total'] * 100 + '%')
     $('#service-progress-warning').css('width', (serviceStatus['warning'] || 0) / serviceStatus['total'] * 100 + '%')
