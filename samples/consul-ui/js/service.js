@@ -1,27 +1,27 @@
 class ConsulService {
-  constructor(ressourceURL) {
+  constructor(ressourceURL, refresh) {
     this.ressourceURL = ressourceURL;
     this.fetchRessource();
     this.serviceList = $("#service-list");
     this.serviceFilter = $("#service-filter");
-    this.serviceFilter.keyup(this.filterService)
+    this.serviceFilter.keyup(this.filterService);
+    this.refresh = parseInt(refresh);
+    this.filterStatus = null;
   }
 
   fetchRessource() {
     $.ajax({url: "consul_template.json", cache: false, dataType: "json", sourceObject: this, success: function(result){
-      if(this.sourceObject.data) {
-        // For autoupdate
-      } else {
-        this.sourceObject.initRessource(result);
-      }
+      consulService.initRessource(result);
     }});
   }
 
   initRessource(data) {
     this.data = data;
     this.reloadServiceList();
-    var urlParam = new URL(location.href).searchParams.get('service')
-    if(urlParam) {
+    console.log('Data generated at: ' + data['generated_at']);
+
+    var urlParam = new URL(location.href).searchParams.get('service');
+    if (urlParam) {
       var nodes = document.getElementById('service-list').childNodes;
       for(var i in nodes) {
         if($(nodes[i]).html() == urlParam) {
@@ -31,6 +31,10 @@ class ConsulService {
       }
     } else {
       this.selectService(document.getElementById('service-list').firstElementChild);
+    }
+
+    if(this.refresh > 0) {
+      setTimeout(this.fetchRessource, this.refresh * 1000);
     }
   }
 
@@ -62,6 +66,38 @@ class ConsulService {
     this.updateURL();
   }
 
+  onClickFilter(source) {
+    var status = $(source).attr('status');
+    this.filterStatus = (this.filterStatus == status) ? null : status;
+    this.filterInstances();
+  }
+
+  filterInstances() {
+    $('.progress-status').each(function() {
+      var status = $(this).attr('status');
+      if (consulService.filterStatus == null) {
+        $(this).removeClass('progress-deactivated');
+      } else if(consulService.filterStatus == status) {
+        $(this).removeClass('progress-deactivated');
+      } else {
+        $(this).addClass('progress-deactivated');
+      }
+    })
+    $('#instances-list').children('div').each(function() {
+      var status = $(this).attr('status');
+      if (consulService.filterStatus == null) {
+        $(this).removeClass('d-none');
+        $(this).addClass('d-block');
+      } else if (consulService.filterStatus == status) {
+        $(this).removeClass('d-none');
+        $(this).addClass('d-block');
+      } else {
+        $(this).removeClass('d-block');
+        $(this).addClass('d-none');
+      }
+    })
+  }
+
   updateURL() {
     var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
     newUrl += '?service=' + $(this.selectedService).html();
@@ -82,7 +118,9 @@ class ConsulService {
 
   displayService(service) {
     $("#service-title").html(service['name']);
-    $("#instances-list").html("")
+    $("#instances-list").html("");
+
+    var serviceStatus = {};
 
     for (var key in service['instances']) {
       var instance = service['instances'][key];
@@ -92,13 +130,33 @@ class ConsulService {
       serviceHtml.appendChild(serviceTitleGenerator(instance));
       serviceHtml.appendChild(tagsGenerator(instance));
       serviceHtml.appendChild(checksStatusGenerator(instance));
+      var state = nodeState(instance);
+      serviceHtml.setAttribute('status', state);
+      serviceStatus[state] = (serviceStatus[state] || 0) + 1;
+      serviceStatus['total'] = (serviceStatus['total'] || 0) + 1;
 
       $("#instances-list").append(serviceHtml);
     }
 
+    $('#service-progress-passing').css('width', (serviceStatus['passing'] || 0) / serviceStatus['total'] * 100 + '%')
+    $('#service-progress-warning').css('width', (serviceStatus['warning'] || 0) / serviceStatus['total'] * 100 + '%')
+    $('#service-progress-critical').css('width', (serviceStatus['critical'] || 0) / serviceStatus['total'] * 100 + '%')
+
     resizeWrapper('instances-wrapper', 'instances-list');
     $('#instances-list .list-group-item').resize(resizeAll);
   }
+}
+
+function nodeState(instance) {
+  status='passing';
+  for (var checkKey in instance.checks) {
+    switch(instance.checks[checkKey]['status']) {
+      case 'passing': break;
+      case 'warning': status='warning'; break;
+      case 'critical': return 'critical'; break;
+    }
+  }
+  return status;
 }
 
 function serviceTitleGenerator(instance) {

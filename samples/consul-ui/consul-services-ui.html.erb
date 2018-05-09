@@ -1,4 +1,7 @@
-<% datasource = ENV['SERVICE_DATASOURCE'] || 'consul-template.json' %>
+<% datasource = ENV['SERVICE_DATASOURCE'] || 'consul-template.json'
+   # Time to wait before reloading configuration again in seconds (0 = never)
+   refresh = ENV['REFRESH'] || '600' %>
+
 <%= render_file('common/header.html.erb', title: 'Services') %>
     <div class="main">
       <div class="row mx-0">
@@ -13,6 +16,11 @@
         </div>
         <div class="col-8 col-m-9">
           <h2 class="text-center" id="service-title"></h2>
+          <div class="progress">
+            <div id="service-progress-passing" status="passing" onclick="consulService.onClickFilter(this)" class="progress-status progress-bar bg-success" role="progressbar" style="width: 100%">passing</div>
+            <div id="service-progress-warning" status="warning" onclick="consulService.onClickFilter(this)" class="progress-status progress-bar bg-warning" role="progressbar" style="width: 0%">warning</div>
+            <div id="service-progress-critical" status="critical" onclick="consulService.onClickFilter(this)" class="progress-status progress-bar bg-danger" role="progressbar" style="width: 0%">critical</div>
+          </div>
           <div id="instances-wrapper">
             <div id="instances-list" class="list-group"></div>
           </div>
@@ -25,7 +33,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <script src="js/service.js"></script>
   <script type="text/javascript">
-    consulService = new ConsulService('<%= datasource %>');
+    consulService = new ConsulService('<%= datasource %>','<%= refresh %>');
   </script>
   </body>
 </html>
