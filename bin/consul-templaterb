@@ -92,19 +92,19 @@ optparse = OptionParser.new do |opts|
 
   def compute_signal(val, none_value)
     valid_signals = Signal.list.keys
-    raise "Please #{val} specifiy a signal: #{valid_signals.inspect}" unless val
+    raise "Please specify a signal, use any of: #{valid_signals.inspect}" unless val
     return nil if val == none_value
-    raise "Invalid signal, valid signals: #{valid_signals.inspect}" unless valid_signals.include? val
+    raise "Invalid signal #{val}, valid signals: #{valid_signals.inspect}" unless valid_signals.include? val
     val
   end
 
   opts.on('-K', '--sig-term=kill_signal', String,
-          "Signal to sent to next --exec command on kill, default=#{cur_sig_term}") do |sig|
+          "Signal to send to next --exec command on kill, default=#{cur_sig_term}") do |sig|
     cur_sig_term = compute_signal(sig, nil)
   end
 
   opts.on('-R', '--sig-reload=reload_signal', String,
-          "Signal to sent to next --exec command on reload (NONE supported), default=#{cur_sig_reload}") do |sig|
+          "Signal to send to next --exec command on reload (NONE supported), default=#{cur_sig_reload}") do |sig|
     cur_sig_reload = compute_signal(sig, 'NONE')
   end
 

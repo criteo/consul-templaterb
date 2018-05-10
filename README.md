@@ -88,7 +88,7 @@ $ gem install consul-templaterb
 [...]
 ```
 
-If you simply want to use the executable on your favorite linux distribution, you
+If you simply want to use the executable on your preferred Linux distribution, you
 have to install first: ruby and ruby dev.
 
 ### Quick install on Ubuntu-Linux
@@ -140,8 +140,8 @@ USAGE: consul-templaterb [[options]]
     -w, --wait=<min_duration>        Wait at least n seconds before each template generation
     -r, --retry-delay=<min_duration> Min Retry delay on Error/Missing Consul Index
     -k, --hot-reload=<behavior>      Control hot reload behaviour, one of :[die (kill daemon on hot reload failure), keep (on error, keep running), disable (hot reload disabled)]
-    -K, --sig-term=kill_signal       Signal to sent to next --exec command on kill, default=TERM
-    -R, --sig-reload=reload_signal   Signal to sent to next --exec command on reload (NONE supported), default=HUP
+    -K, --sig-term=kill_signal       Signal to send to next --exec command on kill, default=TERM
+    -R, --sig-reload=reload_signal   Signal to send to next --exec command on reload (NONE supported), default=HUP
     -e, --exec=<command>             Execute the following command
     -d, --debug-network-usage        Debug the network usage
     -t erb_file:[output]:[command]:[params_file],
@@ -153,8 +153,8 @@ When launched with file arguments ending with .erb, the executable will assume
 the file is a template and will render the corresponding file without the
 `.erb` extension.
 
-It means that you can call consul-templaterb with *.erb arguments, the shell
-will then substitute all files and render it by removing the .erb extension as
+It means that you can call consul-templaterb with `*.erb` arguments, the shell
+will then substitute all files and render it by removing the `.erb` extension as
 if the `--template my_file.ext.erb:myfile.ext` was used.
 
 ### Generate multiple templates
@@ -222,7 +222,7 @@ examples:
 7. [Services in JSON](samples/consul_template.json.erb)
 8. [Generate HaProxy Configuration](samples/ha_proxy.cfg.erb)
 
-If you want to test it quickly, you might try with (assuming you consul agent is listening on
+If you want to test it quickly, you might try with (assuming your consul agent is listening on
 `http://localhost:8500`):
 
 ```shell
@@ -257,7 +257,7 @@ Here are the known bugs of the application:
   watches) at the same time. This bug is
   [probably a race condition in `em-http-request`](https://github.com/igrigorik/em-http-request/issues/315). Only visible
   on very large clusters or when watching thousands of individual KV keys.
-* [ ] render_file might create an infinite recursion if a template includes itself indirectly.
+* [ ] `render_file` might create an infinite recursion if a template includes itself indirectly.
 
 Please consult [CHANGELOG.md](CHANGELOG.md) for fixed bugs.
 
@@ -266,9 +266,9 @@ Please consult [CHANGELOG.md](CHANGELOG.md) for fixed bugs.
 * [ ] Hashi's Vault support
 * [ ] Implement automatic dynamic rate limit
 * [ ] More samples: apache, nginx, full website displaying consul information...
-* [ ] Optimize rendering speed at startup: an iteration is done very second by default, but it would be possible to speed
+* [ ] Optimize rendering speed at start-up: an iteration is done very second by default, but it would be possible to speed
       up rendering by iterating with higher frequency until the first write of result has been performed.
-* [ ] Allow to tune bandwidth using a simple config file (while it should not be necessary for 90% of use-cases)
+* [ ] Allow to tune bandwidth using a simple configuration file (while it should not be necessary for 90% of use-cases)
 
 ## Contributing
 

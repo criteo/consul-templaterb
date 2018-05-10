@@ -95,7 +95,7 @@ Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
 
 [List the instances](https://www.consul.io/api/health.html#list-nodes-for-service) of a service having the given
 optional tag. If no tag is specified, will return all instances of service. By default, it will return all the
-well services that are passing or not. An optional argument passing might be used to retrieve only passing instances.
+services that are passing or not. An optional argument passing might be used to retrieve only passing instances.
 
 <details><summary>Examples</summary>
 <div class="samples">
