@@ -29,7 +29,7 @@ RSpec.describe Consul::Async::ConsulTemplateEngine do
     expect(File.directory?(samples_path)).to be true
   end
 
-  Dir["#{samples_path}/*.erb"].each do |erb|
+  Dir.glob(File.join(samples_path, '**', '*.erb')).each do |erb|
     it "Checks that #{erb} do work" do
       mock_all
       EM.run_block do

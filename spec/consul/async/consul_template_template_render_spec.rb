@@ -14,7 +14,7 @@ RSpec.describe Consul::Async::ConsulTemplateRender do
     expect(File.directory?(unit_templates)).to be true
   end
 
-  Dir["#{unit_templates}/*.erb"].each do |erb|
+  Dir.glob(File.join(unit_templates, '**', '*.erb')).each do |erb|
     expected = erb.gsub(/\.erb$/, '.txt.expected')
     it "Checks that #{erb} renders #{expected}" do
       mock_all
