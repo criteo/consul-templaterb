@@ -243,7 +243,17 @@ function checksStatusGenerator(instance) {
       var td2 = document.createElement('td');
       var fieldName = dataToDisplay[index].replace(/\b\w/g, l => l.toUpperCase());
       td1.appendChild(document.createTextNode(fieldName + ': '));
-      td2.appendChild(document.createTextNode(instance.checks[checkKey][dataToDisplay[index]]));
+      var target = td2
+      if (index != 1) {
+        target = document.createElement('div');
+        target.setAttribute("class", "check-notes")
+      } else {
+        // Notes are rendered as plain text
+        target = document.createElement('pre');
+        target.setAttribute("class", "check-output")
+      }
+      target.appendChild(document.createTextNode(instance.checks[checkKey][dataToDisplay[index]]));
+      td2.appendChild(target)
       tr.appendChild(td1);
       tr.appendChild(td2);
       notes.appendChild(tr);
