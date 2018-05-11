@@ -46,7 +46,7 @@
       the_backends = []
       service(service_name).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
         tags_of_instance = snode['Service']['Tags']
-        if tags_of_instance.include?(instance_must_tag) && !tags_of_instance.include?(instance_exclude_tag)
+        if (instance_must_tag.nil? || tags_of_instance.include?(instance_must_tag)) && !tags_of_instance.include?(instance_exclude_tag)
           the_backends << snode if snode['Service']['Port']
         end
       end
