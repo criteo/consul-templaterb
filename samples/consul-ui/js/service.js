@@ -159,17 +159,25 @@ function nodeState(instance) {
   return status;
 }
 
+supported_protocols = ['https', 'http', 'sftp', 'ftp', 'ssh', 'telnet']
+
 function serviceTitleGenerator(instance) {
-  var protocol = 'http://';
-  if(instance.tags.includes('https')) {
-    protocol = 'https://';
+  var protocol = null;
+  for (i in supported_protocols) {
+    var protoc = supported_protocols[i]
+    if (instance.tags.includes(protoc)) {
+      protocol = protoc + '://';
+      break;
+    }
   }
 
   var htmlTitle = document.createElement('h5');
 
   var instanceLink = document.createElement('a');
-  instanceLink.setAttribute('href',  protocol + instance.name + ':' + instance.port);
-  instanceLink.setAttribute('target',  '_blank');
+  if (protocol != null) {
+    instanceLink.setAttribute('href',  protocol + instance.name + ':' + instance.port);
+    instanceLink.setAttribute('target',  '_blank');
+  }
   instanceLink.appendChild(document.createTextNode(instance.name + ':' + instance.port));
   htmlTitle.appendChild(instanceLink);
 
