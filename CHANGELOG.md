@@ -2,7 +2,18 @@
 
 ## (UNRELEASED)
 
+BUG FIXES:
+ * Fix for Mac OS X fixed in `1.2-stable` branch of
+   [event-machine](https://github.com/eventmachine/eventmachine/), see
+   https://github.com/igrigorik/em-http-request/issues/315 for more
+   details
+ * fixed bug in samples/sample_keys.html.erb
+
 IMPROVEMENTS:
+
+ * Documentation typos
+ * Help typos fixed
+ * Various improvements in [samples/](samples/]
 
 # 1.0.10
 
