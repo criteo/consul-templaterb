@@ -22,7 +22,7 @@ IMPROVEMENTS:
  * Help typos fixed
  * Various improvements in [samples/](samples/]
 
-# 1.0.10 (May 4, 2018)
+## 1.0.10 (May 4, 2018)
 
 IMPROVEMENTS:
 
