@@ -2,20 +2,27 @@
 
 ## (UNRELEASED)
 
+IMPROVEMENTS:
+
+## 1.0.11 (May 11, 2018)
+
 BUG FIXES:
+
  * Fix for Mac OS X fixed in `1.2-stable` branch of
    [event-machine](https://github.com/eventmachine/eventmachine/), see
    https://github.com/igrigorik/em-http-request/issues/315 for more
    details
  * fixed bug in samples/sample_keys.html.erb
+ * Unit tests now catches all `*.erb` files in subdirectories
 
 IMPROVEMENTS:
 
+ * Improved new samples/consul-ui/
  * Documentation typos
  * Help typos fixed
  * Various improvements in [samples/](samples/]
 
-# 1.0.10
+# 1.0.10 (May 4, 2018)
 
 IMPROVEMENTS:
 
