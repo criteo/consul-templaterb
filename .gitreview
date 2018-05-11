@@ -1,5 +1,0 @@
-[gerrit]
-host=review.criteois.lan
-port=29418
-project=ruby-gems/consul-templaterb
-defaultbranch=master
