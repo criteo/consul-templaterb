@@ -57,7 +57,7 @@ if key_to_display
     <code><% 
   # catch_errors: true will return nil if data cannot be converted to JSON
   json = kv(key_to_display).get_value_json(catch_errors: true)
-  %><%= (json ? jERB::Util.html_escape(json) : 'No Valid JSON Data') %></code>
+  %><%= (json ? ERB::Util.html_escape(json) : 'No Valid JSON Data') %></code>
   </div>
 <%
 end
