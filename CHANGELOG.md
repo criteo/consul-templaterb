@@ -4,7 +4,7 @@
 
 IMPROVEMENTS:
 
-## 1.1.0
+## 1.1.0 (May 12, 2018)
 
 BUG FIXES:
 
