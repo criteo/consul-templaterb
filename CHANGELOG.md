@@ -4,6 +4,17 @@
 
 IMPROVEMENTS:
 
+## 1.1.0
+
+BUG FIXES:
+
+ * Fix crashes on Mac OS X by updating eventmachine to 1.2.7. See
+   https://github.com/igrigorik/em-http-request/issues/315 for details
+
+IMPROVEMENTS:
+
+ * Minor typo fixes in documentation
+
 ## 1.0.11 (May 11, 2018)
 
 BUG FIXES:

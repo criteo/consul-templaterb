@@ -253,10 +253,6 @@ push git commits and tags, and push the `.gem` file to [rubygems.org](https://ru
 
 Here are the known bugs of the application:
 
-* [x] On Mac OS X, with many services, consul-templaterb sometimes crashes when watching lots of changes (more than 2k
-  watches) at the same time. This bug is
-  [probably a race condition in `em-http-request`](https://github.com/igrigorik/em-http-request/issues/315). Only visible
-  on very large clusters or when watching thousands of individual KV keys.
 * [ ] `render_file` might create an infinite recursion if a template includes itself indirectly.
 
 Please consult [CHANGELOG.md](CHANGELOG.md) for fixed bugs.
