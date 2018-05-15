@@ -243,7 +243,24 @@ templates. Also have a look to [samples/](samples/) directory to have full worki
 
 ## Development
 
+### Quick start
+
 We recommend using bundle using `bundle install`, you can now run `bundle exec bin/consul-templaterb`.
+Help is available running `bundle exec bin/consul-templaterb --help`
+
+The following example will generate static HTML pages and JSON data for `consul-ui`:
+```
+bundle exec bin/consul-templaterb -c your.consul.agent:8500 samples/consul-ui/*.erb
+```
+
+If you need remote calls, you need an HTTP server. A simple way to have one is using Python's simple HTTP
+server. Example for `consul-ui`:
+```
+cd samples/consul-ui
+python -m SimpleHTTPServer
+```
+
+### Installation
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the
 version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version,
