@@ -41,7 +41,8 @@ class ConsulService {
   reloadServiceList() {
     for (var service in this.data.services) {
       var listItem = '<button type="button" onclick="consulService.onClickServiceName(this)" class="list-group-item list-group-item-action">';
-      listItem += service;
+      listItem += '<span class="service-name">' + service + '</span>';
+      listItem += '<span class="badge badge-pill badge-dark" style="float:right;">' + this.data.services[service].count + '</span>';
       listItem += '</button>';
       this.serviceList.append(listItem);
     }
@@ -111,7 +112,7 @@ class ConsulService {
     this.selectedService = source;
     $(this.selectedService).addClass('active');
 
-    var serviceName = $(source).html();
+    var serviceName = $(source).find(".service-name").html();
 
     this.displayService(this.data.services[serviceName]);
   }
