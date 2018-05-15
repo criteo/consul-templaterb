@@ -39,10 +39,23 @@ class ConsulService {
   }
 
   reloadServiceList() {
-    for (var service in this.data.services) {
+    for (var serviceName in this.data.services) {
+      var service = this.data.services[serviceName];
+      var serviceStatus = buildServiceStatus(service);
       var listItem = '<button type="button" onclick="consulService.onClickServiceName(this)" class="list-group-item list-group-item-action">';
-      listItem += '<span class="service-name">' + service + '</span>';
-      listItem += '<span class="badge badge-pill badge-dark" style="float:right;">' + this.data.services[service].count + '</span>';
+      listItem += '<div class="service-name">' + serviceName + '</div>';
+
+      listItem += '<span class="badge badge-pill badge-dark" style="float:right;">' + (serviceStatus['total'] || 0) + '</span>';
+      if (!!serviceStatus['passing']) {
+        listItem += '<span class="badge badge-pill badge-success" style="margin-right:10px;">' + serviceStatus['passing'] + '</span>';
+      }
+      if (!!serviceStatus['warning']) {
+        listItem += '<span class="badge badge-pill badge-warning" style="margin-right:10px;">' + serviceStatus['warning'] + '</span>';
+      }
+      if (!!serviceStatus['critical']) {
+        listItem += '<span class="badge badge-pill badge-danger" style="margin-right:10px;">' + serviceStatus['critical'] + '</span>';
+      }
+
       listItem += '</button>';
       this.serviceList.append(listItem);
     }
