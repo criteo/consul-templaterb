@@ -39,9 +39,23 @@ class ConsulService {
   }
 
   reloadServiceList() {
-    for (var service in this.data.services) {
+    for (var serviceName in this.data.services) {
+      var service = this.data.services[serviceName];
+      var serviceStatus = buildServiceStatus(service);
       var listItem = '<button type="button" onclick="consulService.onClickServiceName(this)" class="list-group-item list-group-item-action">';
-      listItem += service;
+      listItem += '<div class="service-name">' + serviceName + '</div>';
+
+      listItem += '<span class="badge badge-pill badge-dark" style="float:right;">' + (serviceStatus['total'] || 0) + '</span>';
+      if (!!serviceStatus['passing']) {
+        listItem += '<span class="badge badge-pill badge-success" style="margin-right:10px;">' + serviceStatus['passing'] + '</span>';
+      }
+      if (!!serviceStatus['warning']) {
+        listItem += '<span class="badge badge-pill badge-warning" style="margin-right:10px;">' + serviceStatus['warning'] + '</span>';
+      }
+      if (!!serviceStatus['critical']) {
+        listItem += '<span class="badge badge-pill badge-danger" style="margin-right:10px;">' + serviceStatus['critical'] + '</span>';
+      }
+
       listItem += '</button>';
       this.serviceList.append(listItem);
     }
@@ -111,7 +125,7 @@ class ConsulService {
     this.selectedService = source;
     $(this.selectedService).addClass('active');
 
-    var serviceName = $(source).html();
+    var serviceName = $(source).find(".service-name").html();
 
     this.displayService(this.data.services[serviceName]);
   }
@@ -120,7 +134,7 @@ class ConsulService {
     $("#service-title").html(service['name']);
     $("#instances-list").html("");
 
-    var serviceStatus = {};
+    var serviceStatus = buildServiceStatus(service);
 
     for (var key in service['instances']) {
       var instance = service['instances'][key];
@@ -132,19 +146,33 @@ class ConsulService {
       serviceHtml.appendChild(checksStatusGenerator(instance));
       var state = nodeState(instance);
       serviceHtml.setAttribute('status', state);
-      serviceStatus[state] = (serviceStatus[state] || 0) + 1;
-      serviceStatus['total'] = (serviceStatus['total'] || 0) + 1;
-
       $("#instances-list").append(serviceHtml);
     }
 
     $('#service-progress-passing').css('width', (serviceStatus['passing'] || 0) / serviceStatus['total'] * 100 + '%')
+    $('#service-progress-passing').html("passing (" + (serviceStatus['passing'] || 0) + ")")
     $('#service-progress-warning').css('width', (serviceStatus['warning'] || 0) / serviceStatus['total'] * 100 + '%')
+    $('#service-progress-warning').html("warning (" + (serviceStatus['warning'] || 0) +")")
     $('#service-progress-critical').css('width', (serviceStatus['critical'] || 0) / serviceStatus['total'] * 100 + '%')
+    $('#service-progress-critical').html("critical (" + (serviceStatus['critical'] || 0) + ")")
 
     resizeWrapper('instances-wrapper', 'instances-list');
     $('#instances-list .list-group-item').resize(resizeAll);
   }
+}
+
+function buildServiceStatus(service) {
+  var serviceStatus = {};
+
+  for (var key in service['instances']) {
+    var instance = service['instances'][key];
+    var state = nodeState(instance);
+
+    serviceStatus[state] = (serviceStatus[state] || 0) + 1;
+    serviceStatus['total'] = (serviceStatus['total'] || 0) + 1;
+  }
+
+  return serviceStatus;
 }
 
 function nodeState(instance) {
