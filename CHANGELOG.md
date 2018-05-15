@@ -3,6 +3,10 @@
 ## (UNRELEASED)
 
 IMPROVEMENTS:
+
+## 1.1.1 (May 15, 2018)
+
+IMPROVEMENTS:
  * Use 60 seconds of cleanup to avoid over-cleaning up endpoints
  * Use same environment variables to filter services in nodes.html.erb
 
