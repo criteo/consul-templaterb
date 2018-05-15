@@ -1,10 +1,16 @@
 <%= render_file('common/header.html.erb', title: 'Nodes') %><%
+service_tag_filter = ENV['SERVICES_TAG_FILTER'] || nil
+# Services to hide
+services_blacklist = (ENV['EXCLUDE_SERVICES'] || 'consul-agent-http,mesos-slave,mesos-agent-watcher,mesos-exporter-slave').split(',')
+
 service_per_node = {}
 services.each do |service_name, tags|
-  service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
-  node_services = service_per_node[snode['Node']['Node']] || []
-  node_services.push(snode)
-  service_per_node[snode['Node']['Node']] = node_services
+  if !services_blacklist.include? service_name
+    service(service_name, tag: service_tag_filter).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
+      node_services = service_per_node[snode['Node']['Node']] || []
+      node_services.push(snode)
+      service_per_node[snode['Node']['Node']] = node_services
+    end
   end
 end %>
 
