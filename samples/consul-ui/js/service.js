@@ -139,8 +139,11 @@ class ConsulService {
     }
 
     $('#service-progress-passing').css('width', (serviceStatus['passing'] || 0) / serviceStatus['total'] * 100 + '%')
+    $('#service-progress-passing').html("passing (" + (serviceStatus['passing'] || 0) + ")")
     $('#service-progress-warning').css('width', (serviceStatus['warning'] || 0) / serviceStatus['total'] * 100 + '%')
+    $('#service-progress-warning').html("warning (" + (serviceStatus['warning'] || 0) +")")
     $('#service-progress-critical').css('width', (serviceStatus['critical'] || 0) / serviceStatus['total'] * 100 + '%')
+    $('#service-progress-critical').html("critical (" + (serviceStatus['critical'] || 0) + ")")
 
     resizeWrapper('instances-wrapper', 'instances-list');
     $('#instances-list .list-group-item').resize(resizeAll);
