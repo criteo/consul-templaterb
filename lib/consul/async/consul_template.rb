@@ -171,7 +171,7 @@ module Consul
           else
             not_ready << endpt.endpoint.path
           end
-          to_cleanup << endpoint_key if (@iteration - endpt.seen_at) > 10
+          to_cleanup << endpoint_key if (@iteration - endpt.seen_at) > 60
         end
         if not_ready.count.positive?
           STDERR.print "[INFO] Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}..."

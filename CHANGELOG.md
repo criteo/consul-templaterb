@@ -3,6 +3,7 @@
 ## (UNRELEASED)
 
 IMPROVEMENTS:
+ * Use 60 seconds of cleanup to avoid over-cleaning up endpoints
 
 ## 1.1.0 (May 12, 2018)
 
