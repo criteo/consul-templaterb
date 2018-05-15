@@ -121,7 +121,7 @@ class ConsulService {
     $("#service-title").html(service['name']);
     $("#instances-list").html("");
 
-    var serviceStatus = {};
+    var serviceStatus = buildServiceStatus(service);
 
     for (var key in service['instances']) {
       var instance = service['instances'][key];
@@ -133,9 +133,6 @@ class ConsulService {
       serviceHtml.appendChild(checksStatusGenerator(instance));
       var state = nodeState(instance);
       serviceHtml.setAttribute('status', state);
-      serviceStatus[state] = (serviceStatus[state] || 0) + 1;
-      serviceStatus['total'] = (serviceStatus['total'] || 0) + 1;
-
       $("#instances-list").append(serviceHtml);
     }
 
@@ -149,6 +146,20 @@ class ConsulService {
     resizeWrapper('instances-wrapper', 'instances-list');
     $('#instances-list .list-group-item').resize(resizeAll);
   }
+}
+
+function buildServiceStatus(service) {
+  var serviceStatus = {};
+
+  for (var key in service['instances']) {
+    var instance = service['instances'][key];
+    var state = nodeState(instance);
+
+    serviceStatus[state] = (serviceStatus[state] || 0) + 1;
+    serviceStatus['total'] = (serviceStatus['total'] || 0) + 1;
+  }
+
+  return serviceStatus;
 }
 
 function nodeState(instance) {
