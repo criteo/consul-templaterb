@@ -4,9 +4,18 @@
 
 IMPROVEMENTS:
 
+## 1.1.2 (May 17, 2018)
+
+IMPROVEMENTS:
+
+ * samples/consul-ui now display number of instances passing/warning/critical
+ * samples/consul-ui allow to filter per status, tags or instance name
+ * samples/consul-ui now display tags in list
+
 ## 1.1.1 (May 15, 2018)
 
 IMPROVEMENTS:
+
  * Use 60 seconds of cleanup to avoid over-cleaning up endpoints
  * Use same environment variables to filter services in nodes.html.erb
 
