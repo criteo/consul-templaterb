@@ -15,6 +15,7 @@
 /samples/*.cfg
 samples/consul-ui/*.html
 samples/consul-ui/*.json
+samples/consul-ui/common/*.html
 /samples/criteo/haproxy.cfg
 /samples/consul_template
 /samples/find_blocked_choregraphies

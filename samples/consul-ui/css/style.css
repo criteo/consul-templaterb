@@ -12,11 +12,6 @@
   border-color: rgba(0,0,0,.125);
 }
 
-.service-tags {
-  overflow: scroll;
-  max-height: 2.2em !important;
-}
-
 .service-tags .badge {
   max-width: 8em;
   text-overflow: ellipsis;

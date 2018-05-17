@@ -1,13 +1,17 @@
 <% datasource = ENV['SERVICE_DATASOURCE'] || 'consul-template.json'
    # Time to wait before reloading configuration again in seconds (0 = never)
-   refresh = ENV['REFRESH'] || '600' %>
-
-<%= render_file('common/header.html.erb', title: 'Services') %>
+   refresh = ENV['REFRESH'] || '600' %><%= render_file('common/header.html.erb', title: 'Services') %>
     <div class="main">
       <div class="row mx-0">
         <div id="filter-menu" class="col-4 col-m-3 px-4 pt-4">
           <div class="form-group">
-            <input id="service-filter" type="text" placeholder="filter by name or tags" class="form-control" >
+            <div class="form-check">
+              <label class="form-check-label">
+                <input id="showTagsInList" type="checkbox" title="show tags" onclick="consulService.showTags(this.checked)" class="form-check-input" />
+                Show Tags
+              </label>
+            </div>
+            <input id="service-filter" type="text" placeholder="filter by name or tags" class="form-control" />
           </div>
           <div id="service-wrapper" >
             <ul id="service-list" class="list-group">

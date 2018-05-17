@@ -7,6 +7,12 @@ class ConsulService {
     this.serviceFilter.keyup(this.filterService);
     this.refresh = parseInt(refresh);
     this.filterStatus = null;
+    this.showTags($('#showTagsInList').checked)
+  }
+
+  showTags(showTags) {
+    var stylesheet = document.getElementById('css-states');
+    stylesheet.textContent = '.service-tags { display: ' + (showTags? 'block':'none') + ';}';
   }
 
   fetchRessource() {
@@ -46,22 +52,17 @@ class ConsulService {
       var serviceStatus = buildServiceStatus(service);
       var listItem = '<button type="button" onfocus="consulService.onClickServiceName(this)" onclick="consulService.onClickServiceName(this)" value="' + serviceName + '" class="list-group-item list-group-item-action">';
       listItem += '<div class="statuses" style="float:right">'
-      var globalStatus = 'dark'
       if (!!serviceStatus['passing']) {
-        listItem += '<span class="badge badge-pill badge-success" style="margin-right:10px;">' + serviceStatus['passing'] + '</span>';
+        listItem += '<span class="badge badge-pill badge-success passing" style="margin-right:10px;">' + serviceStatus['passing'] + '</span>';
       }
       if (!!serviceStatus['warning']) {
-        listItem += '<span class="badge badge-pill badge-warning" style="margin-right:10px;">' + serviceStatus['warning'] + '</span>';
-        if (globalStatus == 'dark') {
-          globalStatus = 'warning'
-        }
+        listItem += '<span class="badge badge-pill badge-warning warning" style="margin-right:10px;">' + serviceStatus['warning'] + '</span>';
       }
       if (!!serviceStatus['critical']) {
-        listItem += '<span class="badge badge-pill badge-danger" style="margin-right:10px;">' + serviceStatus['critical'] + '</span>';
-        globalStatus = 'critical'
+        listItem += '<span class="badge badge-pill badge-danger critical" style="margin-right:10px;">' + serviceStatus['critical'] + '</span>';
       }
       listItem+= ' / <span class="badge badge-pill badge-dark">' + (serviceStatus['total'] || 0) + '</span></div>';
-      listItem += '<div class="service-name text-' + globalStatus + '">' + serviceName + '</div>';
+      listItem += '<div class="service-name">' + serviceName + '</div>';
       listItem += '<div class="service-tags">'
       for (var i = 0; i < service.tags.length; i++) {
         listItem += '<span title="' + service.tags[i] + '" class="badge badge-pill badge-' + (i%2?'secondary':'info') + '" style="float:right;">' + (service.tags[i]) + '</span> ';
