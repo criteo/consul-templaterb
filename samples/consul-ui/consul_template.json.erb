@@ -41,11 +41,13 @@
     attributes = "#{attributes} weight #{w}" if w.positive?
   end
   backends = {}
+  tags_per_service = {}
   services(tag: service_tag_filter).each do |service_name, tags|
     if !services_blacklist.include?(service_name) && (instance_must_tag.nil? || tags.include?(instance_must_tag))
+      tags_per_service[service_name] = tags.sort
       the_backends = []
       service(service_name).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
-        tags_of_instance = snode['Service']['Tags']
+        tags_of_instance = snode['Service']['Tags'].sort
         if (instance_must_tag.nil? || tags_of_instance.include?(instance_must_tag)) && !tags_of_instance.include?(instance_exclude_tag)
           the_backends << snode if snode['Service']['Port']
         end
@@ -60,14 +62,15 @@
     service = {
       name:      service_name,
       count:     nodes.count,
-      instances: []
+      tags: tags_per_service[service_name],
+      instances: [],
     }
     json_backends[service_name] = service
     nodes.each do |snode|
       checks = []
       snode['Checks'].each do |ncheck|
         check = {}
-        check['checkid'] = ncheck['CheckID']
+        check['checkid'] = ncheck['ID'] || ncheck['CheckID']
         check['name'] = ncheck['Name']
         check['output'] = ncheck['Output']
         check['status'] = ncheck['Status']
@@ -77,6 +80,7 @@
       server = { frontend_id: "backend_http__#{service_name}",
                  id:     snode['Service']['ID'],
                  name:   snode['Node']['Node'],
+                 sMeta:  snode['Service']['Meta'],
                  addr:   snode['Node']['Address'],
                  port:   snode['Service']['Port'],
                  tags:   snode['Service']['Tags'],

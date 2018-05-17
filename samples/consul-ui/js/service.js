@@ -24,8 +24,10 @@ class ConsulService {
     if (urlParam) {
       var nodes = document.getElementById('service-list').childNodes;
       for(var i in nodes) {
-        if($(nodes[i]).html() == urlParam) {
-          this.selectService(nodes[i]);
+        if($(nodes[i]).find(".service-name").html() == urlParam) {
+          var selectedElement = $(nodes[i])
+          this.selectService(selectedElement);
+          selectedElement.focus()
           break;
         }
       }
@@ -42,20 +44,29 @@ class ConsulService {
     for (var serviceName in this.data.services) {
       var service = this.data.services[serviceName];
       var serviceStatus = buildServiceStatus(service);
-      var listItem = '<button type="button" onclick="consulService.onClickServiceName(this)" class="list-group-item list-group-item-action">';
-      listItem += '<div class="service-name">' + serviceName + '</div>';
-
-      listItem += '<span class="badge badge-pill badge-dark" style="float:right;">' + (serviceStatus['total'] || 0) + '</span>';
+      var listItem = '<button type="button" onfocus="consulService.onClickServiceName(this)" onclick="consulService.onClickServiceName(this)" value="' + serviceName + '" class="list-group-item list-group-item-action">';
+      listItem += '<div class="statuses" style="float:right">'
+      var globalStatus = 'dark'
       if (!!serviceStatus['passing']) {
         listItem += '<span class="badge badge-pill badge-success" style="margin-right:10px;">' + serviceStatus['passing'] + '</span>';
       }
       if (!!serviceStatus['warning']) {
         listItem += '<span class="badge badge-pill badge-warning" style="margin-right:10px;">' + serviceStatus['warning'] + '</span>';
+        if (globalStatus == 'dark') {
+          globalStatus = 'warning'
+        }
       }
       if (!!serviceStatus['critical']) {
         listItem += '<span class="badge badge-pill badge-danger" style="margin-right:10px;">' + serviceStatus['critical'] + '</span>';
+        globalStatus = 'critical'
       }
-
+      listItem+= ' / <span class="badge badge-pill badge-dark">' + (serviceStatus['total'] || 0) + '</span></div>';
+      listItem += '<div class="service-name text-' + globalStatus + '">' + serviceName + '</div>';
+      listItem += '<div class="service-tags">'
+      for (var i = 0; i < service.tags.length; i++) {
+        listItem += '<span title="' + service.tags[i] + '" class="badge badge-pill badge-' + (i%2?'secondary':'info') + '" style="float:right;">' + (service.tags[i]) + '</span> ';
+      }
+      listItem += '</div>'
       listItem += '</button>';
       this.serviceList.append(listItem);
     }
@@ -66,18 +77,20 @@ class ConsulService {
     var filter = new RegExp(e.target.value);
     consulService.serviceList.children('button').each(function (){
       if($(this).html().match(filter)) {
-        $(this).removeClass('d-none');
-        $(this).addClass('d-block');
+        var ui = $(this).closest( "button" )
+        ui.removeClass('d-none');
+        ui.addClass('d-block');
       } else {
-        $(this).removeClass('d-block');
-        $(this).addClass('d-none');
+        var ui = $(this).closest( "button" )
+        ui.removeClass('d-block');
+        ui.addClass('d-none');
       }
     })
   }
 
   onClickServiceName(source) {
     this.selectService(source);
-    this.updateURL();
+    this.updateURL($(source).find(".service-name").html());
   }
 
   onClickFilter(source) {
@@ -112,9 +125,11 @@ class ConsulService {
     })
   }
 
-  updateURL() {
+  updateURL(link) {
     var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-    newUrl += '?service=' + $(this.selectedService).html();
+    if (link) {
+      newUrl += '?service=' + link
+    }
     window.history.pushState({},"",newUrl);
   }
 
@@ -122,10 +137,9 @@ class ConsulService {
     if (this.selectedService) {
       $(this.selectedService).removeClass('active');
     }
-    this.selectedService = source;
+    var serviceName = $(source).find(".service-name").html()
+    this.selectedService = source.closest( "button" );
     $(this.selectedService).addClass('active');
-
-    var serviceName = $(source).find(".service-name").html();
 
     this.displayService(this.data.services[serviceName]);
   }
