@@ -4,6 +4,12 @@
 
 IMPROVEMENTS:
 
+## 1.1.3 (May 17, 2018)
+
+IMPROVEMENTS:
+
+ * Cleaner consul-ui with ability to filterr using tags and statuses
+
 ## 1.1.2 (May 17, 2018)
 
 IMPROVEMENTS:
