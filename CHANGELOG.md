@@ -4,6 +4,10 @@
 
 IMPROVEMENTS:
 
+## 1.2.0 (May 17, 2018)
+
+IMPROVEMENTS:
+
  * Added snode.service_address to get the IP address of a service easily
    without any logic in ERB files
  * Improved consul-ui, added a [README.md](samples/consul-ui/README.md)
