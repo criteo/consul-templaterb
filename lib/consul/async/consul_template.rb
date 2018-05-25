@@ -296,6 +296,7 @@ module Consul
           new_res << ServiceInstance.new(v)
         end
         @cached_result = new_res
+        @cached_json = result.json
         new_res
       end
     end
