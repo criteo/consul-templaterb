@@ -54,25 +54,45 @@ class ConsulService {
     for (var serviceName in this.data.services) {
       var service = this.data.services[serviceName];
       var serviceStatus = buildServiceStatus(service);
-      var listItem = '<button type="button" onfocus="consulService.onClickServiceName(this)" onclick="consulService.onClickServiceName(this)" value="' + serviceName + '" class="list-group-item list-group-item-action">';
-      listItem += '<div class="statuses" style="float:right">'
+
+      var listItem = document.createElement('button');
+      listItem.setAttribute('type','button');
+      listItem.setAttribute('onfocus','consulService.onClickServiceName(this)');
+      listItem.setAttribute('onclick','consulService.onClickServiceName(this)');
+      listItem.setAttribute('value',serviceName);
+      listItem.setAttribute('class','list-group-item list-group-item-action');
+
+      var statuses = document.createElement('div');
+      statuses.setAttribute('class','statuses float-right');
+
       if (!!serviceStatus['passing']) {
-        listItem += '<span class="badge badge-pill badge-success passing" style="margin-right:10px;">' + serviceStatus['passing'] + '</span>';
+        statuses.appendChild(createBadge('badge-success passing', serviceStatus['passing']));
       }
+
       if (!!serviceStatus['warning']) {
-        listItem += '<span class="badge badge-pill badge-warning warning" style="margin-right:10px;">' + serviceStatus['warning'] + '</span>';
+        statuses.appendChild(createBadge('badge-warning warning', serviceStatus['warning']));
       }
+
       if (!!serviceStatus['critical']) {
-        listItem += '<span class="badge badge-pill badge-danger critical" style="margin-right:10px;">' + serviceStatus['critical'] + '</span>';
+        statuses.appendChild(createBadge('badge-danger critical', serviceStatus['critical']));
       }
-      listItem+= ' / <span class="badge badge-pill badge-dark">' + (serviceStatus['total'] || 0) + '</span></div>';
-      listItem += '<div class="service-name">' + serviceName + '</div>';
-      listItem += '<div class="service-tags">'
+
+      statuses.appendChild(createBadge('badge-dark', (serviceStatus['total'] || 0)));
+      listItem.appendChild(statuses);
+
+      var serviceNameItem = document.createElement('div');
+      serviceNameItem.setAttribute('class', 'service-name');
+      serviceNameItem.appendChild(document.createTextNode(serviceName));
+      listItem.appendChild(serviceNameItem);
+
+      var serviceTagsItem = document.createElement('div');
+      serviceTagsItem.setAttribute('class', 'service-tags');
+
       for (var i = 0; i < service.tags.length; i++) {
-        listItem += '<span title="' + service.tags[i] + '" class="badge badge-pill badge-' + (i%2?'secondary':'info') + '" style="float:right;">' + (service.tags[i]) + '</span> ';
+        serviceTagsItem.appendChild(createBadge('float-right badge-' + (i%2?'secondary':'info') , service.tags[i]));
       }
-      listItem += '</div>'
-      listItem += '</button>';
+
+      listItem.appendChild(serviceTagsItem);
       this.serviceFilterCount += 1;
       this.serviceList.append(listItem);
     }
@@ -329,6 +349,18 @@ function resizeAll() {
 function resizeWrapper(wrapperId, wrapped) {
   var size = $(window).height() - $('#' + wrapperId).offset()["top"] - 20;
   $('#' + wrapperId).css("height", size);
+}
+
+function createBadge(classes, data) {
+  var badge = document.createElement('span');
+  badge.setAttribute('class', 'badge mx-1');
+  classesArray = classes.split(' ');
+  for (var i = 0; i < classesArray.length; i++) {
+    badge.classList.add(classesArray[i]);
+  }
+
+  badge.appendChild(document.createTextNode(data));
+  return badge;
 }
 
 $( window ).resize(resizeAll);
