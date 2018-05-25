@@ -2,17 +2,18 @@ require 'spec_helper'
 require 'consul/async/consul_endpoint'
 require_relative 'async_mock'
 
-RSpec.describe Consul::Async::ConsulEndpoint do
+RSpec.describe Consul::Async::VaultEndpoint do
   include Consul::AsyncMock
   before do
-    @conf = Consul::Async::ConsulConfiguration.new
+    @conf = Consul::Async::VaultConfiguration.new()
   end
 
   it 'returns the right json from the body of the http request' do
-    path = 'v1/health/service/consul'
-    results = mock_consul
-    EM.run_block { @endpoint = Consul::Async::ConsulEndpoint.new(@conf, path) }
+    path = 'v1/test/foo'
+    results = mock_vault
+    EM.run_block { @endpoint = Consul::Async::VaultEndpoint.new(@conf, path) }
     expect(@endpoint.ready?).to be true
+    puts results
     expect(@endpoint.last_result.data).to eq results[path]
   end
 end

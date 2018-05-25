@@ -71,7 +71,7 @@ module Consul
             @template_file_ctime = new_time
             return update_template(load_template)
           rescue Consul::Async::InvalidTemplateException => e
-            STDERR.puts "****\n[ERROR] HOT Reload of template #{template_file} did fail due to:\n #{e}\n****\n"
+            STDERR.puts "****t \n[ERROR] HOT Reload of template #{template_file} did fail due to:\n #{e}\n****\n"
             raise e unless hot_reload_failure == 'keep'
             STDERR.puts "[WARN] Hot reload of #{template_file} was not taken into account, keep running with previous version"
           end

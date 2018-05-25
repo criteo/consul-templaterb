@@ -1,5 +1,6 @@
 require 'consul/async/utilities'
 require 'consul/async/consul_endpoint'
+require 'consul/async/vault_endpoint'
 require 'consul/async/consul_template'
 require 'consul/async/consul_template_render'
 require 'em-http'
@@ -55,7 +56,7 @@ module Consul
               template_manager.terminate
               EventMachine.stop
             rescue StandardError => e
-              STDERR.puts "[ERROR] Fatal error occured: #{e.inspect} - #{e.backtrace}"
+              STDERR.puts "[ERROR] Fatal error occured: #{e.inspect} - #{e.backtrace.join("\n\t")}"
               template_manager.terminate
               EventMachine.stop
             end

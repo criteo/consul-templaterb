@@ -5,13 +5,14 @@ require_relative 'async_mock'
 RSpec.describe Consul::Async::ConsulTemplateEngine do
   include Consul::AsyncMock
   before do
-    @conf = Consul::Async::ConsulConfiguration.new
+    @consul_conf = Consul::Async::ConsulConfiguration.new
+    @vault_conf = Consul::Async::VaultConfiguration.new
   end
 
   it 'Renders properly ha_proxy.cfg.erb' do
-    mock_all
+    mock_consul
     EM.run_block do
-      template_manager = Consul::Async::ConsulEndPointsManager.new(@conf)
+      template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf)
       template_file = find_absolute_path('../../../../samples/ha_proxy.cfg.erb')
       output_file = 'out.txt'
       @renderer = Consul::Async::ConsulTemplateRender.new(template_manager, template_file, output_file)
@@ -31,9 +32,9 @@ RSpec.describe Consul::Async::ConsulTemplateEngine do
 
   Dir.glob(File.join(samples_path, '**', '*.erb')).each do |erb|
     it "Checks that #{erb} do work" do
-      mock_all
+      mock_consul
       EM.run_block do
-        template_manager = Consul::Async::ConsulEndPointsManager.new(@conf)
+        template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf)
         template_file = erb
         output_file = 'out.txt'
         @renderer = Consul::Async::ConsulTemplateRender.new(template_manager, template_file, output_file)
