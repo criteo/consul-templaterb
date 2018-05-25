@@ -2,9 +2,16 @@
 
 ## (UNRELEASED)
 
+BUG FIXES:
+
+ * cache for service was not properly taken into account
+
 IMPROVEMENTS:
 
-## 1.2.0 (May 17, 2018)
+ * consul-ui now shows the number of service filetered
+ * service.Meta is an object not an array when null (Consul < 1.1)
+
+## 1.2.0 (May 25, 2018)
 
 IMPROVEMENTS:
 
