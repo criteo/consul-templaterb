@@ -34,7 +34,7 @@
       service(service_name).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
         xnode = REXML::Element.new 'service-instance'
         xnode.add_attribute 'id', snode['Node']['ID'] if snode['Node']['ID']
-        xnode.add_attribute 'address', snode['Node']['Address']
+        xnode.add_attribute 'address', snode.service_address
         xnode.add_attribute 'name', snode['Node']['Name']
         xnode.add_attribute 'port', snode['Service']['Port'].to_i
         xnode.add_attribute 'tags', snode['Service']['Tags'].sort.join(',')

@@ -1,7 +1,7 @@
 Service Consul
 <%
   service('consul').each do |instance|
-%><%= instance['Node']['Node'] %>:<%= instance['Service']['Port'] %>
+%><%= instance.service_address %>:<%= instance['Service']['Port'] %> (<%= instance['Node']['Node'] %>)
 <%
   end
 %>---

@@ -101,7 +101,7 @@ require 'date'
         <div class="list-group">
         <% nodes_sorted.each do |snode|
           tags = snode['Service']['Tags'].sort
-          addr = snode['Node']['Address']
+          addr = snode.service_address
           port_num = snode['Service']['Port'].to_i
           port = port_num && port_num > 0 ? ":#{port_num}" : ''
           url = if tags.include? 'https'

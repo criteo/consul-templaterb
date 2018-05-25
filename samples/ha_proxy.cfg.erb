@@ -88,7 +88,7 @@ backend backend_http__<%= service_name %>
   mode http
   balance leastconn
 <%   nodes.each do |node|
-  %>  server <%= node['Node']['Node']%>_<%= node['Service']['Port'] %> <%= node['Node']['Address']%>:<%= node['Service']['Port'] %><%= compute_attributes(node) %>
+  %>  server <%= node['Node']['Node']%>_<%= node['Service']['Port'] %> <%= node.service_address%>:<%= node['Service']['Port'] %><%= compute_attributes(node) %>
 <%   end
    end
 %>

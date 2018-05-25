@@ -97,6 +97,9 @@ Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
 optional tag. If no tag is specified, will return all instances of service. By default, it will return all the
 services that are passing or not. An optional argument passing might be used to retrieve only passing instances.
 
+This object also contains a Helper to get easily the correct Address by using `service_address` which returns
+the optional `['Service']['Address']` if found or `['Node']['Address']` otherwise.
+
 <details><summary>Examples</summary>
 <div class="samples">
 

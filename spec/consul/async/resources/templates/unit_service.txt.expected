@@ -1,8 +1,8 @@
 Service Consul
-consul01-par.central.criteo.preprod:8300
-consul02-par.central.criteo.preprod:8300
-consul03-par.central.criteo.preprod:8300
-consul04-par.central.criteo.preprod:8300
+5.6.7.8:8300 (consul01-par.central.criteo.preprod)
+10.251.1.96:8300 (consul02-par.central.criteo.preprod)
+10.251.1.97:8300 (consul03-par.central.criteo.preprod)
+10.251.1.99:8300 (consul04-par.central.criteo.preprod)
 ---
 Service Consul filter UI
 consul04-par.central.criteo.preprod:8300

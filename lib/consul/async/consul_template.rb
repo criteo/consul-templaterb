@@ -269,9 +269,34 @@ module Consul
       end
     end
 
+    class ServiceInstance < Hash
+      def initialize(obj)
+        merge!(obj)
+      end
+
+      # Return ['Service']['Address'] if defined, the address of node otherwise
+      def service_address
+        val = self['Service']['Address']
+        val = self['Node']['Address'] unless !val.nil? && val != ''
+        val
+      end
+    end
+
     class ConsulTemplateService < ConsulTemplateAbstractMap
       def initialize(consul_endpoint)
         super(consul_endpoint)
+        @cached_result = []
+        @cached_json = nil
+      end
+
+      def result_delegate
+        return @cached_result if @cached_json == result.json
+        new_res = []
+        result.json.each do |v|
+          new_res << ServiceInstance.new(v)
+        end
+        @cached_result = new_res
+        new_res
       end
     end
 

@@ -157,7 +157,7 @@ backend be_<%= service_name %>
   mode http
   balance leastconn
 <%   nodes.each_with_index do |node, idx|
-  %>  server srv<%= idx %> <%= node['Node']['Address']%>:<%= node['Service']['Port'] %><%= compute_attributes(node) %>
+  %>  server srv<%= idx %> <%= node.service_address%>:<%= node['Service']['Port'] %><%= compute_attributes(node) %>
 <%   end
    end
 %>

@@ -28,7 +28,7 @@ end %>
   if service_per_node.key?(snode['Node'])
     service_per_node[snode['Node']].each do |service|
       tags = service['Service']['Tags'].sort
-      addr = service['Node']['Address']
+      addr = service.service_address
       port_num = service['Service']['Port'].to_i
       port = port_num && port_num > 0 ? ":#{port_num}" : ''
       url = if tags.include? 'https'

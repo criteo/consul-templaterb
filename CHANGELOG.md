@@ -4,6 +4,9 @@
 
 IMPROVEMENTS:
 
+ * Added snode.service_address to get the IP address of a service easily
+   without any logic in ERB files
+
 ## 1.1.3 (May 17, 2018)
 
 IMPROVEMENTS:
