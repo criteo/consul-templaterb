@@ -67,7 +67,7 @@ h2 .fas:hover {
 }
 
 .progress-status {
-  transition: background-color .16s linear;
+  transition: background-color .16s linear, width .16s linear;
   cursor: pointer;
 }
 
