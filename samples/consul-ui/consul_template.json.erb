@@ -77,14 +77,15 @@
         check['notes'] = ncheck['Notes']
         checks.push(check)
       end
+      meta = snode['Service']['Meta']
       server = { frontend_id: "backend_http__#{service_name}",
-                 id:     snode['Service']['ID'],
-                 name:   snode['Node']['Node'],
-                 sMeta:  snode['Service']['Meta'],
-                 addr:   snode.service_address,
-                 port:   snode['Service']['Port'],
-                 tags:   snode['Service']['Tags'],
-                 checks: checks,
+                 id:      snode['Service']['ID'],
+                 name:    snode['Node']['Node'],
+                 sMeta:   meta ? meta : [],
+                 addr:    snode.service_address,
+                 port:    snode['Service']['Port'],
+                 tags:    snode['Service']['Tags'],
+                 checks:  checks,
       }
       service[:instances] << server
     end

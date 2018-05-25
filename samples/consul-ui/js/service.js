@@ -218,7 +218,7 @@ function serviceTitleGenerator(instance) {
 
   var instanceLink = document.createElement('a');
   if (protocol != null) {
-    instanceLink.setAttribute('href',  protocol + instance.name + ':' + instance.port);
+    instanceLink.setAttribute('href',  protocol + instance.addr + ':' + instance.port);
     instanceLink.setAttribute('target',  '_blank');
   }
   instanceLink.appendChild(document.createTextNode(instance.name + ':' + instance.port));
