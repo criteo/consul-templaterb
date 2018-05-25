@@ -132,7 +132,6 @@ class ConsulService {
   }
 
   filterInstances() {
-    console.log("Filtering");
     $('.progress-status').each(function() {
       var status = $(this).attr('status');
       if (consulService.filterStatus == null) {
@@ -211,5 +210,6 @@ class ConsulService {
 
     resizeWrapper('instances-wrapper', 'instances-list');
     $('#instances-list .list-group-item').resize(resizeAll);
+    this.filterInstances();
   }
 }
