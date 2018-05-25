@@ -7,6 +7,8 @@ class ConsulService {
     this.serviceFilter.keyup(this.filterService);
     this.refresh = parseInt(refresh);
     this.filterStatus = null;
+    this.serviceFilterCounter = $("#service-counter");
+    this.serviceFilterCount = 0;
     this.showTags($('#showTagsInList').checked)
   }
 
@@ -47,6 +49,8 @@ class ConsulService {
   }
 
   reloadServiceList() {
+    this.serviceList.html('');
+    this.serviceFilterCount = 0;
     for (var serviceName in this.data.services) {
       var service = this.data.services[serviceName];
       var serviceStatus = buildServiceStatus(service);
@@ -69,18 +73,24 @@ class ConsulService {
       }
       listItem += '</div>'
       listItem += '</button>';
+      this.serviceFilterCount += 1;
       this.serviceList.append(listItem);
     }
+    this.serviceFilterCounter.html(this.serviceFilterCount);
     resizeWrapper('service-wrapper', 'service-list');
+    this.filterService();
   }
 
-  filterService(e) {
-    var filter = new RegExp(e.target.value);
+  filterService() {
+    var filter = new RegExp(consulService.serviceFilter.val());
+    consulService.serviceFilterCount = 0;
     consulService.serviceList.children('button').each(function (){
       if($(this).html().match(filter)) {
         var ui = $(this).closest( "button" )
         ui.removeClass('d-none');
         ui.addClass('d-block');
+        consulService.serviceFilterCount += 1;
+        consulService.serviceFilterCounter.html(consulService.serviceFilterCount);
       } else {
         var ui = $(this).closest( "button" )
         ui.removeClass('d-block');
