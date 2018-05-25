@@ -5,6 +5,8 @@ class ConsulService {
     this.serviceList = $("#service-list");
     this.serviceFilter = $("#service-filter");
     this.serviceFilter.keyup(this.filterService);
+    this.instanceFilter = $("#instance-filter");
+    this.instanceFilter.keyup(this.filterInstances);
     this.refresh = parseInt(refresh);
     this.filterStatus = null;
     this.serviceFilterCounter = $("#service-counter");
@@ -105,14 +107,13 @@ class ConsulService {
     var filter = new RegExp(consulService.serviceFilter.val());
     consulService.serviceFilterCount = 0;
     consulService.serviceList.children('button').each(function (){
-      if($(this).html().match(filter)) {
-        var ui = $(this).closest( "button" )
+      var ui = $(this);
+      if(serviceMatcher(this, filter)) {
         ui.removeClass('d-none');
         ui.addClass('d-block');
         consulService.serviceFilterCount += 1;
         consulService.serviceFilterCounter.html(consulService.serviceFilterCount);
       } else {
-        var ui = $(this).closest( "button" )
         ui.removeClass('d-block');
         ui.addClass('d-none');
       }
@@ -131,6 +132,7 @@ class ConsulService {
   }
 
   filterInstances() {
+    console.log("Filtering");
     $('.progress-status').each(function() {
       var status = $(this).attr('status');
       if (consulService.filterStatus == null) {
@@ -141,14 +143,20 @@ class ConsulService {
         $(this).addClass('progress-deactivated');
       }
     })
+    var filter = new RegExp(consulService.instanceFilter.val());
     $('#instances-list').children('div').each(function() {
       var status = $(this).attr('status');
-      if (consulService.filterStatus == null) {
-        $(this).removeClass('d-none');
-        $(this).addClass('d-block');
-      } else if (consulService.filterStatus == status) {
-        $(this).removeClass('d-none');
-        $(this).addClass('d-block');
+      if(instanceMatcher(this, filter)) {
+        if (consulService.filterStatus == null) {
+          $(this).removeClass('d-none');
+          $(this).addClass('d-block');
+        } else if (consulService.filterStatus == status) {
+          $(this).removeClass('d-none');
+          $(this).addClass('d-block');
+        } else {
+          $(this).removeClass('d-block');
+          $(this).addClass('d-none');
+        }
       } else {
         $(this).removeClass('d-block');
         $(this).addClass('d-none');
@@ -247,6 +255,7 @@ function serviceTitleGenerator(instance) {
   var htmlTitle = document.createElement('h5');
 
   var instanceLink = document.createElement('a');
+  instanceLink.setAttribute('class',  'instance-name');
   if (protocol != null) {
     instanceLink.setAttribute('href',  protocol + instance.addr + ':' + instance.port);
     instanceLink.setAttribute('target',  '_blank');
@@ -260,7 +269,7 @@ function serviceTitleGenerator(instance) {
 function tagsGenerator(instance) {
   var tags = document.createElement('div');
 
-  tags.className = 'tags';
+  tags.className = 'instance-tags';
   tags.appendChild(document.createTextNode("Tags: "));
   tags.appendChild(document.createElement('br'));
 
@@ -361,6 +370,34 @@ function createBadge(classes, data) {
 
   badge.appendChild(document.createTextNode(data));
   return badge;
+}
+
+function serviceMatcher(service, regex) {
+  if(service.getElementsByClassName('service-name')[0].innerHTML.match(regex)) {
+    return true;
+  }
+  var tags = service.getElementsByClassName('service-tags')[0].getElementsByClassName('badge');
+
+  for (var i=0; i < tags.length; i++) {
+    if(tags[i].innerHTML.match(regex)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function instanceMatcher(instance, regex) {
+  if(instance.getElementsByClassName('instance-name')[0].innerHTML.match(regex)) {
+    return true;
+  }
+  var tags = instance.getElementsByClassName('instance-tags')[0].getElementsByClassName('badge');
+
+  for (var i=0; i < tags.length; i++) {
+    if(tags[i].innerHTML.match(regex)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 $( window ).resize(resizeAll);

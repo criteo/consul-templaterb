@@ -35,6 +35,16 @@
   border-right: 0px;
 }
 
+#node-statuses span {
+  font-size: 1rem;
+  transition: background-color .16s linear;
+  cursor: pointer;
+}
+
+#node-statuses {
+  margin-top: 0.4rem;
+}
+
 h2 {
   margin-top: 1rem;
   margin-bottom: 1rem;
