@@ -85,3 +85,58 @@ h2 .fas:hover {
   background-color: #a5a5a5 !important;
   color: #f1f1f1 !important;
 }
+
+.status-deactivated {
+  background-color: #a5a5a5 !important;
+  color: #f1f1f1 !important;
+}
+
+.service-status {
+  transition: background-color .16s linear;
+  font-size: 85%;
+  cursor: pointer;
+}
+
+#instance-statuses {
+  padding-top: 5px;
+  text-align: center;
+}
+
+.status-sidebar {
+  width: 5px !important;
+  min-height: 1px;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.instance-content {
+  width: 100%;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 12px;
+}
+
+#nodes #instances-list .list-group-item {
+  padding-left: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  display: flex;
+  flex-direction: row;
+}
+
+html, body {
+    height:100%;
+}
+
+.instance-content-header {
+  display: flex;
+}
+
+.instance-content-header h5 {
+  margin-right: 10px;
+}
+
+.meta-tags {
+  text-align: right;
+  flex: 2 0 0;
+}

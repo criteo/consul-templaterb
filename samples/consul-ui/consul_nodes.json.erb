@@ -1,0 +1,63 @@
+<%
+# This template can be configure the following way with environment variables
+# Environment variables to filter services/instances
+#   SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
+#   INSTANCE_MUST_TAG: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
+#   INSTANCE_EXCLUDE_TAG: Exclude instances having the given tag (default: canary)
+#   EXCLUDE_SERVICES: comma-separated services to exclude (default: consul-agent-http,mesos-slave,mesos-agent-watcher)
+
+  service_tag_filter = ENV['SERVICES_TAG_FILTER'] || nil
+  instance_must_tag = ENV['INSTANCE_MUST_TAG'] || service_tag_filter
+  instance_exclude_tag = ENV['INSTANCE_EXCLUDE_TAG']
+
+  # Services to hide
+  services_blacklist = (ENV['EXCLUDE_SERVICES'] || 'consul-agent-http,mesos-slave,mesos-agent-watcher,mesos-exporter-slave').split(',')
+  service_per_node = {}
+  services.each do |service_name, tags|
+    if !services_blacklist.include? service_name
+      service(service_name, tag: service_tag_filter).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
+        node_info = service_per_node[snode['Node']['Node']] || {}
+
+        node_node_data = {
+          Name: snode['Node']['Node'],
+          Address: snode['Node']['Address'],
+          Meta: snode['Node']['Meta'],
+        }
+
+        node_services_data = node_info[:Service] || []
+
+        service_data = {
+          Service: snode["Service"]["Service"],
+          Tags: snode["Service"]["Tags"],
+          Port: snode["Service"]["Port"],
+        }
+        checks_array = []
+        snode["Checks"].each do |check|
+          checks_data = {
+            name: check["Name"],
+            status: check["Status"],
+            notes: check["Notes"],
+            output: check["Output"],
+          }
+          checks_array.push(checks_data)
+        end
+        node_service = {
+          Service: service_data,
+          Checks: checks_array,
+        }
+        node_services_data.push(node_service)
+
+        node_data = {
+          Node: node_node_data,
+          Service: node_services_data,
+        }
+
+        service_per_node[snode['Node']['Node']] = node_data
+      end
+      # break
+    end
+  end
+%><%
+  json_datacenters = datacenters
+  json = { nodes: service_per_node, datacenters: json_datacenters, generated_at: Time.now}
+%><%= JSON.pretty_generate(json) %>

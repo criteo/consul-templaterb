@@ -1,4 +1,4 @@
-<% datasource = ENV['SERVICE_DATASOURCE'] || 'consul-template.json'
+<% datasource = ENV['SERVICE_DATASOURCE'] || 'consul_services.json'
    # Time to wait before reloading configuration again in seconds (0 = never)
    refresh = ENV['REFRESH'] || '3600' %><%= render_file('common/header.html.erb', title: 'Services') %>
     <div class="main">

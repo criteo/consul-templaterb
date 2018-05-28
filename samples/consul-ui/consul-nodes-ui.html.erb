@@ -1,0 +1,35 @@
+<% datasource = ENV['SERVICE_DATASOURCE'] || 'consul_nodes.json'
+   # Time to wait before reloading configuration again in seconds (0 = never)
+   refresh = ENV['REFRESH'] || '3600' %><%= render_file('common/header.html.erb', title: 'Nodes') %>
+    <div id='nodes' class="main">
+      <div class="row mx-0">
+        <div class="col-12 col-m-12">
+          <h2 class="text-center" id="service-title"></h2>
+          <div class="row mb-2">
+            <div class="input-group float-left col-10">
+              <input id="instance-filter" type="text" placeholder="filter nodes by name, service or tags" class="form-control" />
+            </div>
+            <div id="instance-statuses" class="col-2">
+              <span id="service-status-passing"  status="passing" onclick="consulNodes.onClickFilter(this)" class="badge mx-1 badge-success passing service-status">0</span>
+              <span id="service-status-warning"  status="warning" onclick="consulNodes.onClickFilter(this)" class="badge mx-1 badge-warning warning service-status">0</span>
+              <span id="service-status-critical" status="critical" onclick="consulNodes.onClickFilter(this)" class="badge mx-1 badge-danger critical service-status">0</span>
+              <span id="service-status-total" status="total" onclick="consulNodes.onClickFilter(this)" class="badge mx-1 badge-dark service-status">0</span>
+            </div>
+          </div>
+          <div id="instances-wrapper">
+            <div id="instances-list" class="list-group"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- Optional JavaScript -->
+  <!-- JavaScript Dependencies: jQuery, Popper.js, Bootstrap JS, Shards JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/nodes.js"></script>
+  <script type="text/javascript">
+    consulNodes = new ConsulNodes('<%= datasource %>','<%= refresh %>');
+  </script>
+  </body>
+</html>
