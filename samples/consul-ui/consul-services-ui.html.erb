@@ -1,6 +1,6 @@
 <% datasource = ENV['SERVICE_DATASOURCE'] || 'consul-template.json'
    # Time to wait before reloading configuration again in seconds (0 = never)
-   refresh = ENV['REFRESH'] || '600' %><%= render_file('common/header.html.erb', title: 'Services') %>
+   refresh = ENV['REFRESH'] || '3600' %><%= render_file('common/header.html.erb', title: 'Services') %>
     <div class="main">
       <div class="row mx-0">
         <div id="filter-menu" class="col-4 col-m-3 px-4 pt-4">
@@ -12,7 +12,7 @@
               </label>
             </div>
             <div class="input-group">
-            <input id="service-filter" type="text" placeholder="filter by name or tags" class="form-control" />
+            <input id="service-filter" type="text" placeholder="filter services by name or tags" class="form-control" />
               <div class="input-group-append">
                 <span class="input-group-text" id="service-counter"></span>
               </div>
@@ -25,6 +25,11 @@
         </div>
         <div class="col-8 col-m-9">
           <h2 class="text-center" id="service-title"></h2>
+          <div class="row mb-2">
+            <div class="input-group float-left col-12">
+              <input id="instance-filter" type="text" placeholder="filter nodes by name or tags" class="form-control" />
+            </div>
+          </div>
           <div class="progress">
             <div id="service-progress-passing" status="passing" onclick="consulService.onClickFilter(this)" class="progress-status progress-bar bg-success" role="progressbar" style="width: 100%">passing</div>
             <div id="service-progress-warning" status="warning" onclick="consulService.onClickFilter(this)" class="progress-status progress-bar bg-warning" role="progressbar" style="width: 0%">warning</div>
@@ -40,6 +45,7 @@
   <!-- JavaScript Dependencies: jQuery, Popper.js, Bootstrap JS, Shards JS -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="js/utils.js"></script>
   <script src="js/service.js"></script>
   <script type="text/javascript">
     consulService = new ConsulService('<%= datasource %>','<%= refresh %>');
