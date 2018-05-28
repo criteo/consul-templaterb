@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+IMPROVEMENTS:
+
+## 1.2.1 (May 28, 2018)
+
 BUG FIXES:
 
  * cache for service was not properly taken into account
