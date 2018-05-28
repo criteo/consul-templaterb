@@ -27,3 +27,12 @@ samples/consul-ui/common/*.html
 .rspec_status
 # Mac OS
 .DS_Store
+
+# IntelliJ project files 
+*.iml
+*.iws
+*.ipr
+.idea/
+
+# Misc
+*.swp
