@@ -5,7 +5,6 @@ require 'json'
 module Consul
   module Async
     class Utilities
-
       def self.valid_json?(json)
         !!JSON.parse(json)
       rescue JSON::ParserError => _e

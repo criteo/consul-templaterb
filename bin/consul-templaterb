@@ -29,10 +29,10 @@ options = {
     min_duration: 60,
     max_retry_duration: 86_400, # Much higher than consul's because some dynamic secrets could be used for a day.
     paths: {
-        '/v1/sys/mounts' => {
+      '/v1/sys/mounts' => {
         max_retry_duration: 600,
         min_duration: 600
-      },
+      }
     }
   },
   consul: {
@@ -248,9 +248,7 @@ def find_max_descriptors(max_descripors)
 end
 
 %i[consul vault].each do |type|
-  unless options[type][:base_url].start_with? 'http', 'https'
-    options[type][:base_url] = "http://#{options[type][:base_url]}"
-  end
+  options[type][:base_url] = "http://#{options[type][:base_url]}" unless options[type][:base_url].start_with? 'http', 'https'
 end
 
 # Since we might be using a lots of descriptors, document this
