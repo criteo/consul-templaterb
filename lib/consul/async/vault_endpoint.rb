@@ -212,7 +212,7 @@ module Consul
         cb = proc do |n|
           http = connection.send(http_method.downcase, build_request()) # Under the hood: c.send('get', {stuff}) === c.get({stuff})
           http.callback do
-            if enforce_json_200 && http.response_header.status != 200 || http.response_header['Content-Type'] != 'application/json'
+            if enforce_json_200 && http.response_header.status != 200
               _handle_error(http) { connection = EventMachine::HttpRequest.new(conf.base_url, options) }
             else
               @consecutive_errors = 0
