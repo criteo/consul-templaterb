@@ -41,28 +41,28 @@ options = {
     },
     base_url: ENV['CONSUL_HTTP_ADDR'] || 'http://localhost:8500',
     token: ENV['CONSUL_HTTP_TOKEN'] || nil,
-    retry_duration: 10, # On error, retry after n seconds
-    min_duration: 5, # On sucess and when differences are found
-    retry_on_non_diff: 3, # On success but when there are not differences
-    wait_duration: 600, # Delay to block in Consul
+    retry_duration: 10,      # On error, retry after n seconds
+    min_duration: 5,         # On sucess and when differences are found
+    retry_on_non_diff: 3,    # On success but when there are not differences
+    wait_duration: 600,      # Delay to block in Consul
     max_retry_duration: 600, # On consecutive errors, delay will increase, max value
     missing_index_retry_time_on_diff: 15, # On endpoints without X-Consul-Index => next request
     missing_index_retry_time_on_unchanged: 60, # Endpoints with X-Consul index and no diff
     paths: {
       '/v1/catalog/services' => {
-        min_duration: 30, # Since services change a lot, refresh services every 30 seconds
+        min_duration: 30,    # Since services change a lot, refresh services every 30 seconds
       },
       '/v1/catalog/nodes' => {
-        min_duration: 30, # Do not wake up before 30 seconds when node appear/disappear
+        min_duration: 30,    # Do not wake up before 30 seconds when node appear/disappear
       },
       '/v1/catalog/datacenters' => {
-        min_duration: 60, # Datacenters are not added every minute, right?
+        min_duration: 60,    # Datacenters are not added every minute, right?
       },
       '/v1/agent/metrics' => {
-        min_duration: 60, # Refresh metrics only minute max
+        min_duration: 60,    # Refresh metrics only minute max
       },
       '/v1/agent/self' => {
-        min_duration: 60, # Refresh self info every minute max
+        min_duration: 60,    # Refresh self info every minute max
       }
     }
   }
