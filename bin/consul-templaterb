@@ -101,11 +101,12 @@ optparse = OptionParser.new do |opts|
     options[:vault][:token] = vault_token
   end
 
-  opts.on('', '--no-vault-renew', 'Disable auto-renewal of the Vault token') do
-    options[:vault][:token_renew] = FALSE
+  options[:vault][:token_renew] = TRUE
+  opts.on('', '--vault-renew [boolean]', Boolean, 'Disable auto-renewal of the Vault token') do |vault_renew|
+    options[:vault][:token_renew] = vault_renew
   end
 
-  opts.on('l', '--lease-duration-factor', 'Wait at least <factor> * lease time before updating a Vault secret (e.g: 0.5)') do |factor|
+  opts.on('l', '--vault-lease-duration-factor', 'Wait at least <factor> * lease time before updating a Vault secret (e.g: 0.5)') do |factor|
     options[:vault][:lease_duration_factor] = factor
   end
 
