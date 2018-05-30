@@ -15,10 +15,10 @@ module Consul
       JSON.parse input
     end
 
-    def mock_path(path, file, port, http_method = :get, status = 200, _query_params = {})
+    def mock_path(path, file, port, http_method = :get, status = 200, query_params={})
       body = read(file)
       stub_request(http_method, %r{http://localhost:#{port}/#{path}?.*})
-        .to_return(body: body, status: status)
+          .to_return(body: body, status: status)
       body
     end
 
@@ -29,10 +29,10 @@ module Consul
     def mock_vault
       results = {}
       [
-        ['v1/test/foo', :get, 200],
-        ['v1/test/nothere', :get, 404]
+          ['v1/test/foo', :get, 200],
+          ['v1/test/nothere', :get, 404],
       ].each do |path, verb, code|
-        results[path] = mock_path(path, "vault/#{path}.json", 8200, verb, code)
+        results[path] = mock_path(path, "vault/#{path}.json", 8200, verb, code )
       end
       results
     end
@@ -55,5 +55,6 @@ module Consul
       end
       results
     end
+
   end
 end

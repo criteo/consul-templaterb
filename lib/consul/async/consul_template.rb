@@ -38,7 +38,7 @@ module Consul
         }
 
         unless @vault_conf.token.nil?
-          # Setup token renewal
+          #Setup token renewal
           vault_setup_token_renew
         end
       end
@@ -135,17 +135,17 @@ module Consul
       def secrets(path = '')
         raise "You need to provide a vault token to use 'secret' keyword" if vault_conf.token.nil?
         path = "/v1/#{path}"
-        query_params = { list: 'true' }
-        create_if_missing(path, query_params) { ConsulTemplateVaultSecretList.new(VaultEndpoint.new(vault_conf, path, 'GET', true, query_params)) }
+        query_params = {list: "true"}
+        create_if_missing(path, query_params) { ConsulTemplateVaultSecretList.new(VaultEndpoint.new(vault_conf, path, 'GET',true, query_params)) }
       end
 
-      def secret(path = '', post_data = nil)
+      def secret(path = '', post_data = nil )
         puts post_data
         raise "You need to provide a vault token to use 'secrets' keyword" if vault_conf.token.nil?
         path = "/v1/#{path}"
         query_params = {}
-        method = post_data ? 'POST' : 'GET'
-        create_if_missing(path, query_params) { ConsulTemplateVaultSecret.new(VaultEndpoint.new(vault_conf, path, method, true, query_params)) }
+        method = post_data ? "POST" : "GET"
+        create_if_missing(path, query_params) { ConsulTemplateVaultSecret.new(VaultEndpoint.new(vault_conf, path, method, true, query_params )) }
       end
 
       # render a relative file with the given params accessible from template
@@ -170,7 +170,7 @@ module Consul
           current_erb_path: tpl_file_path,
           params: params
         }
-        result = ERB.new(tpl, nil, '<>-%').result(binding)
+        result = ERB.new(tpl, nil, "<>-%").result(binding)
         @context = old_value
         result
       rescue StandardError => e
@@ -228,7 +228,7 @@ module Consul
 
       def vault_setup_token_renew
         path = 'v1/auth/token/renew-self'
-        STDERR.print '[INFO] Setting up vault token renewal'
+        STDERR.print "[INFO] Setting up vault token renewal"
         VaultEndpoint.new(vault_conf, path, :POST, {}, {})
       end
 
@@ -276,7 +276,7 @@ module Consul
       protected
 
       def result_delegate
-        result.json
+          result.json
       end
 
       def parse_result(res)
@@ -420,7 +420,7 @@ module Consul
     end
     class ConsulTemplateVaultSecretList < ConsulTemplateAbstractArray
       def parse_result(res)
-        return res unless res.data != '[]'
+        return res unless res.data != "[]"
         res.mutate(JSON.generate(res.json['data']['keys']))
         res
       end

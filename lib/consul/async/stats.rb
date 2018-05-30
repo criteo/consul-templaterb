@@ -37,3 +37,4 @@ module Consul
     end
   end
 end
+

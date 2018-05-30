@@ -55,11 +55,11 @@ class Endpoint
 
   def build_request(headers = {}, query_params = {})
     req = {
-      head: headers,
-      path: path,
-      query: query_params,
-      keepalive: true,
-      callback: method(:on_response)
+        head: headers,
+        path: path,
+        query: query_params,
+        keepalive: true,
+        callback: method(:on_response)
     }
     @query_params.each_pair do |k, v|
       req[:query][k] = v
@@ -67,7 +67,9 @@ class Endpoint
     req
   end
 
-  def log(level, message); end
+  def log(level, message)
+
+  end
 
   def _handle_error(http, consul_index)
     retry_in = [600, conf.retry_duration + 2**@consecutive_errors].min
@@ -83,8 +85,8 @@ class Endpoint
 
   def fetch
     options = {
-      connect_timeout: 5, # default connection setup timeout
-      inactivity_timeout: conf.wait_duration + 1, # default connection inactivity (post-setup) timeout
+        connect_timeout: 5, # default connection setup timeout
+        inactivity_timeout: conf.wait_duration + 1, # default connection inactivity (post-setup) timeout
     }
     connection = EventMachine::HttpRequest.new(conf.base_url, options)
     cb = proc do |consul_index|

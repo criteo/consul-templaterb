@@ -29,6 +29,7 @@ module Consul
         @lease_duration_factor = lease_duration_factor
         @paths = paths
         @token = token
+
       end
 
       def ch(path, symbol)
@@ -102,7 +103,7 @@ module Consul
     class VaultEndpoint
       attr_reader :conf, :path, :http_method, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value, :query_params
 
-      def initialize(conf, path, http_method = 'GET', enforce_json_200 = true, query_params = {}, default_value = '[]', post_data = {})
+      def initialize(conf, path, http_method = 'GET', enforce_json_200 = true, query_params = {}, default_value = '[]', post_data ={})
         @conf = conf.create(path)
         @default_value = default_value
         @path = path
@@ -118,7 +119,7 @@ module Consul
         @post_data = post_data
         @stopping = false
         @stats = EndPointStats.new
-        @last_result = VaultResult.new(default_value, false, HttpResponse.new(nil), stats, 1)
+        @last_result = VaultResult.new(default_value, false, HttpResponse.new(nil) , stats ,1)
         on_response { |result| @stats.on_response result }
         on_error { |http| @stats.on_error http }
         _enable_network_debug if conf.debug && conf.debug[:network]
@@ -156,7 +157,7 @@ module Consul
 
       private
 
-      def build_request
+      def build_request()
         res = {
           head: {
             'Accept' => 'application/json',
@@ -179,12 +180,13 @@ module Consul
       def get_lease_duration(result)
         JSON[result]['lease_duration'] || conf.min_duration
       end
-
       def _get_errors(http)
         return [http.error] if http.error
         if Utilities.valid_json?(http.response)
           r = JSON[http.response]
-          return r['errors'] if r.key?('errors')
+          if r.has_key?('errors')
+            return r['errors']
+          end
         end
         ['unknown error']
       end
@@ -196,7 +198,7 @@ module Consul
         http_result = HttpResponse.new(http)
         EventMachine.add_timer(retry_in) do
           yield
-          queue.push
+          queue.push()
         end
         @e_callbacks.each { |c| c.call(http_result) }
       end
@@ -207,8 +209,8 @@ module Consul
           inactivity_timeout: 1, # default connection inactivity (post-setup) timeout
         }
         connection = EventMachine::HttpRequest.new(conf.base_url, options)
-        cb = proc do |_n|
-          http = connection.send(http_method.downcase, build_request) # Under the hood: c.send('get', {stuff}) === c.get({stuff})
+        cb = proc do |n|
+          http = connection.send(http_method.downcase, build_request()) # Under the hood: c.send('get', {stuff}) === c.get({stuff})
           http.callback do
             if enforce_json_200 && http.response_header.status != 200
               _handle_error(http) { connection = EventMachine::HttpRequest.new(conf.base_url, options) }
