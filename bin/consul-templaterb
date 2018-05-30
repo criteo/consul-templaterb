@@ -49,19 +49,19 @@ options = {
     missing_index_retry_time_on_diff: 15, # On endpoints without X-Consul-Index => next request
     missing_index_retry_time_on_unchanged: 60, # Endpoints with X-Consul index and no diff
     paths: {
-      '/v1/catalog/services' => {
+      '/v1/catalog/services': {
         min_duration: 30,    # Since services change a lot, refresh services every 30 seconds
       },
-      '/v1/catalog/nodes' => {
+      '/v1/catalog/nodes': {
         min_duration: 30,    # Do not wake up before 30 seconds when node appear/disappear
       },
-      '/v1/catalog/datacenters' => {
+      '/v1/catalog/datacenters': {
         min_duration: 60,    # Datacenters are not added every minute, right?
       },
-      '/v1/agent/metrics' => {
+      '/v1/agent/metrics': {
         min_duration: 60,    # Refresh metrics only minute max
       },
-      '/v1/agent/self' => {
+      '/v1/agent/self': {
         min_duration: 60,    # Refresh self info every minute max
       }
     }

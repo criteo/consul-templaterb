@@ -170,7 +170,7 @@ module Consul
           current_erb_path: tpl_file_path,
           params: params
         }
-        result = ERB.new(tpl, nil, "<>-%").result(binding)
+        result = ERB.new(tpl).result(binding)
         @context = old_value
         result
       rescue StandardError => e
@@ -276,7 +276,7 @@ module Consul
       protected
 
       def result_delegate
-          result.json
+        result.json
       end
 
       def parse_result(res)

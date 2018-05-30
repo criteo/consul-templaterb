@@ -56,7 +56,7 @@ module Consul
               template_manager.terminate
               EventMachine.stop
             rescue StandardError => e
-              STDERR.puts "[ERROR] Fatal error occured: #{e.inspect} - #{e.backtrace.join("\n\t")}"
+              STDERR.puts "[ERROR] Fatal error occured: #{e.inspect} - #{e.backtrace}"
               template_manager.terminate
               EventMachine.stop
             end
