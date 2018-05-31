@@ -123,7 +123,7 @@ module Consul
         @post_data = post_data
         @stopping = false
         @stats = EndPointStats.new
-        @last_result = VaultResult.new(HttpResponse.new(nil, default_value), false, stats ,1)
+        @last_result = VaultResult.new(::HttpResponse.new(nil, default_value), false, stats ,1)
         on_response { |result| @stats.on_response result }
         on_error { |http| @stats.on_error http }
         _enable_network_debug if conf.debug && conf.debug[:network]
@@ -197,7 +197,7 @@ module Consul
         retry_in = [conf.max_retry_duration, conf.retry_duration + 2**@consecutive_errors].min
         STDERR.puts "[ERROR][#{path}][#{http_method}] Code: #{http.response_header.status} #{_get_errors(http).join(' - ')} - Retry in #{retry_in}s #{stats.body_bytes_human}"
         @consecutive_errors += 1
-        http_result = HttpResponse.new(http, default_value)
+        http_result = ::HttpResponse.new(http, default_value)
         EventMachine.add_timer(retry_in) do
           yield
           queue.push()
@@ -214,7 +214,7 @@ module Consul
         cb = proc do |_|
           http = connection.send(http_method.downcase, build_request) # Under the hood: c.send('get', {stuff}) === c.get({stuff})
           http.callback do
-            http_result = HttpResponse.new(http.dup.freeze, default_value)
+            http_result = ::HttpResponse.new(http.dup.freeze, default_value)
             if enforce_json_200 && http.response_header.status != 200
               _handle_error(http_result) { connection = EventMachine::HttpRequest.new(conf.base_url, options) }
             else
