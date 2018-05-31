@@ -117,7 +117,7 @@ module Consul
         @query_params = query_params
         @stopping = false
         @stats = EndPointStats.new
-        @last_result = ConsulResult.new(default_value, false, ::HttpResponse.new(nil), 0, stats, 1)
+        @last_result = ConsulResult.new(default_value, false, HttpResponse.new(nil), 0, stats, 1)
         on_response { |result| @stats.on_response result }
         on_error { |http| @stats.on_error http }
         _enable_network_debug if conf.debug && conf.debug[:network]
@@ -185,7 +185,7 @@ module Consul
         retry_in = [600, conf.retry_duration + 2**@consecutive_errors].min
         STDERR.puts "[ERROR][#{path}] X-Consul-Index:#{consul_index} - #{http.error} - Retry in #{retry_in}s #{stats.body_bytes_human}"
         @consecutive_errors += 1
-        http_result = ::HttpResponse.new(http)
+        http_result = HttpResponse.new(http)
         EventMachine.add_timer(retry_in) do
           yield
           queue.push(consul_index)
@@ -210,9 +210,9 @@ module Consul
               n_consul_index = find_x_consul_token(http)
               @consecutive_errors = 0
               http_result = if is_kv_empty
-                              ::HttpResponse.new(http, default_value)
+                              HttpResponse.new(http, default_value)
                             else
-                              ::HttpResponse.new(http)
+                              HttpResponse.new(http)
                             end
               new_content = http_result.response.freeze
               modified = @last_result.nil? ? true : @last_result.data != new_content
