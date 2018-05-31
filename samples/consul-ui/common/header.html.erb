@@ -10,6 +10,19 @@
   dc_suffix = ENV['CONSUL_DC_SUFFIX'] || ''
   dc_prefix = ENV['CONSUL_DC_PREFIX'] || '#'
 
+  # CUSTOM_LINKS: A comma separated list of URLs to add to the header in the format: [linkname](actuallink)
+  # Example: [Consul template erb](https://github.com/criteo/consul-templaterb),[anotherlink](#)
+  custom_links = (ENV['CUSTOM_LINKS'] || '').split(",")
+  links_to_display = {}
+  if !custom_links.empty?
+    custom_links.each do |link|
+      if /\[.*\]\(.*\)/ =~ link
+        link_data = /\[(.*)\]\((.*)\)/.match(link)
+        links_to_display[link_data[1]] = link_data[2]
+      end
+    end
+  end
+
 %><!DOCTYPE html>
 <html lang="en">
   <head>
@@ -43,6 +56,11 @@
           <% tools.each do |tool| %>
           <li class="nav-item">
             <a class="nav-link" href="<%= tools_prefix + tool + tools_suffix %>"><%= tool.gsub('_', ' ').capitalize %></a>
+          </li>
+          <% end %>
+          <% links_to_display.each do |linkname,link| %>
+          <li class="nav-item">
+            <a class="nav-link" target="_blank" href="<%= link %>"><%= linkname %></a>
           </li>
           <% end %>
         </ul>
