@@ -4,7 +4,7 @@
   "renewable": false,
   "lease_duration": 0,
   "data": {
-    "a": [
+    "keys": [
       "a",
       "b",
       "value"

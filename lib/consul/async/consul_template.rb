@@ -37,7 +37,7 @@ module Consul
           params: {}
         }
 
-        unless @vault_conf.token.nil?
+        unless @vault_conf.token.nil? || !@vault_conf.token_renew
           #Setup token renewal
           vault_setup_token_renew
         end

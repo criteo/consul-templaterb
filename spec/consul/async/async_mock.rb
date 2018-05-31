@@ -29,10 +29,11 @@ module Consul
     def mock_vault
       results = {}
       [
-          ['v1/test/foo', :get, 200],
-          ['v1/test/nothere', :get, 404],
-      ].each do |path, verb, code|
-        results[path] = mock_path(path, "vault/#{path}.json", 8200, verb, code )
+          ['v1/test/foo', :get, 200, nil],
+          ['v1/test/nothere', :get, 404, nil],
+          ['v1/teams/', :get, 200, {list:"true"}],
+      ].each do |path, verb, code, query_params|
+        results[path] = mock_path(path, "vault/#{path}.json", 8200, verb, code)
       end
       results
     end

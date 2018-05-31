@@ -6,7 +6,7 @@ RSpec.describe Consul::Async::ConsulTemplateEngine do
   include Consul::AsyncMock
   before do
     @consul_conf = Consul::Async::ConsulConfiguration.new
-    @vault_conf = Consul::Async::VaultConfiguration.new
+    @vault_conf = Consul::Async::VaultConfiguration.new(token: "fake", token_renew: false)
   end
 
   it 'Renders properly ha_proxy.cfg.erb' do
@@ -33,6 +33,7 @@ RSpec.describe Consul::Async::ConsulTemplateEngine do
   Dir.glob(File.join(samples_path, '**', '*.erb')).each do |erb|
     it "Checks that #{erb} do work" do
       mock_consul
+      mock_vault
       EM.run_block do
         template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf)
         template_file = erb
