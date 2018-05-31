@@ -101,8 +101,8 @@ optparse = OptionParser.new do |opts|
     options[:vault][:token] = vault_token
   end
 
-  options[:vault][:token_renew] = TRUE
-  opts.on('', '--vault-renew [boolean]', Boolean, 'Disable auto-renewal of the Vault token') do |vault_renew|
+  options[:vault][:token_renew] = true
+  opts.on('', '--[no-]vault-renew', 'Control auto-renewal of the Vault token. Default: activated') do |vault_renew|
     options[:vault][:token_renew] = vault_renew
   end
 

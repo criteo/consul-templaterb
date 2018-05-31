@@ -57,10 +57,11 @@ module Consul
     class VaultResult
       attr_reader :data, :http, :stats, :retry_in
 
-      def initialize(data, modified, http, stats, retry_in)
-        @data = data
+      def initialize(result, modified, stats, retry_in)
+        @data = result.response
         @modified = modified
-        @http = http
+        @http = result
+        @data_json = result.json
         @last_update = Time.now.utc
         @next_update = Time.now.utc + retry_in
         @stats = stats
@@ -76,17 +77,18 @@ module Consul
         @data_json = nil
       end
 
+      def [](path)
+        json[path]
+      end
+
       def json
         @data_json = JSON.parse(data) if @data_json.nil?
         @data_json
       end
 
-      def next_retry_at
-        next_retry + last_update
-      end
     end
     class HttpResponse
-      attr_reader :response_header, :response, :error
+      attr_reader :response_header, :response, :error, :json
 
       def initialize(http, override_nil_response = nil)
         if http.nil?
@@ -98,12 +100,14 @@ module Consul
           @response = http.response.nil? || http.response.empty? ? override_nil_response : http.response.dup.freeze
           @error = http.error.nil? ? nil : http.error.dup.freeze
         end
+        @json = JSON[response]
       end
     end
+
     class VaultEndpoint
       attr_reader :conf, :path, :http_method, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value, :query_params
 
-      def initialize(conf, path, http_method = 'GET', enforce_json_200 = true, query_params = {}, default_value = '[]', post_data ={})
+      def initialize(conf, path, http_method = 'GET', enforce_json_200 = true, query_params = {}, default_value = '{}', post_data ={})
         @conf = conf.create(path)
         @default_value = default_value
         @path = path
@@ -119,7 +123,7 @@ module Consul
         @post_data = post_data
         @stopping = false
         @stats = EndPointStats.new
-        @last_result = VaultResult.new(default_value, false, HttpResponse.new(nil) , stats ,1)
+        @last_result = VaultResult.new(HttpResponse.new(nil, default_value), false, stats ,1)
         on_response { |result| @stats.on_response result }
         on_error { |http| @stats.on_error http }
         _enable_network_debug if conf.debug && conf.debug[:network]
@@ -178,24 +182,22 @@ module Consul
       end
 
       def get_lease_duration(result)
-        JSON[result]['lease_duration'] || conf.min_duration
+        result.json['lease_duration'] || conf.min_duration
       end
+
       def _get_errors(http)
-        return [http.error] if http.error
-        if Utilities.valid_json?(http.response)
-          r = JSON[http.response]
-          if r.has_key?('errors')
-            return r['errors']
-          end
+        return [http] if http.error
+        unless http.json.nil?
+          return http.json['errors'] if http.json.key?('errors')
         end
         ['unknown error']
       end
 
       def _handle_error(http)
         retry_in = [conf.max_retry_duration, conf.retry_duration + 2**@consecutive_errors].min
-        STDERR.puts "[ERROR][#{path}][#{http_method}] #{_get_errors(http).join(' - ')} - Retry in #{retry_in}s #{stats.body_bytes_human}"
+        STDERR.puts "[ERROR][#{path}][#{http_method}] Code: #{http.response_header.status} #{_get_errors(http).join(' - ')} - Retry in #{retry_in}s #{stats.body_bytes_human}"
         @consecutive_errors += 1
-        http_result = HttpResponse.new(http)
+        http_result = HttpResponse.new(http, default_value)
         EventMachine.add_timer(retry_in) do
           yield
           queue.push()
@@ -209,25 +211,24 @@ module Consul
           inactivity_timeout: 1, # default connection inactivity (post-setup) timeout
         }
         connection = EventMachine::HttpRequest.new(conf.base_url, options)
-        cb = proc do |n|
-          http = connection.send(http_method.downcase, build_request()) # Under the hood: c.send('get', {stuff}) === c.get({stuff})
+        cb = proc do |_|
+          http = connection.send(http_method.downcase, build_request) # Under the hood: c.send('get', {stuff}) === c.get({stuff})
           http.callback do
+            http_result = HttpResponse.new(http.dup.freeze, default_value)
             if enforce_json_200 && http.response_header.status != 200
-              _handle_error(http) { connection = EventMachine::HttpRequest.new(conf.base_url, options) }
+              _handle_error(http_result) { connection = EventMachine::HttpRequest.new(conf.base_url, options) }
             else
               @consecutive_errors = 0
-              http_result = HttpResponse.new(http, default_value)
-              new_content = http_result.response.freeze
-              modified = @last_result.nil? ? true : @last_result.data != new_content # Leaving it do to stats with this later
-              retry_in = get_lease_duration(new_content) * conf.lease_duration_factor
+              modified = @last_result.nil? ? true : @last_result.data != http_result.response # Leaving it do to stats with this later
+              retry_in = get_lease_duration(http_result) * conf.lease_duration_factor
               retry_in = [retry_in, conf.max_retry_duration].min
               retry_in = [retry_in, conf.min_duration].max
+              result = VaultResult.new(http_result, modified, stats, retry_in)
               unless @stopping
                 EventMachine.add_timer(retry_in) do
                   queue.push(0)
                 end
               end
-              result = VaultResult.new(new_content, modified, http_result, stats, retry_in)
               @last_result = result
               @ready = true
               @s_callbacks.each { |c| c.call(result) }

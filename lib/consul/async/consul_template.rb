@@ -134,9 +134,9 @@ module Consul
 
       def secrets(path = '')
         raise "You need to provide a vault token to use 'secret' keyword" if vault_conf.token.nil?
-        path = "/v1/#{path}"
+        path = "/v1/#{path}".gsub(/\/{2,}/, '/')
         query_params = {list: "true"}
-        create_if_missing(path, query_params) { ConsulTemplateVaultSecretList.new(VaultEndpoint.new(vault_conf, path, 'GET',true, query_params)) }
+        create_if_missing(path, query_params) { ConsulTemplateVaultSecretList.new(VaultEndpoint.new(vault_conf, path, 'GET',true, query_params,JSON.generate(data: {keys: []}))) }
       end
 
       def secret(path = '', post_data = nil )
@@ -145,7 +145,7 @@ module Consul
         path = "/v1/#{path}"
         query_params = {}
         method = post_data ? "POST" : "GET"
-        create_if_missing(path, query_params) { ConsulTemplateVaultSecret.new(VaultEndpoint.new(vault_conf, path, method, true, query_params )) }
+        create_if_missing(path, query_params) { ConsulTemplateVaultSecret.new(VaultEndpoint.new(vault_conf, path, method, true, query_params, JSON.generate(data: {}))) }
       end
 
       # render a relative file with the given params accessible from template
@@ -414,13 +414,13 @@ module Consul
     end
 
     class ConsulTemplateVaultSecret < ConsulTemplateAbstractMap
-      def initialize(consul_endpoint)
-        super(consul_endpoint)
+      def initialize(vault_endpoint)
+        super(vault_endpoint)
       end
     end
     class ConsulTemplateVaultSecretList < ConsulTemplateAbstractArray
       def parse_result(res)
-        return res unless res.data != "[]"
+        return res if res.data.nil?
         res.mutate(JSON.generate(res.json['data']['keys']))
         res
       end
