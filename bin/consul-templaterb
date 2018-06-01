@@ -17,6 +17,24 @@ def compute_default_output(source)
 end
 
 options = {
+  vault: {
+    debug: {
+      network: false
+    },
+    base_url: ENV['VAULT_ADDR'] || 'http://localhost:8200',
+    token: ENV['VAULT_TOKEN'] || nil,
+    token_renew: true,
+    retry_duration: 10,
+    lease_duration_factor: 0.5, # The time it waits before actualizing data based on the lease time: 2h lease * 0.5 = Fetch data every 1h
+    min_duration: 60,
+    max_retry_duration: 86_400, # Much higher than consul's because some dynamic secrets could be used for a day.
+    paths: {
+      '/v1/sys/mounts' => {
+        max_retry_duration: 600,
+        min_duration: 600
+      }
+    }
+  },
   consul: {
     debug: {
       network: false
@@ -71,8 +89,25 @@ optparse = OptionParser.new do |opts|
     options[:consul][:base_url] = consul_url
   end
 
-  opts.on('-t', '--consul-token=<token>', String, 'Use a token to connect to Consul') do |consul_token|
+  opts.on('--consul-token=<token>', String, 'Use a token to connect to Consul') do |consul_token|
     options[:consul][:token] = consul_token
+  end
+
+  opts.on('-V', '--vault-addr=<address>', String, 'Address of Vault, eg: http://localhost:8200') do |vault_url|
+    options[:vault][:base_url] = vault_url
+  end
+
+  opts.on('-T', '--vault-token=<token>', String, 'Token used to authenticate against vault.') do |vault_token|
+    options[:vault][:token] = vault_token
+  end
+
+  options[:vault][:token_renew] = true
+  opts.on('--[no-]vault-renew', 'Control auto-renewal of the Vault token. Default: activated') do |vault_renew|
+    options[:vault][:token_renew] = vault_renew
+  end
+
+  opts.on('--vault-lease-duration-factor=<factor>', Float, 'Wait at least <factor> * lease time before updating a Vault secret. Default: 0.5') do |factor|
+    options[:vault][:lease_duration_factor] = factor
   end
 
   opts.on('-w', '--wait=<min_duration>', Float, 'Wait at least n seconds before each template generation') do |min_duration|
@@ -213,8 +248,10 @@ def find_max_descriptors(max_descripors)
   max_size
 end
 
-unless options[:consul][:base_url].start_with? 'http'
-  options[:consul][:base_url] = "http://#{options[:consul][:base_url]}"
+%i[consul vault].each do |type|
+  unless options[type][:base_url].start_with? 'http', 'https'
+    options[type][:base_url] = "http://#{options[type][:base_url]}"
+  end
 end
 
 # Since we might be using a lots of descriptors, document this
@@ -227,7 +264,8 @@ STDERR.puts "Max number of descriptors set to #{new_size}" if options[:consul][:
 EM.epoll
 
 consul_conf = Consul::Async::ConsulConfiguration.new(options[:consul])
-template_manager = Consul::Async::ConsulEndPointsManager.new(consul_conf)
+vault_conf = Consul::Async::VaultConfiguration.new(options[:vault])
+template_manager = Consul::Async::EndPointsManager.new(consul_conf, vault_conf)
 
 ARGV.each do |tpl|
   dest = compute_default_output(tpl)

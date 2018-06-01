@@ -1,4 +1,5 @@
 require 'consul/async/utilities'
+require 'consul/async/stats'
 require 'em-http'
 require 'thread'
 require 'json'
@@ -56,38 +57,6 @@ module Consul
                                 paths: @paths)
       end
     end
-    class ConsulEndPointStats
-      attr_reader :successes, :errors, :start, :body_bytes
-      def initialize
-        @start = Time.now.utc
-        @successes = 0
-        @errors = 0
-        @body_bytes = 0
-      end
-
-      def on_reponse(res)
-        @successes += 1
-        @body_bytes = body_bytes + res.http.response.bytesize
-      end
-
-      def on_error(_http)
-        @errors += 1
-      end
-
-      def bytes_per_sec
-        diff = (Time.now.utc - start)
-        diff = 1 if diff < 1
-        (body_bytes / diff).round(0)
-      end
-
-      def bytes_per_sec_human
-        "#{Utilities.bytes_to_h(bytes_per_sec)}/s"
-      end
-
-      def body_bytes_human
-        Utilities.bytes_to_h(body_bytes)
-      end
-    end
     class ConsulResult
       attr_reader :data, :http, :x_consul_index, :last_update, :stats, :retry_in
       def initialize(data, modified, http, x_consul_index, stats, retry_in)
@@ -106,6 +75,7 @@ module Consul
 
       def mutate(new_data)
         @data = new_data.dup
+        @data_json = nil
       end
 
       def json
@@ -146,9 +116,9 @@ module Consul
         @consecutive_errors = 0
         @query_params = query_params
         @stopping = false
-        @stats = ConsulEndPointStats.new
+        @stats = EndPointStats.new
         @last_result = ConsulResult.new(default_value, false, HttpResponse.new(nil), 0, stats, 1)
-        on_response { |result| @stats.on_reponse result }
+        on_response { |result| @stats.on_response result }
         on_error { |http| @stats.on_error http }
         _enable_network_debug if conf.debug && conf.debug[:network]
         fetch

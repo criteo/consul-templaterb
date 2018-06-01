@@ -19,10 +19,11 @@ module Consul
       end
     end
 
-    class ConsulEndPointsManager
-      attr_reader :conf, :net_info, :start_time
-      def initialize(consul_configuration)
-        @conf = consul_configuration
+    class EndPointsManager
+      attr_reader :consul_conf, :vault_conf, :net_info, :start_time
+      def initialize(consul_configuration, vault_configuration)
+        @consul_conf = consul_configuration
+        @vault_conf = vault_configuration
         @endpoints = {}
         @iteration = 1
         @start_time = Time.now.utc
@@ -35,6 +36,11 @@ module Consul
           current_erb_path: nil,
           params: {}
         }
+
+        unless @vault_conf.token.nil? || !@vault_conf.token_renew
+          #Setup token renewal
+          vault_setup_token_renew
+        end
       end
 
       # https://www.consul.io/api/health.html#list-nodes-for-service
@@ -45,7 +51,7 @@ module Consul
         query_params[:dc] = dc if dc
         query_params[:passing] = passing if passing
         query_params[:tag] = tag if tag
-        create_if_missing(path, query_params) { ConsulTemplateService.new(ConsulEndpoint.new(conf, path, true, query_params, '[]')) }
+        create_if_missing(path, query_params) { ConsulTemplateService.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]')) }
       end
 
       # https://www.consul.io/api/health.html#list-checks-for-service
@@ -55,7 +61,7 @@ module Consul
         query_params = {}
         query_params[:dc] = dc if dc
         query_params[:passing] = passing if passing
-        create_if_missing(path, query_params) { ConsulTemplateChecks.new(ConsulEndpoint.new(conf, path, true, query_params, '[]')) }
+        create_if_missing(path, query_params) { ConsulTemplateChecks.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]')) }
       end
 
       # https://www.consul.io/api/catalog.html#list-nodes
@@ -63,7 +69,7 @@ module Consul
         path = '/v1/catalog/nodes'
         query_params = {}
         query_params[:dc] = dc if dc
-        create_if_missing(path, query_params) { ConsulTemplateNodes.new(ConsulEndpoint.new(conf, path, true, query_params, '[]')) }
+        create_if_missing(path, query_params) { ConsulTemplateNodes.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]')) }
       end
 
       # https://www.consul.io/api/catalog.html#list-services-for-node
@@ -71,7 +77,7 @@ module Consul
         path = "/v1/catalog/node/#{name_or_id}"
         query_params = {}
         query_params[:dc] = dc if dc
-        create_if_missing(path, query_params) { ConsulTemplateNodes.new(ConsulEndpoint.new(conf, path, true, query_params, '{}')) }
+        create_if_missing(path, query_params) { ConsulTemplateNodes.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '{}')) }
       end
 
       # https://www.consul.io/api/agent.html#read-configuration
@@ -79,7 +85,7 @@ module Consul
         path = '/v1/agent/self'
         query_params = {}
         default_value = '{"Config":{}, "Coord":{}, "Member":{}, "Meta":{}, "Stats":{}}'
-        create_if_missing(path, query_params) { ConsulAgentSelf.new(ConsulEndpoint.new(conf, path, true, query_params, default_value)) }
+        create_if_missing(path, query_params) { ConsulAgentSelf.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value)) }
       end
 
       # https://www.consul.io/api/agent.html#view-metrics
@@ -87,7 +93,7 @@ module Consul
         path = '/v1/agent/metrics'
         query_params = {}
         default_value = '{"Gauges":[], "Points":[], "Member":{}, "Counters":[], "Samples":{}}'
-        create_if_missing(path, query_params) { ConsulAgentMetrics.new(ConsulEndpoint.new(conf, path, true, query_params, default_value)) }
+        create_if_missing(path, query_params) { ConsulAgentMetrics.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value)) }
       end
 
       # Return a param of template
@@ -105,14 +111,14 @@ module Consul
         query_params[:dc] = dc if dc
         # Tag filtering is performed on client side
         query_params[:tag] = tag if tag
-        create_if_missing(path, query_params) { ConsulTemplateServices.new(ConsulEndpoint.new(conf, path, true, query_params, '{}')) }
+        create_if_missing(path, query_params) { ConsulTemplateServices.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '{}')) }
       end
 
       # https://www.consul.io/api/catalog.html#list-datacenters
       def datacenters
         path = '/v1/catalog/datacenters'
         query_params = {}
-        create_if_missing(path, query_params) { ConsulTemplateDatacenters.new(ConsulEndpoint.new(conf, path, true, query_params, '[]')) }
+        create_if_missing(path, query_params) { ConsulTemplateDatacenters.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]')) }
       end
 
       # https://www.consul.io/api/kv.html#read-key
@@ -123,7 +129,23 @@ module Consul
         query_params[:recurse] = recurse if recurse
         query_params[:keys] = keys if keys
         default_value = '[]'
-        create_if_missing(path, query_params) { ConsulTemplateKV.new(ConsulEndpoint.new(conf, path, true, query_params, default_value), name) }
+        create_if_missing(path, query_params) { ConsulTemplateKV.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value), name) }
+      end
+
+      def secrets(path = '')
+        raise "You need to provide a vault token to use 'secret' keyword" if vault_conf.token.nil?
+        path = "/v1/#{path}".gsub(/\/{2,}/, '/')
+        query_params = {list: "true"}
+        create_if_missing(path, query_params) { ConsulTemplateVaultSecretList.new(VaultEndpoint.new(vault_conf, path, 'GET',true, query_params,JSON.generate(data: {keys: []}))) }
+      end
+
+      def secret(path = '', post_data = nil )
+        puts post_data
+        raise "You need to provide a vault token to use 'secrets' keyword" if vault_conf.token.nil?
+        path = "/v1/#{path}"
+        query_params = {}
+        method = post_data ? "POST" : "GET"
+        create_if_missing(path, query_params) { ConsulTemplateVaultSecret.new(VaultEndpoint.new(vault_conf, path, method, true, query_params, JSON.generate(data: {}))) }
       end
 
       # render a relative file with the given params accessible from template
@@ -202,6 +224,12 @@ module Consul
           v.endpoint.terminate
         end
         @endpoints = {}
+      end
+
+      def vault_setup_token_renew
+        path = 'v1/auth/token/renew-self'
+        STDERR.print "[INFO] Setting up vault token renewal"
+        VaultEndpoint.new(vault_conf, path, :POST, {}, {})
       end
 
       def create_if_missing(path, query_params)
@@ -382,6 +410,19 @@ module Consul
           return nil if catch_errors
           raise StandardError.new(e), "get_value_json() cannot deserialize kv(#{name}) as JSON: #{e.message}", e.backtrace
         end
+      end
+    end
+
+    class ConsulTemplateVaultSecret < ConsulTemplateAbstractMap
+      def initialize(vault_endpoint)
+        super(vault_endpoint)
+      end
+    end
+    class ConsulTemplateVaultSecretList < ConsulTemplateAbstractArray
+      def parse_result(res)
+        return res if res.data.nil?
+        res.mutate(JSON.generate(res.json['data']['keys']))
+        res
       end
     end
   end

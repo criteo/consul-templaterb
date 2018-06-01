@@ -5,7 +5,8 @@ require_relative 'async_mock'
 RSpec.describe Consul::Async::ConsulTemplateRender do
   include Consul::AsyncMock
   before do
-    @conf = Consul::Async::ConsulConfiguration.new
+    @consul_conf = Consul::Async::ConsulConfiguration.new
+    @vault_conf = Consul::Async::VaultConfiguration.new
   end
 
   unit_templates = File.expand_path('../resources/templates', __FILE__)
@@ -17,9 +18,9 @@ RSpec.describe Consul::Async::ConsulTemplateRender do
   Dir.glob(File.join(unit_templates, '**', '*.erb')).each do |erb|
     expected = erb.gsub(/\.erb$/, '.txt.expected')
     it "Checks that #{erb} renders #{expected}" do
-      mock_all
+      mock_consul
       EM.run_block do
-        template_manager = Consul::Async::ConsulEndPointsManager.new(@conf)
+        template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf)
         template_file = erb
         @template_value = File.read(template_file)
         output_file = erb.gsub(/\.erb$/, '.txt')

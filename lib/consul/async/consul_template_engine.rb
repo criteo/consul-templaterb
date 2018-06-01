@@ -1,5 +1,6 @@
 require 'consul/async/utilities'
 require 'consul/async/consul_endpoint'
+require 'consul/async/vault_endpoint'
 require 'consul/async/consul_template'
 require 'consul/async/consul_template_render'
 require 'em-http'
