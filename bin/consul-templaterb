@@ -239,6 +239,7 @@ end
 %w[INT PIPE TERM].each do |sig|
   Signal.trap(sig) do
     STDERR.puts "[KILL] received #{sig}, stopping myself"
+    template_manager.terminate
     kill_program
   end
 end
