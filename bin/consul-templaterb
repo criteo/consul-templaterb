@@ -29,10 +29,10 @@ options = {
     min_duration: 60,
     max_retry_duration: 86_400, # Much higher than consul's because some dynamic secrets could be used for a day.
     paths: {
-        '/v1/sys/mounts' => {
+      '/v1/sys/mounts' => {
         max_retry_duration: 600,
         min_duration: 600
-      },
+      }
     }
   },
   consul: {
@@ -89,7 +89,7 @@ optparse = OptionParser.new do |opts|
     options[:consul][:base_url] = consul_url
   end
 
-  opts.on('-t', '--consul-token=<token>', String, 'Use a token to connect to Consul') do |consul_token|
+  opts.on('--consul-token=<token>', String, 'Use a token to connect to Consul') do |consul_token|
     options[:consul][:token] = consul_token
   end
 
@@ -102,11 +102,11 @@ optparse = OptionParser.new do |opts|
   end
 
   options[:vault][:token_renew] = true
-  opts.on('', '--[no-]vault-renew', 'Control auto-renewal of the Vault token. Default: activated') do |vault_renew|
+  opts.on('--[no-]vault-renew', 'Control auto-renewal of the Vault token. Default: activated') do |vault_renew|
     options[:vault][:token_renew] = vault_renew
   end
 
-  opts.on('l', '--vault-lease-duration-factor', 'Wait at least <factor> * lease time before updating a Vault secret (e.g: 0.5)') do |factor|
+  opts.on('--vault-lease-duration-factor=<factor>', Float, 'Wait at least <factor> * lease time before updating a Vault secret. Default: 0.5') do |factor|
     options[:vault][:lease_duration_factor] = factor
   end
 
