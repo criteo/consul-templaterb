@@ -1,0 +1,12 @@
+<% path = ENV['kv_path'] || ''
+require 'base64'
+require 'json'
+require 'date'
+
+data = {}
+kv(path, recurse:true).each do |tuple|
+  data[tuple['Key']] = tuple['Value']
+end
+%><%
+json = { kv: data, generated_at: Time.now}
+%><%= JSON.pretty_generate(json) %>

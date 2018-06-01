@@ -205,6 +205,11 @@ function resizeInstances() {
   resizeWrapper('instances-wrapper', 'instances-list');
 }
 
+function resizeData() {
+  resizeWrapper('keys-wrapper', 'keys-list');
+  resizeWrapper('data-wrapper', 'kv-data');
+}
+
 function resizeWrapper(wrapperId, wrapped) {
   var size = $(window).height() - $('#' + wrapperId).offset()["top"] - 20;
   $('#' + wrapperId).css("height", size);
@@ -234,6 +239,12 @@ function serviceMatcher(service, regex) {
     }
   }
   return false;
+}
+
+function keyMatcher(service, regex) {
+  if(service.getElementsByClassName('key-name')[0].innerHTML.match(regex)) {
+    return true;
+  }
 }
 
 function instanceMatcher(instance, regex) {
