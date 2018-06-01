@@ -174,7 +174,7 @@ module Consul
           to_cleanup << endpoint_key if (@iteration - endpt.seen_at) > 60
         end
         if not_ready.count.positive?
-          STDERR.print "[INFO] Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}..."
+          STDERR.puts "[INFO] Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}..."
           return [false, false, nil]
         end
         if to_cleanup.count > 1
@@ -185,9 +185,9 @@ module Consul
           end
         end
         if last_result != data
-          STDERR.print "[INFO] Write #{Utilities.bytes_to_h data.bytesize} bytes to #{file}, "\
+          STDERR.puts "[INFO] Write #{Utilities.bytes_to_h data.bytesize} bytes to #{file}, "\
                        "netinfo=#{@net_info} aka "\
-                       "#{Utilities.bytes_to_h((net_info[:bytes_read] / (Time.now.utc - @start_time)).round(1))}/s ...\n"
+                       "#{Utilities.bytes_to_h((net_info[:bytes_read] / (Time.now.utc - @start_time)).round(1))}/s ..."
           tmp_file = "#{file}.tmp"
           File.open(tmp_file, 'w') do |f|
             f.write data
