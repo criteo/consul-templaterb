@@ -50,7 +50,7 @@ function serviceTitleGenerator(instance) {
   return htmlTitle;
 }
 
-function nodeNameGenator(nodename) {
+function nodeNameGenator(nodename, nodeaddr) {
   var protocol = 'ssh://'
 
   var htmlTitle = document.createElement('h5');
@@ -58,7 +58,7 @@ function nodeNameGenator(nodename) {
   var instanceLink = document.createElement('a');
   instanceLink.setAttribute('class',  'instance-name');
   if (protocol != null) {
-    instanceLink.setAttribute('href',  protocol + nodename);
+    instanceLink.setAttribute('href',  protocol + nodeaddr);
     instanceLink.setAttribute('target',  '_blank');
   }
   instanceLink.appendChild(document.createTextNode(nodename));
@@ -104,7 +104,7 @@ function tagsGenerator(instanceTags) {
   return tags;
 }
 
-function servicesGenerator(instanceServices, nodeName) {
+function servicesGenerator(instanceServices, nodeName, nodeAddr) {
 
   var services = document.createElement('div');
   services.className = 'instance-services';
@@ -116,7 +116,7 @@ function servicesGenerator(instanceServices, nodeName) {
     var servicePort = instanceServices[serviceKey]['Service']['Port'];
     service.setAttribute('class', 'btn btn-sm m-1');
     service.setAttribute('target', '_blank');
-    service.setAttribute('href', 'http://' + nodeName + ':' + servicePort);
+    service.setAttribute('href', 'http://' + nodeAddr + ':' + servicePort);
     switch(nodeState(instanceServices[serviceKey]['Checks'])) {
         case 'passing': service.classList.add('btn-outline-success'); break;
         case 'warning': service.classList.add('btn-outline-warning'); break;

@@ -94,11 +94,11 @@ class ConsulNodes {
       content.setAttribute('class','instance-content');
       var contentHead = document.createElement('div');
       contentHead.setAttribute('class','instance-content-header');
-      contentHead.appendChild(nodeNameGenator(instance['Node']['Name']));
+      contentHead.appendChild(nodeNameGenator(instance['Node']['Name'],instance['Node']['Address']));
       contentHead.appendChild(nodeAddressGenator(instance['Node']['Address']));
       contentHead.appendChild(nodeMetaGenator(instance['Node']['Meta']));
       content.appendChild(contentHead);
-      content.appendChild(servicesGenerator(instance['Service'], instance['Node']['Name']));
+      content.appendChild(servicesGenerator(instance['Service'], instance['Node']['Name'], instance['Node']['Address']));
       content.appendChild(tagsGenerator(getTagsNode(instance)));
 
       instanceHtml.setAttribute('status', state);
