@@ -186,7 +186,7 @@ module Consul
       end
 
       def _get_errors(http)
-        return [http] if http.error
+        return [http.error] if http.error
         unless http.json.nil?
           return http.json['errors'] if http.json.key?('errors')
         end
