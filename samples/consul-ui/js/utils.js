@@ -104,8 +104,7 @@ function tagsGenerator(instanceTags) {
   return tags;
 }
 
-function servicesGenerator(instanceServices, nodeName, nodeAddr) {
-
+function servicesGenerator(instanceServices) {
   var services = document.createElement('div');
   services.className = 'instance-services';
   services.appendChild(document.createTextNode("Services: "));
@@ -116,6 +115,7 @@ function servicesGenerator(instanceServices, nodeName, nodeAddr) {
     var servicePort = instanceServices[serviceKey]['Service']['Port'];
     service.setAttribute('class', 'btn btn-sm m-1');
     service.setAttribute('target', '_blank');
+    nodeAddr = instanceServices[serviceKey]['Service']['Address'];
     service.setAttribute('href', 'http://' + nodeAddr + ':' + servicePort);
     switch(nodeState(instanceServices[serviceKey]['Checks'])) {
         case 'passing': service.classList.add('btn-outline-success'); break;

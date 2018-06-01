@@ -98,7 +98,7 @@ class ConsulNodes {
       contentHead.appendChild(nodeAddressGenator(instance['Node']['Address']));
       contentHead.appendChild(nodeMetaGenator(instance['Node']['Meta']));
       content.appendChild(contentHead);
-      content.appendChild(servicesGenerator(instance['Service'], instance['Node']['Name'], instance['Node']['Address']));
+      content.appendChild(servicesGenerator(instance['Service']));
       content.appendChild(tagsGenerator(getTagsNode(instance)));
 
       instanceHtml.setAttribute('status', state);
