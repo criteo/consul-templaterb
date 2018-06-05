@@ -20,7 +20,7 @@ class ConsulService {
   }
 
   fetchRessource() {
-    $.ajax({url: "consul_template.json", cache: false, dataType: "json", sourceObject: this, success: function(result){
+    $.ajax({url: this.ressourceURL, cache: false, dataType: "json", sourceObject: this, success: function(result){
       consulService.initRessource(result);
     }});
   }
@@ -132,16 +132,7 @@ class ConsulService {
   }
 
   filterInstances() {
-    $('.progress-status').each(function() {
-      var status = $(this).attr('status');
-      if (consulService.filterStatus == null) {
-        $(this).removeClass('progress-deactivated');
-      } else if(consulService.filterStatus == status) {
-        $(this).removeClass('progress-deactivated');
-      } else {
-        $(this).addClass('progress-deactivated');
-      }
-    })
+    updateFilterDisplay(consulService.filterStatus);
     var filter = new RegExp(consulService.instanceFilter.val());
     $('#instances-list').children('div').each(function() {
       var status = $(this).attr('status');
@@ -194,9 +185,9 @@ class ConsulService {
       serviceHtml.setAttribute('class','list-group-item');
 
       serviceHtml.appendChild(serviceTitleGenerator(instance));
-      serviceHtml.appendChild(tagsGenerator(instance));
-      serviceHtml.appendChild(checksStatusGenerator(instance));
-      var state = nodeState(instance);
+      serviceHtml.appendChild(tagsGenerator(instance.tags));
+      serviceHtml.appendChild(checksStatusGenerator(instance.checks));
+      var state = nodeState(instance.checks);
       serviceHtml.setAttribute('status', state);
       $("#instances-list").append(serviceHtml);
     }
@@ -213,3 +204,6 @@ class ConsulService {
     this.filterInstances();
   }
 }
+
+$( window ).resize(resizeAll);
+resizeAll();

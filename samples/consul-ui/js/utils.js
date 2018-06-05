@@ -3,7 +3,7 @@ function buildServiceStatus(service) {
 
   for (var key in service['instances']) {
     var instance = service['instances'][key];
-    var state = nodeState(instance);
+    var state = nodeState(instance.checks);
 
     serviceStatus[state] = (serviceStatus[state] || 0) + 1;
     serviceStatus['total'] = (serviceStatus['total'] || 0) + 1;
@@ -12,10 +12,10 @@ function buildServiceStatus(service) {
   return serviceStatus;
 }
 
-function nodeState(instance) {
+function nodeState(checks) {
   status='passing';
-  for (var checkKey in instance.checks) {
-    switch(instance.checks[checkKey]['status']) {
+  for (var checkKey in checks) {
+    switch(checks[checkKey]['status']) {
       case 'passing': break;
       case 'warning': status='warning'; break;
       case 'critical': return 'critical'; break;
@@ -50,31 +50,93 @@ function serviceTitleGenerator(instance) {
   return htmlTitle;
 }
 
-function tagsGenerator(instance) {
+function nodeNameGenator(nodename) {
+  var protocol = 'ssh://'
+
+  var htmlTitle = document.createElement('h5');
+
+  var instanceLink = document.createElement('a');
+  instanceLink.setAttribute('class',  'instance-name');
+  if (protocol != null) {
+    instanceLink.setAttribute('href',  protocol + nodename);
+    instanceLink.setAttribute('target',  '_blank');
+  }
+  instanceLink.appendChild(document.createTextNode(nodename));
+  htmlTitle.appendChild(instanceLink);
+
+  return htmlTitle;
+}
+
+function nodeAddressGenator(nodeaddr) {
+  var htmlAddress = document.createElement('h5');
+  htmlAddress.className = 'instance-addr';
+  htmlAddress.appendChild(document.createTextNode(nodeaddr));
+  return htmlAddress;
+}
+
+function nodeMetaGenator(nodeMetaTags) {
+  var metaTags = document.createElement('div');
+  metaTags.className = 'meta-tags';
+  for (var tagKey in nodeMetaTags) {
+    if(!nodeMetaTags[tagKey]) {
+      continue;
+    }
+    var metaTag = document.createElement('span');
+    metaTag.setAttribute('class', 'badge badge-primary mx-1');
+    metaTag.appendChild(document.createTextNode(tagKey + ':' + nodeMetaTags[tagKey]));
+    metaTags.appendChild(metaTag);
+  }
+  return metaTags;
+}
+
+function tagsGenerator(instanceTags) {
   var tags = document.createElement('div');
 
   tags.className = 'instance-tags';
   tags.appendChild(document.createTextNode("Tags: "));
   tags.appendChild(document.createElement('br'));
-
-  for (var tagKey in instance.tags) {
+  for (var tagKey in instanceTags) {
     var tag = document.createElement('span');
     tag.setAttribute('class', 'badge badge-secondary mx-1');
-    tag.appendChild(document.createTextNode(instance.tags[tagKey]));
+    tag.appendChild(document.createTextNode(instanceTags[tagKey]));
     tags.appendChild(tag);
   }
   return tags;
 }
 
-function checksStatusGenerator(instance) {
+function servicesGenerator(instanceServices, nodeName) {
+
+  var services = document.createElement('div');
+  services.className = 'instance-services';
+  services.appendChild(document.createTextNode("Services: "));
+  services.appendChild(document.createElement('br'));
+  for (var serviceKey in instanceServices) {
+    var service = document.createElement('a');
+    var serviceName = instanceServices[serviceKey]['Service']['Service'];
+    var servicePort = instanceServices[serviceKey]['Service']['Port'];
+    service.setAttribute('class', 'btn btn-sm m-1');
+    service.setAttribute('target', '_blank');
+    service.setAttribute('href', 'http://' + nodeName + ':' + servicePort);
+    switch(nodeState(instanceServices[serviceKey]['Checks'])) {
+        case 'passing': service.classList.add('btn-outline-success'); break;
+        case 'warning': service.classList.add('btn-outline-warning'); break;
+        case 'critical': service.classList.add('btn-outline-danger'); break;
+    }
+    service.appendChild(document.createTextNode(serviceName + ':' + servicePort));
+    services.appendChild(service);
+  }
+  return services;
+}
+
+function checksStatusGenerator(instanceChecks) {
   var checks = document.createElement('div');
   checks.className = 'checks';
   checks.appendChild(document.createTextNode("Checks: "));
   checks.appendChild(document.createElement('br'));
 
-  for (var checkKey in instance.checks) {
+  for (var checkKey in instanceChecks) {
     checkId = Math.floor(Math.random()*10000);
-    switch(instance.checks[checkKey]['status']) {
+    switch(instanceChecks[checkKey]['status']) {
       case 'passing': var btn = 'btn-success'; break;
       case 'warning': var btn = 'btn-warning'; break;
       case 'critical': var btn = 'btn-danger'; break;
@@ -88,7 +150,7 @@ function checksStatusGenerator(instance) {
     btnCheck.setAttribute('data-target', '#' + checkId);
     btnCheck.setAttribute('aria-expanded', 'false');
 
-    btnCheck.appendChild(document.createTextNode(instance.checks[checkKey]['name']));
+    btnCheck.appendChild(document.createTextNode(instanceChecks[checkKey]['name']));
 
     check.appendChild(btnCheck);
 
@@ -118,7 +180,7 @@ function checksStatusGenerator(instance) {
         target = document.createElement('pre');
         target.setAttribute("class", "check-output")
       }
-      target.appendChild(document.createTextNode(instance.checks[checkKey][dataToDisplay[index]]));
+      target.appendChild(document.createTextNode(instanceChecks[checkKey][dataToDisplay[index]]));
       td2.appendChild(target)
       tr.appendChild(td1);
       tr.appendChild(td2);
@@ -136,6 +198,10 @@ function checksStatusGenerator(instance) {
 
 function resizeAll() {
   resizeWrapper('service-wrapper', 'service-list');
+  resizeWrapper('instances-wrapper', 'instances-list');
+}
+
+function resizeInstances() {
   resizeWrapper('instances-wrapper', 'instances-list');
 }
 
@@ -174,6 +240,7 @@ function instanceMatcher(instance, regex) {
   if(instance.getElementsByClassName('instance-name')[0].innerHTML.match(regex)) {
     return true;
   }
+
   var tags = instance.getElementsByClassName('instance-tags')[0].getElementsByClassName('badge');
 
   for (var i=0; i < tags.length; i++) {
@@ -184,5 +251,86 @@ function instanceMatcher(instance, regex) {
   return false;
 }
 
-$( window ).resize(resizeAll);
-resizeAll();
+function nodeMatcher(instance, regex) {
+    instanceMatcher(instance, regex);
+    if(instance.getElementsByClassName('instance-name')[0].innerHTML.match(regex)) {
+      return true;
+    }
+
+    if(instance.getElementsByClassName('instance-addr')[0].innerHTML.match(regex)) {
+      return true;
+    }
+
+    var metaTags = instance.getElementsByClassName('meta-tags')[0].getElementsByClassName('badge');
+    for (var i=0; i < metaTags.length; i++) {
+      if(metaTags[i].innerHTML.match(regex)) {
+        return true;
+      }
+    }
+
+    var services = instance.getElementsByClassName('instance-services')[0].getElementsByClassName('btn');
+    for (var i=0; i < services.length; i++) {
+      if(services[i].innerHTML.match(regex)) {
+        return true;
+      }
+    }
+}
+
+function getTagsNode(node) {
+  tags = new Set([]);
+  for (service in node['Service']) {
+    for (tag in node['Service'][service]['Service']['Tags']) {
+      tags.add(node['Service'][service]['Service']['Tags'][tag]);
+    }
+  }
+  return Array.from(tags);
+}
+
+function getChecksNode(node) {
+  checks = [];
+  for (service in node['Service']) {
+    for (check in node['Service'][service]['Checks']) {
+      checks.push(node['Service'][service]['Checks'][check]);
+    }
+  }
+  return checks;
+}
+
+function getGeneralNodeStatus(nodeService) {
+  status='passing';
+  for (var serviceKey in nodeService) {
+    switch(nodeState(nodeService[serviceKey]['Checks'])) {
+        case 'passing': break;
+        case 'warning': status='warning'; break;
+        case 'critical': return 'critical'; break;
+    }
+  }
+  return status;
+}
+
+function updateStatusItem(statuses) {
+  states = ['passing', 'warning', 'critical', 'total']
+  for (state in states) {
+    document.getElementById('service-status-' + states[state]).innerHTML = (statuses[states[state]] || 0);
+  }
+}
+
+function updateFilterDisplay(filterStatus) {
+  $('.progress-status').each(function() {
+    var status = $(this).attr('status');
+    if (filterStatus == null || filterStatus == status) {
+      $(this).removeClass('progress-deactivated');
+    } else {
+      $(this).addClass('progress-deactivated');
+    }
+  })
+  $('.service-status').each(function() {
+    var status = $(this).attr('status');
+    if (filterStatus == null || filterStatus == status) {
+      $(this).removeClass('status-deactivated');
+    } else {
+      $(this).addClass('status-deactivated');
+    }
+  })
+
+}
