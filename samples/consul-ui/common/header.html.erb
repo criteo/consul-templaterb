@@ -3,7 +3,7 @@
   # CONSUL_TOOLS_SUFFIX: suffix for the address of consul tools
   # CONSUL_TOOLS_PREFIX: prefix for the address of consul tools
   # CONSUL_TOOLS: comma sperated list of consul tools
-  tools = (ENV['CONSUL_TOOLS'] || 'services,nodes').split(",")
+  tools = (ENV['CONSUL_TOOLS'] || 'services,nodes,keys').split(",")
   tools_suffix = ENV['CONSUL_TOOLS_PREFIX'] || '-ui.html'
   tools_prefix = ENV['CONSUL_TOOLS_SUFFIX'] || 'consul-'
 
@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.11/css/all.css" integrity="sha384-p2jx59pefphTFIpeqCcISO9MdVfIm4pNnsL08A6v5vaQc4owkQqxMV8kg4Yvhaw/" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="vendors/highlight/atom-one-dark.css">
     <style id="css-states">
       .service-tags { display: none; }
     </style>

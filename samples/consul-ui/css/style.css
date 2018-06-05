@@ -3,7 +3,7 @@
    box-shadow: none;
 }
 
-#service-wrapper, #instances-wrapper {
+#service-wrapper, #instances-wrapper, #keys-wrapper {
   overflow: scroll;
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
@@ -18,19 +18,21 @@
   overflow: hidden;
 }
 
-#service-wrapper  .list-group-item:last-child, #instances-wrapper .list-group-item:last-child {
+#service-wrapper .list-group-item:last-child, #instances-wrapper .list-group-item:last-child,
+#keys-wrapper .list-group-item:last-child {
   border-bottom-width: 0px;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
 }
 
-#service-wrapper  .list-group-item:first-child, #instances-wrapper .list-group-item:first-child {
+#service-wrapper .list-group-item:first-child, #instances-wrapper .list-group-item:first-child,
+#keys-wrapper .list-group-item:first-child {
   border-top-width: 0px;
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
 }
 
-#service-wrapper  .list-group-item, #instances-wrapper .list-group-item {
+#service-wrapper .list-group-item, #instances-wrapper .list-group-item, #keys-wrapper .list-group-item {
   border-left: 0px;
   border-right: 0px;
 }
@@ -139,4 +141,13 @@ html, body {
 .meta-tags {
   text-align: right;
   flex: 2 0 0;
+}
+
+#data-wrapper {
+  overflow: scroll;
+}
+
+pre, code {
+  height: 100%;
+  margin-bottom: 0px;
 }

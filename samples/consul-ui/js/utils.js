@@ -50,7 +50,7 @@ function serviceTitleGenerator(instance) {
   return htmlTitle;
 }
 
-function nodeNameGenator(nodename) {
+function nodeNameGenator(nodename, nodeaddr) {
   var protocol = 'ssh://'
 
   var htmlTitle = document.createElement('h5');
@@ -58,7 +58,7 @@ function nodeNameGenator(nodename) {
   var instanceLink = document.createElement('a');
   instanceLink.setAttribute('class',  'instance-name');
   if (protocol != null) {
-    instanceLink.setAttribute('href',  protocol + nodename);
+    instanceLink.setAttribute('href',  protocol + nodeaddr);
     instanceLink.setAttribute('target',  '_blank');
   }
   instanceLink.appendChild(document.createTextNode(nodename));
@@ -104,8 +104,7 @@ function tagsGenerator(instanceTags) {
   return tags;
 }
 
-function servicesGenerator(instanceServices, nodeName) {
-
+function servicesGenerator(instanceServices) {
   var services = document.createElement('div');
   services.className = 'instance-services';
   services.appendChild(document.createTextNode("Services: "));
@@ -116,7 +115,8 @@ function servicesGenerator(instanceServices, nodeName) {
     var servicePort = instanceServices[serviceKey]['Service']['Port'];
     service.setAttribute('class', 'btn btn-sm m-1');
     service.setAttribute('target', '_blank');
-    service.setAttribute('href', 'http://' + nodeName + ':' + servicePort);
+    nodeAddr = instanceServices[serviceKey]['Service']['Address'];
+    service.setAttribute('href', 'http://' + nodeAddr + ':' + servicePort);
     switch(nodeState(instanceServices[serviceKey]['Checks'])) {
         case 'passing': service.classList.add('btn-outline-success'); break;
         case 'warning': service.classList.add('btn-outline-warning'); break;
@@ -205,6 +205,11 @@ function resizeInstances() {
   resizeWrapper('instances-wrapper', 'instances-list');
 }
 
+function resizeData() {
+  resizeWrapper('keys-wrapper', 'keys-list');
+  resizeWrapper('data-wrapper', 'kv-data');
+}
+
 function resizeWrapper(wrapperId, wrapped) {
   var size = $(window).height() - $('#' + wrapperId).offset()["top"] - 20;
   $('#' + wrapperId).css("height", size);
@@ -234,6 +239,12 @@ function serviceMatcher(service, regex) {
     }
   }
   return false;
+}
+
+function keyMatcher(service, regex) {
+  if(service.getElementsByClassName('key-name')[0].innerHTML.match(regex)) {
+    return true;
+  }
 }
 
 function instanceMatcher(instance, regex) {
