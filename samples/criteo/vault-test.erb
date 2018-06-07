@@ -1,6 +1,0 @@
-<% secrets("/teams/").each do |secretKey| %> * <%=secretKey%>
-<% end %>
-
-test/foo :<% secret("test/foo").each do |k, v| %>
-  <%=k%>: <%=v%><% end %>
-

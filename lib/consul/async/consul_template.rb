@@ -140,8 +140,7 @@ module Consul
       end
 
       def secret(path = '', post_data = nil )
-        puts post_data
-        raise "You need to provide a vault token to use 'secrets' keyword" if vault_conf.token.nil?
+        raise "You need to provide a vault token to use 'secret' keyword" if vault_conf.token.nil?
         path = "/v1/#{path}"
         query_params = {}
         method = post_data ? "POST" : "GET"
