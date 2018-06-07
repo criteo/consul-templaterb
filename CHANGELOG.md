@@ -2,7 +2,19 @@
 
 ## (UNRELEASED)
 
+## 1.3.0 (June 7, 2018)
+
 IMPROVEMENTS:
+
+ * samples/consul-ui/ now supports keys as well as nodes thans to [@geobeau](https://github.com/geobeau)
+
+NEW FEATURES
+
+ * EXPERIMENTAL Vault support thanks to [@uepock](https://github.com/uepoch)
+
+BUG FIXES:
+
+ * Properly shutdown connections when receiving Posix signal to kill app
 
 ## 1.2.1 (May 28, 2018)
 
