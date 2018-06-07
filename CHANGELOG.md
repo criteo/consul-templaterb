@@ -6,11 +6,11 @@
 
 IMPROVEMENTS:
 
- * samples/consul-ui/ now supports keys as well as nodes thans to [@geobeau](https://github.com/geobeau)
+ * samples/consul-ui/ now supports keys as well as nodes thanks to [@geobeau](https://github.com/geobeau)
 
 NEW FEATURES
 
- * EXPERIMENTAL Vault support thanks to [@uepock](https://github.com/uepoch)
+ * EXPERIMENTAL Vault support thanks to [@uepoch](https://github.com/uepoch)
 
 BUG FIXES:
 
