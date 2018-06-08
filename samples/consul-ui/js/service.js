@@ -69,14 +69,17 @@ class ConsulService {
 
       if (!!serviceStatus['passing']) {
         statuses.appendChild(createBadge('badge-success passing', serviceStatus['passing']));
+        listItem.setAttribute('status', 'passing');
       }
 
       if (!!serviceStatus['warning']) {
         statuses.appendChild(createBadge('badge-warning warning', serviceStatus['warning']));
+        listItem.setAttribute('status', 'warning');
       }
 
       if (!!serviceStatus['critical']) {
         statuses.appendChild(createBadge('badge-danger critical', serviceStatus['critical']));
+        listItem.setAttribute('status', 'critical');
       }
 
       statuses.appendChild(createBadge('badge-dark', (serviceStatus['total'] || 0)));
