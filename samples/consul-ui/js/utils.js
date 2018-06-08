@@ -238,6 +238,11 @@ function serviceMatcher(service, regex) {
       return true;
     }
   }
+
+  if(service.getAttribute('status').match(regex)) {
+    return true;
+  }
+  
   return false;
 }
 
