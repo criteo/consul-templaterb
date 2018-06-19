@@ -189,6 +189,7 @@ class ConsulService {
 
       serviceHtml.appendChild(serviceTitleGenerator(instance));
       serviceHtml.appendChild(tagsGenerator(instance.tags));
+      serviceHtml.appendChild(serviceMetaGenerator(instance.sMeta));
       serviceHtml.appendChild(checksStatusGenerator(instance.checks));
       var state = nodeState(instance.checks);
       serviceHtml.setAttribute('status', state);

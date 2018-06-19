@@ -104,6 +104,27 @@ function tagsGenerator(instanceTags) {
   return tags;
 }
 
+function serviceMetaGenerator(instanceMeta) {
+  var top = document.createElement('div');
+  top.className = 'instance-meta';
+  if (instanceMeta) {
+    var container = document.createElement('dl');
+    top.appendChild(container);
+    container.className = 'row';
+    for (var meta in instanceMeta) {
+      var metaH = document.createElement('dt');
+      metaH.className = 'col-sm-4';
+      metaH.appendChild(document.createTextNode(meta));
+      container.appendChild(metaH);
+      var metaVH = document.createElement('dd');
+      metaVH.className = 'col-sm-8';
+      metaVH.appendChild(document.createTextNode(instanceMeta[meta]));
+      container.appendChild(metaVH);
+    }
+  }
+  return top;
+}
+
 function servicesGenerator(instanceServices) {
   var services = document.createElement('div');
   services.className = 'instance-services';
@@ -239,7 +260,8 @@ function serviceMatcher(service, regex) {
     }
   }
 
-  if(service.getAttribute('status').match(regex)) {
+  var sstatus = service.getAttribute('status')
+  if(sstatus && sstatus.match(regex)) {
     return true;
   }
   

@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+## 1.3.1 (June 19, 2018)
+
+ * samples/consul-ui/ now displays Service Meta information (new in Consul 1.1)
+
 ## 1.3.0 (June 7, 2018)
 
 IMPROVEMENTS:
