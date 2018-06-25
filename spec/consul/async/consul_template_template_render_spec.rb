@@ -24,7 +24,6 @@ RSpec.describe Consul::Async::ConsulTemplateRender do
         template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf)
         template_file = erb
         @template_value = File.read(template_file)
-        puts "File: #{expected} -> #{@template_value}"
         output_file = erb.gsub(/\.erb$/, '.txt')
         @renderer = Consul::Async::ConsulTemplateRender.new(template_manager, template_file, output_file)
         @renderer.run
