@@ -33,7 +33,7 @@ module Consul
           ['v1/test/nothere', :get, 404, nil],
           ['v1/teams/', :get, 200, {list:"true"}],
           ['v1/auth/ldap/users/', :get, 200, {list:"true"}],
-          ['v1/auth/ldap/users/d.vador', :get, 404],
+          ['v1/auth/ldap/users/d.vador', :get, 200],
           ['v1/auth/ldap/groups/', :get, 200, {list:"true"}],
           ['v1/auth/token/renew-self', :post, 200],
       ].each do |path, verb, code, query_params|
