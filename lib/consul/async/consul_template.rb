@@ -139,7 +139,7 @@ module Consul
         create_if_missing(path, query_params) { ConsulTemplateVaultSecretList.new(VaultEndpoint.new(vault_conf, path, 'GET',true, query_params,JSON.generate(data: {keys: []}))) }
       end
 
-      def secret(path = '', post_data = nil )
+      def secret(path = '', post_data = nil)
         raise "You need to provide a vault token to use 'secret' keyword" if vault_conf.token.nil?
         path = "/v1/#{path}"
         query_params = {}
