@@ -1,0 +1,13 @@
+{
+  "request_id": "Fake",
+  "lease_id": "",
+  "renewable": false,
+  "lease_duration": 0,
+  "data": {
+    "keys": [
+    ]
+  },
+  "wrap_info": null,
+  "warnings": null,
+  "auth": null
+}

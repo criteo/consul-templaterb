@@ -1,0 +1,17 @@
+<% ['users','groups'].each do |entity_type|
+%><%= entity_type.capitalize %>:
+<%
+    secrets("auth/ldap/#{entity_type}/").each do |entity|
+%> * <%=entity%>: <%= secret("auth/ldap/#{entity_type}/#{entity}")['data'].to_json %>
+<% end %>
+<% end %>
+
+<%# Example Output:
+Users:
+ * m.conraux: {"groups":"","policies":["operator"]}
+ * p.souchay: {"groups":"","policies":["duck_factory_rw"]}
+
+Groups:
+ * usr-aws-passwords: {"policies":["aws_passwords"]}
+ * gu-analytics: {"policies":["kibana", "hadoop"]}
+%>

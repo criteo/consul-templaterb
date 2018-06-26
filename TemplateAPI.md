@@ -279,8 +279,61 @@ consul-templaterb --template "source.html.erb:dest.html:reload_command:params.ya
 [...]
 ```
 
-In that case, it would load the content of params.yaml and inject it as params when evaluating
-template `source.html.erb`. Injection of params using 4th parameter of `--template` supports
-YAML as well as JSON format. Those parameter files are NOT automatically reloaded however.
+## secrets(prefix)
+
+It requires that a Vault token is given either in parameter or in environment variable
+The [policies](https://www.vaultproject.io/docs/concepts/policies.html) should be properly set.
+
+List the secrets in vault under a given prefix.
+
+<details><summary>Examples</summary>
+<div class="samples">
+
+### List all LDAP entities configured in Vault
+
+```erb
+<% ['users','groups'].each do |entity_type|
+%><%= entity_type.capitalize %>: <%
+    secrets("auth/ldap/#{entity_type}/").each do |entity|
+%> * <%=entity%>
+<% end %>
+<% end %>
+```
+
+Full example: [samples/vault-ldap.txt.erb](samples/vault-ldap.txt.erb)
+
+</div>
+</details>
+
+## secret(path, [data = nil])
+
+It requires that a Vault token is given either in parameter or in environment variable
+The [policies](https://www.vaultproject.io/docs/concepts/policies.html) should be properly set.
+
+Either read or write on a path in vault.
+
+Having a non-nil data Hash will change the behavior from read to update and apply the given data.
+
+Notice: For the moment the versionned KV abstration is not handled, if you want to access versioned KV, you have to hit the logical paths directly.
+
+<details><summary>Examples</summary>
+<div class="samples">
+
+### Read LDAP configuration
+
+```erb
+secret('auth/ldap/config')['data']
+```
+
+Full example: [samples/vault-ldap.txt.erb](samples/vault-ldap.txt.erb)
+
+
+### Read a path in non-versionned KV
+```erb
+secret('secret/foo', [force_ttl: intInSecond])
+```
+
+</div>
+</details>
 
 See [samples/common/header.html.erb](samples/common/header.html.erb) for example of usage.
