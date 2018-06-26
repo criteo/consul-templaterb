@@ -17,7 +17,7 @@ module Consul
 
     def mock_path(path, file, port, http_method = :get, status = 200, query_params={})
       body = read(file)
-      stub_request(http_method, %r{http://localhost:#{port}/#{path}(?:\?.*)?})
+      stub_request(http_method, %r{^http://localhost:#{port}/#{path}(?:\?.*)?$})
           .to_return(body: body, status: status)
       body
     end
@@ -32,8 +32,8 @@ module Consul
           ['v1/test/foo', :get, 200, nil],
           ['v1/test/nothere', :get, 404, nil],
           ['v1/teams/', :get, 200, {list:"true"}],
-          ['v1/auth/ldap/users/d.vador', :get, 200],
           ['v1/auth/ldap/users/', :get, 200, {list:"true"}],
+          ['v1/auth/ldap/users/d.vador', :get, 200],
           ['v1/auth/ldap/groups/', :get, 200, {list:"true"}],
           ['v1/auth/token/renew-self', :post, 200],
       ].each do |path, verb, code, query_params|
@@ -54,7 +54,7 @@ module Consul
          v1/health/checks/consul
          v1/health/service/consul
          v1/kv/
-         v1/kv/choregraphies
+         v1/kv/choregraphie
          v1/kv/services-data/web-preview/network-service].each do |path|
         results[path] = mock_consul_path path
       end

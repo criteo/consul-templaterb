@@ -30,7 +30,9 @@ RSpec.describe Consul::Async::ConsulTemplateRender do
       end
       # For multi-pass templates, we wait for up to 3 iterations
       3.times do
-        @renderer.run
+        EM.run_block do
+          @renderer.run
+        end
       end
       expect(@renderer.render).not_to be_empty
       expect(@renderer.render).to eq File.read expected
