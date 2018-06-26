@@ -2,7 +2,6 @@
 %><%= entity_type.capitalize %>:
 <%
     secrets("auth/ldap/#{entity_type}/").each do |entity|
-%> * <%=entity%>
+%> * <%=entity%>: <%= secret("auth/ldap/#{entity_type}/#{entity}")['data'].to_json %>
 <% end %>
 <% end %>
-d.vador = <%= secret("auth/ldap/users/d.vador")['data'].to_json %>

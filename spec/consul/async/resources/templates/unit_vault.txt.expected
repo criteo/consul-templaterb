@@ -1,7 +1,6 @@
 Users:
- * d.vador
+ * d.vador: {"groups":"","policies":["empire_endor_admin"]}
 
 Groups:
 
 
-d.vador = {"keys":["d.vador"]}
