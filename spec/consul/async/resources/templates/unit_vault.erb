@@ -1,0 +1,8 @@
+<% ['users','groups'].each do |entity_type|
+%><%= entity_type.capitalize %>:
+<%
+    secrets("auth/ldap/#{entity_type}/").each do |entity|
+%> * <%=entity%>
+<% end %>
+<% end %>
+d.vador = <%= secret("auth/ldap/users/d.vador")['data'].to_json %>

@@ -1,0 +1,16 @@
+{
+  "request_id": "230f39df-b3e5-30d0-8eeb-f50c7cc0fd6b",
+  "lease_id": "",
+  "renewable": false,
+  "lease_duration": 0,
+  "data": {
+    "groups": "",
+    "policies": [
+      "empire_endor_admin"
+    ]
+  },
+  "wrap_info": null,
+  "warnings": null,
+  "auth": null
+}
+
