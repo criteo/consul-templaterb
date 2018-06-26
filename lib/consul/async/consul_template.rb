@@ -141,7 +141,7 @@ module Consul
 
       def secret(path = '', post_data = nil)
         raise "You need to provide a vault token to use 'secret' keyword" if vault_conf.token.nil?
-        path = "/v1/#{path}"
+        path = "/v1/#{path}".gsub(/\/{2,}/, '/')
         query_params = {}
         method = post_data ? "POST" : "GET"
         create_if_missing(path, query_params) { ConsulTemplateVaultSecret.new(VaultEndpoint.new(vault_conf, path, method, true, query_params, JSON.generate(data: {}))) }
