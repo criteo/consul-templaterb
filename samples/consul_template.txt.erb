@@ -1,6 +1,6 @@
 + List of all datacenters
 -------------------------
-<% datacenters.  each do |dc| %>
+<% datacenters.each do |dc| %>
   * <%= dc %> with <%= services(dc:dc).keys.count %> services, <%= nodes(dc:dc).count %> nodes
 <% end %>
 
