@@ -31,6 +31,12 @@ class ConsulService {
     console.log('Data generated at: ' + data['generated_at']);
 
     var urlParam = new URL(location.href).searchParams.get('service');
+    if (urlParam === null) {
+      var servicePrefix = '#service_'
+      if (location.hash.startsWith(servicePrefix)) {
+        urlParam = location.hash.substr(servicePrefix.length)
+      }
+    }
     if (urlParam) {
       var nodes = document.getElementById('service-list').childNodes;
       for(var i in nodes) {
