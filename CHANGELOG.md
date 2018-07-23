@@ -2,7 +2,20 @@
 
 ## (UNRELEASED)
 
+## 1.4.0 (July 23, 2018)
+
+IMPROVEMENTS:
+
+ * minor fixes in samples
+ * consul-ui now supports `#service_<service_name>` anchors
+
+NEW FEATURES:
+
+ * Support for Hashicorp Vault improvements thanks to [@uepoch](https://github.com/uepoch)
+
 ## 1.3.1 (June 19, 2018)
+
+NEW FEATURES:
 
  * samples/consul-ui/ now displays Service Meta information (new in Consul 1.1)
 
@@ -12,7 +25,7 @@ IMPROVEMENTS:
 
  * samples/consul-ui/ now supports keys as well as nodes thanks to [@geobeau](https://github.com/geobeau)
 
-NEW FEATURES
+NEW FEATURES:
 
  * EXPERIMENTAL Vault support thanks to [@uepoch](https://github.com/uepoch)
 
