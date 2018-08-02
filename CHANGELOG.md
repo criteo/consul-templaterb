@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+IMPROVEMENTS:
+
+ * fixed small errors in documentation
+
 ## 1.4.0 (July 23, 2018)
 
 IMPROVEMENTS:

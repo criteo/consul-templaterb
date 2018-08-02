@@ -279,6 +279,8 @@ consul-templaterb --template "source.html.erb:dest.html:reload_command:params.ya
 [...]
 ```
 
+See [samples/common/header.html.erb](samples/common/header.html.erb) for example of usage.
+
 ## secrets(prefix)
 
 It requires that a Vault token is given either in parameter or in environment variable
@@ -335,5 +337,3 @@ secret('secret/foo', [force_ttl: intInSecond])
 
 </div>
 </details>
-
-See [samples/common/header.html.erb](samples/common/header.html.erb) for example of usage.
