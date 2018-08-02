@@ -28,6 +28,9 @@ consul-template.
 It provides a very [simple API](TemplateAPI.md) to write your own templates
 with fully [working examples](samples/).
 
+It also allow to display a very nice and hi-performance HTML5 UI for Consul,
+see [consul-ui](samples/consul-ui) for details.
+
 ## Differences with HashiCorp's consul-template
 
 [Hashicorp's Consul Template](https://github.com/hashicorp/consul-template)

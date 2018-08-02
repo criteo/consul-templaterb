@@ -4,6 +4,23 @@ A simple HTML5 app that displays all services within Consul with AJAX requests.
 It supports fitering based on tags and does not rely on Consul to display pages,
 meaning that it can be scaled horizontally without any troubles with Consul.
 
+## Is it prod ready?
+
+This application is used for several months within Criteo to replace Consul native interface and
+is used daily by hundreds of users. At Criteo, consul-templaterb creates the static web, updates
+it continuously and all the static pages are served using nginx, but any web server might be used.
+
+Criteo has more than 20k Consul nodes on 8 datacenters, so it should work for most installations.
+
+It has far more performance than most Consul UIs, the only downside is that the whole application
+is Read-Only (but it would be possible to add RW support with CORS to modify values within
+Consul).
+
+You can watch a [video comparison](https://www.youtube.com/watch?v=o7VEox2FSEs) of this application
+with the new native Consul UI interface of Consul 1.2.x, performance gap is especially strong
+when using remote Datacenters (in the video around 01:10) where this app displays all information
+from datacenter in Tokyo from Paris.
+
 ## Usage
 
 ```shell
@@ -35,7 +52,7 @@ Will generate index.html and consul_template.json in your directory, so you migh
 
 ### Filtering services
 
-This app supports the following environement variables:
+This app supports the following environment variables:
 
 * SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
 * INSTANCE_MUST_TAG: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
