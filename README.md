@@ -144,6 +144,7 @@ USAGE: consul-templaterb [[options]]
     -r, --retry-delay=<min_duration> Min Retry delay on Error/Missing Consul Index
     -k, --hot-reload=<behavior>      Control hot reload behaviour, one of :[die (kill daemon on hot reload failure), keep (on error, keep running), disable (hot reload disabled)]
     -K, --sig-term=kill_signal       Signal to send to next --exec command on kill, default=TERM
+    -T, --trim-mode=trim_mode        ERB Trim mode to use (- by default)
     -R, --sig-reload=reload_signal   Signal to send to next --exec command on reload (NONE supported), default=HUP
     -e, --exec=<command>             Execute the following command
     -d, --debug-network-usage        Debug the network usage

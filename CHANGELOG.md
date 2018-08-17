@@ -2,9 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.5.0 (August 17, 2018)
+
 IMPROVEMENTS:
 
  * fixed small errors in documentation
+ * added `-T` flag to control ERB trim mode with default value of `-`
 
 ## 1.4.0 (July 23, 2018)
 
