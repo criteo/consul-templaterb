@@ -17,6 +17,9 @@ def compute_default_output(source)
 end
 
 options = {
+  erb: {
+    trim_mode: '-', # trim_mode for ERB
+  },
   vault: {
     debug: {
       network: false
@@ -136,6 +139,11 @@ optparse = OptionParser.new do |opts|
   opts.on('-K', '--sig-term=kill_signal', String,
           "Signal to send to next --exec command on kill, default=#{cur_sig_term}") do |sig|
     cur_sig_term = compute_signal(sig, nil)
+  end
+
+  opts.on('-T', '--trim-mode=trim_mode', String,
+          "ERB Trim mode to use (#{options[:erb][:trim_mode]} by default)") do |trim_mode|
+    options[:erb][:trim_mode] = trim_mode
   end
 
   opts.on('-R', '--sig-reload=reload_signal', String,
@@ -265,7 +273,7 @@ EM.epoll
 
 consul_conf = Consul::Async::ConsulConfiguration.new(options[:consul])
 vault_conf = Consul::Async::VaultConfiguration.new(options[:vault])
-template_manager = Consul::Async::EndPointsManager.new(consul_conf, vault_conf)
+template_manager = Consul::Async::EndPointsManager.new(consul_conf, vault_conf, options[:erb][:trim_mode])
 
 ARGV.each do |tpl|
   dest = compute_default_output(tpl)

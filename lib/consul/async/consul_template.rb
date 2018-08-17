@@ -21,9 +21,10 @@ module Consul
 
     class EndPointsManager
       attr_reader :consul_conf, :vault_conf, :net_info, :start_time
-      def initialize(consul_configuration, vault_configuration)
+      def initialize(consul_configuration, vault_configuration, trim_mode = nil)
         @consul_conf = consul_configuration
         @vault_conf = vault_configuration
+        @trim_mode = trim_mode
         @endpoints = {}
         @iteration = 1
         @start_time = Time.now.utc
@@ -169,7 +170,7 @@ module Consul
           current_erb_path: tpl_file_path,
           params: params
         }
-        result = ERB.new(tpl).result(binding)
+        result = ERB.new(tpl, nil, @trim_mode).result(binding)
         @context = old_value
         result
       rescue StandardError => e
