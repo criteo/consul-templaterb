@@ -11,12 +11,25 @@ class ConsulService {
     this.filterStatus = null;
     this.serviceFilterCounter = $("#service-counter");
     this.serviceFilterCount = 0;
-    this.showTags($('#showTagsInList').checked)
+    this.showProxiesInList = false;
+    var cs = this
+    window.setTimeout(function(){
+      cs.showTags($('#showTagsInList:checked').length > 0);
+      cs.showProxies($('#showProxiesInList:checked').length > 0);
+    }, 100);
   }
 
   showTags(showTags) {
     var stylesheet = document.getElementById('css-states');
     stylesheet.textContent = '.service-tags { display: ' + (showTags? 'block':'none') + ';}';
+  }
+
+  showProxies(showProxies) {
+    if (showProxies != this.showProxiesInList) {
+      this.showProxiesInList = showProxies;
+      console.log("showProxies:= "+this.showProxiesInList+", reloading list")
+      this.reloadServiceList();
+    }
   }
 
   fetchRessource() {
@@ -57,6 +70,9 @@ class ConsulService {
   }
 
   reloadServiceList() {
+    if (!this.data || !this.data.services) {
+      console.log("No data to display");
+    }
     this.serviceList.html('');
     this.serviceFilterCount = 0;
     for (var serviceName in this.data.services) {
@@ -68,7 +84,7 @@ class ConsulService {
       listItem.setAttribute('onfocus','consulService.onClickServiceName(this)');
       listItem.setAttribute('onclick','consulService.onClickServiceName(this)');
       listItem.setAttribute('value',serviceName);
-      listItem.setAttribute('class','list-group-item list-group-item-action');
+      var listItemClass = 'list-group-item list-group-item-action';
 
       var statuses = document.createElement('div');
       statuses.setAttribute('class','statuses float-right');
@@ -90,6 +106,14 @@ class ConsulService {
 
       statuses.appendChild(createBadge('badge-dark', (serviceStatus['total'] || 0)));
       listItem.appendChild(statuses);
+      if (!!service['kind']) {
+        var kind = document.createElement('div');
+        kind.setAttribute('class','kind float-right');
+        kind.appendChild(createBadge('badge-info kind', service['kind']));
+        listItem.appendChild(kind);
+        listItemClass+= " kind-" + service['kind'];
+      }
+      listItem.setAttribute('class', listItemClass);
 
       var serviceNameItem = document.createElement('div');
       serviceNameItem.setAttribute('class', 'service-name');
@@ -113,11 +137,20 @@ class ConsulService {
   }
 
   filterService() {
-    var filter = new RegExp(consulService.serviceFilter.val());
+    var filter;
+    var serviceVal = consulService.serviceFilter.val();
+    try {
+      filter = new RegExp(serviceVal);
+    } catch (e) {
+      var safeReg = serviceVal.replace(/[-[\]{}()*+?.,\\^$|]/g, "\\$&")
+      console.log("Failed to compile regexp for '" + serviceVal + "', using strict lookup due to: " + e);
+      filter = new RegExp(safeReg);
+    }
     consulService.serviceFilterCount = 0;
+    var showProxiesInList = this.showProxiesInList;
     consulService.serviceList.children('button').each(function (){
       var ui = $(this);
-      if(serviceMatcher(this, filter)) {
+      if(serviceMatcher(this, filter, showProxiesInList)) {
         ui.removeClass('d-none');
         ui.addClass('d-block');
         consulService.serviceFilterCount += 1;
@@ -196,6 +229,7 @@ class ConsulService {
       serviceHtml.appendChild(serviceTitleGenerator(instance));
       serviceHtml.appendChild(tagsGenerator(instance.tags));
       serviceHtml.appendChild(serviceMetaGenerator(instance.sMeta));
+      serviceHtml.appendChild(connectGenerator(instance))
       serviceHtml.appendChild(checksStatusGenerator(instance.checks));
       var state = nodeState(instance.checks);
       serviceHtml.setAttribute('status', state);
@@ -212,6 +246,9 @@ class ConsulService {
     resizeWrapper('instances-wrapper', 'instances-list');
     $('#instances-list .list-group-item').resize(resizeAll);
     this.filterInstances();
+    $('pre code').each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
   }
 }
 

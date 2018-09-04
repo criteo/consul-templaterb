@@ -104,6 +104,29 @@ function tagsGenerator(instanceTags) {
   return tags;
 }
 
+function connectGenerator(instance) {
+  var connectItem = document.createElement('div');
+  var connectValue = instance['connect']
+  if (connectValue != null && connectValue["Proxy"]) {
+    connectItem.setAttribute('class', 'connect-enabled');
+    var badge = document.createElement("span");
+    badge.setAttribute("class", "badge badge-primary");
+    badge.appendChild(document.createTextNode("Consul Connect Enabled"));
+    connectItem.appendChild(badge);
+    var content = document.createElement("pre");
+    content.setAttribute("class", "connect-data");
+    var code = document.createElement("code");
+    code.setAttribute("class", "connect-source");
+    code.appendChild(document.createTextNode(JSON.stringify(connectValue)));
+    content.appendChild(code);
+    connectItem.appendChild(content);
+    return connectItem;
+  } else {
+    connectItem.setAttribute('class', 'connect-disabled');
+  }
+  return connectItem
+}
+
 function serviceMetaGenerator(instanceMeta) {
   var top = document.createElement('div');
   top.className = 'instance-meta';
@@ -248,8 +271,11 @@ function createBadge(classes, data) {
   return badge;
 }
 
-function serviceMatcher(service, regex) {
+function serviceMatcher(service, regex, showProxiesInList) {
   if(service.getElementsByClassName('service-name')[0].innerHTML.match(regex)) {
+    if(!showProxiesInList && service.classList.contains('kind-connect-proxy')){
+      return false;
+    }
     return true;
   }
   var tags = service.getElementsByClassName('service-tags')[0].getElementsByClassName('badge');

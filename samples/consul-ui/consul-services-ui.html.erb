@@ -5,14 +5,20 @@
       <div class="row mx-0">
         <div id="filter-menu" class="col-4 col-m-3 px-4 pt-4">
           <div class="form-group">
-            <div class="form-check">
+            <div class="form-check form-check-inline">
               <label class="form-check-label">
                 <input id="showTagsInList" type="checkbox" title="show tags" onclick="consulService.showTags(this.checked)" class="form-check-input" />
                 Show Tags
               </label>
             </div>
+            <div class="form-check form-check-inline">
+              <label class="form-check-label">
+                <input id="showProxiesInList" type="checkbox" title="show Consul Connect Proxies" onclick="consulService.showProxies(this.checked)" class="form-check-input" />
+                Show Connect Proxies
+              </label>
+            </div>
             <div class="input-group">
-            <input id="service-filter" type="text" placeholder="filter services by name or tags" class="form-control" />
+              <input id="service-filter" type="text" placeholder="filter services by name or tags" class="form-control" />
               <div class="input-group-append">
                 <span class="input-group-text" id="service-counter"></span>
               </div>
@@ -50,5 +56,6 @@
   <script type="text/javascript">
     consulService = new ConsulService('<%= datasource %>','<%= refresh %>');
   </script>
+  <script src="vendors/highlight/highlight.pack.js"></script>
   </body>
 </html>

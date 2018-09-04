@@ -82,11 +82,14 @@
                  id:      snode['Service']['ID'],
                  name:    snode['Node']['Node'],
                  sMeta:   meta ? meta : {},
+                 connect: snode['Service']['Connect'],
                  addr:    snode.service_address,
                  port:    snode['Service']['Port'],
                  tags:    snode['Service']['Tags'],
                  checks:  checks,
       }
+      kind_of_service = snode['Service']['Kind']
+      service['kind'] = kind_of_service if kind_of_service
       service[:instances] << server
     end
   end

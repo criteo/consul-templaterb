@@ -151,3 +151,11 @@ pre, code {
   height: 100%;
   margin-bottom: 0px;
 }
+
+.connect-enabled{
+  float:right;
+  border: 1px #ccc solid;
+}
+.connect-disabled{
+  display: none;
+}
