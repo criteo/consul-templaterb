@@ -2,6 +2,16 @@
 
 ## (UNRELEASED)
 
+## 1.5.1 (September 4, 2018)
+
+BUG FIXES:
+
+ * fixed non valid regexp lookups in Consul-UI
+
+IMPROVEMENTS:
+
+ * Added Support for Consul Connect in Consul-UI
+
 ## 1.5.0 (August 17, 2018)
 
 IMPROVEMENTS:
