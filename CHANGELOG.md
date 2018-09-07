@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+IMPROVEMENTS:
+
+ * Added support for Weights in Consul-UI
+
 ## 1.5.1 (September 4, 2018)
 
 BUG FIXES:

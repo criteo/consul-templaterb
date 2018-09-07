@@ -148,6 +148,41 @@ function serviceMetaGenerator(instanceMeta) {
   return top;
 }
 
+function weightsGenerator(instanceWeights, instanceStatus) {
+  var weights = document.createElement('div');
+  if (instanceWeights != null) {
+    weights.setAttribute('class', 'weights weight-passing badge badge-' + toCSSClass(instanceStatus));
+    weights.appendChild(document.createTextNode("Weights: "));
+    {
+      var passing = document.createElement("span");
+      passing.setAttribute("class", "weight-passing badge badge-success");
+      passing.appendChild(document.createTextNode(instanceWeights['Passing']));
+      passing.setAttribute('title', "DNS Weight when in warning state")
+      weights.appendChild(passing);
+    }
+    weights.appendChild(document.createTextNode(' '));
+    {
+      var warning = document.createElement("span");
+      warning.setAttribute("class", "weight-warning badge badge-warning");
+      warning.setAttribute('title', "DNS Weight when in warning state")
+      warning.appendChild(document.createTextNode(instanceWeights['Warning']));
+      weights.appendChild(warning);
+    }
+    return weights;
+  } else {
+    weights.setAttribute('class', 'weights-absent');
+  }
+  return weights
+}
+
+function toCSSClass(state) {
+  switch(state) {
+    case 'passing': return 'success';
+    case 'critical': return 'danger';
+  }
+  return state;
+}
+
 function servicesGenerator(instanceServices) {
   var services = document.createElement('div');
   services.className = 'instance-services';
@@ -161,11 +196,7 @@ function servicesGenerator(instanceServices) {
     service.setAttribute('target', '_blank');
     nodeAddr = instanceServices[serviceKey]['Service']['Address'];
     service.setAttribute('href', 'http://' + nodeAddr + ':' + servicePort);
-    switch(nodeState(instanceServices[serviceKey]['Checks'])) {
-        case 'passing': service.classList.add('btn-outline-success'); break;
-        case 'warning': service.classList.add('btn-outline-warning'); break;
-        case 'critical': service.classList.add('btn-outline-danger'); break;
-    }
+    service.classList.add('btn-outline-'+toCSSClass(nodeState(instanceServices[serviceKey]['Checks'])))
     service.appendChild(document.createTextNode(serviceName + ':' + servicePort));
     services.appendChild(service);
   }
@@ -180,11 +211,7 @@ function checksStatusGenerator(instanceChecks) {
 
   for (var checkKey in instanceChecks) {
     checkId = Math.floor(Math.random()*10000);
-    switch(instanceChecks[checkKey]['status']) {
-      case 'passing': var btn = 'btn-success'; break;
-      case 'warning': var btn = 'btn-warning'; break;
-      case 'critical': var btn = 'btn-danger'; break;
-    }
+    var btn = 'btn-' + toCSSClass(instanceChecks[checkKey]['status'])
     var check = document.createElement('div');
 
     var btnCheck = document.createElement('button');

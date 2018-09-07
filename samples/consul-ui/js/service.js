@@ -225,13 +225,13 @@ class ConsulService {
       var instance = service['instances'][key];
       var serviceHtml = document.createElement('div');
       serviceHtml.setAttribute('class','list-group-item');
-
+      var state = nodeState(instance.checks);
+      serviceHtml.appendChild(weightsGenerator(instance.weights, state));
       serviceHtml.appendChild(serviceTitleGenerator(instance));
       serviceHtml.appendChild(tagsGenerator(instance.tags));
       serviceHtml.appendChild(serviceMetaGenerator(instance.sMeta));
       serviceHtml.appendChild(connectGenerator(instance))
       serviceHtml.appendChild(checksStatusGenerator(instance.checks));
-      var state = nodeState(instance.checks);
       serviceHtml.setAttribute('status', state);
       $("#instances-list").append(serviceHtml);
     }

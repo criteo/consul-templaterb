@@ -87,6 +87,7 @@
                  port:    snode['Service']['Port'],
                  tags:    snode['Service']['Tags'],
                  checks:  checks,
+                 weights: snode['Service']['Weights'],
       }
       kind_of_service = snode['Service']['Kind']
       service['kind'] = kind_of_service if kind_of_service
