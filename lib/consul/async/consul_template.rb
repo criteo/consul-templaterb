@@ -255,7 +255,7 @@ module Consul
 
     class ConsulTemplateAbstract
       extend Forwardable
-      def_delegators :result_delegate, :each, :[], :sort, :select, :each_value, :count, :empty?
+      def_delegators :result_delegate, :each, :[], :sort, :select, :each_value, :count, :empty?, :map
       attr_reader :result, :endpoint, :seen_at
       def initialize(consul_endpoint)
         @endpoint = consul_endpoint

@@ -3,6 +3,7 @@
 # This template compares the number of proxies with the number of services
 # Following https://github.com/hashicorp/consul/issues/4648
 <%
+  dammaged_nodes = []
   datacenters.each do |dc|
     services(dc: dc).each do |service_name, tags|
       if service_name.end_with? '-proxy'
@@ -10,11 +11,22 @@
         service_name_non_proxy = service_name[0..-7]
         num_services = service(service_name_non_proxy, dc:dc).count
         message = '[  OK  ]'
-        message = '[FAILED]' if num_services < num_proxies
-%>
-  <%= message %> <%= dc %> <% service_name %>: <%= num_proxies %> VS <%= service_name_non_proxy %>: <%= num_services %>
+        instance_proxies = service(service_name, dc:dc).map{ |snode| snode['Node']['Node'] + "::" + snode['Service']['ID'][0..-7] }.sort
+        instance_services = service(service_name_non_proxy, dc:dc).map{ |snode| snode['Node']['Node'] + "::" + snode['Service']['ID'] }.sort
+        diff = instance_proxies - instance_services
+        if diff.count > 0
+          message = "[FAILED] (DIFF:= #{diff.inspect} not in #{instance_services.inspect})"
+          dammaged_nodes += diff.map{|k| k[0..k.index('::')]}
+        end
+%><%= message %> <%= dc %> <%= service_name_non_proxy %>  (<%= num_proxies %> / <%= num_services %>)
 <%
     end
   end
 end
 %>
+List of dammaged_nodes
+======================
+<%
+dammaged_nodes.uniq.each do |n|
+%> <%= n %>
+<% end %>
