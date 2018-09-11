@@ -1,0 +1,20 @@
++ List of all datacenters
+-------------------------
+# This template compares the number of proxies with the number of services
+# Following https://github.com/hashicorp/consul/issues/4648
+<%
+  datacenters.each do |dc|
+    services(dc: dc).each do |service_name, tags|
+      if service_name.end_with? '-proxy'
+        num_proxies = service(service_name, dc:dc).count
+        service_name_non_proxy = service_name[0..-7]
+        num_services = service(service_name_non_proxy, dc:dc).count
+        message = '[  OK  ]'
+        message = '[FAILED]' if num_services < num_proxies
+%>
+  <%= message %> <%= dc %> <% service_name %>: <%= num_proxies %> VS <%= service_name_non_proxy %>: <%= num_services %>
+<%
+    end
+  end
+end
+%>
