@@ -2,9 +2,13 @@
 
 ## (UNRELEASED)
 
+## 1.5.2 (September 12, 2018)
+
 IMPROVEMENTS:
 
- * Added support for Weights in Consul-UI
+ * added support for Weights in Consul-UI
+ * new `debug/compare_connect_services.txt.erb`
+ * new erb .map() function to iterate over all values
 
 ## 1.5.1 (September 4, 2018)
 

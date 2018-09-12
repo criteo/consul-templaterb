@@ -11,7 +11,7 @@
         service_name_non_proxy = service_name[0..-7]
         num_services = service(service_name_non_proxy, dc:dc).count
         message = '[  OK  ]'
-        instance_proxies = service(service_name, dc:dc).map{ |snode| snode['Node']['Node'] + "::" + snode['Service']['ID'][0..-7] }.sort
+        instance_proxies = service(service_name, dc:dc).map{ |snode| snode['Node']['Node'] + "::" + snode['Service']['ID'][0..-8] }.sort
         instance_services = service(service_name_non_proxy, dc:dc).map{ |snode| snode['Node']['Node'] + "::" + snode['Service']['ID'] }.sort
         diff = instance_proxies - instance_services
         if diff.count > 0
