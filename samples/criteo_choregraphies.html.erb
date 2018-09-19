@@ -42,7 +42,14 @@
   <%
     else
       json = JSON.parse(Base64.decode64(tuple['Value']))
-      holders = json['holders']
+      begin
+        holders = json['holders']
+      rescue StandardError => e
+%>
+        <h1>Failed to parse holders <%= e %> in <%= json %></h1>
+<%
+        holders = []
+      end
     end
   %>
   <% if holders.count > 0 %>
