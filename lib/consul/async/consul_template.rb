@@ -285,7 +285,7 @@ module Consul
     end
 
     class ConsulTemplateAbstractMap < ConsulTemplateAbstract
-      def_delegators :result_delegate, :each, :[], :keys, :sort, :select, :values, :each_pair, :each_value
+      def_delegators :result_delegate, :each, :[], :keys, :sort, :select, :values, :each_pair, :each_value, :count, :empty?, :map
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end

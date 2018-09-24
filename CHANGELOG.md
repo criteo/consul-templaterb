@@ -2,6 +2,11 @@
 
 ## (UNRELEASED)
 
+## 1.5.2 (September 24, 2018)
+
+ * added to_a method to Arrays
+ * Improved Consul-UI templates to have proper list of DCs
+
 ## 1.5.2 (September 12, 2018)
 
 IMPROVEMENTS:
