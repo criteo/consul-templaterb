@@ -67,10 +67,6 @@ class Endpoint
     req
   end
 
-  def log(level, message)
-
-  end
-
   def _handle_error(http, consul_index)
     retry_in = [600, conf.retry_duration + 2**@consecutive_errors].min
     STDERR.puts "[ERROR][#{path}] X-Consul-Index:#{consul_index} - #{http.error} - Retry in #{retry_in}s #{stats.body_bytes_human}"
@@ -85,8 +81,8 @@ class Endpoint
 
   def fetch
     options = {
-        connect_timeout: 5, # default connection setup timeout
-        inactivity_timeout: conf.wait_duration + 1, # default connection inactivity (post-setup) timeout
+      connect_timeout: 5, # default connection setup timeout
+      inactivity_timeout: conf.wait_duration + 1, # default connection inactivity (post-setup) timeout
     }
     connection = EventMachine::HttpRequest.new(conf.base_url, options)
     cb = proc do |consul_index|

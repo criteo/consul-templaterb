@@ -285,13 +285,14 @@ module Consul
     end
 
     class ConsulTemplateAbstractMap < ConsulTemplateAbstract
-      def_delegators :result_delegate, :each, :[], :keys, :sort, :values, :each_pair, :each_value
+      def_delegators :result_delegate, :each, :[], :keys, :sort, :select, :values, :each_pair, :each_value
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
     class ConsulTemplateAbstractArray < ConsulTemplateAbstract
+      def_delegators :result_delegate, :each, :[], :sort, :select, :each_value, :count, :empty?, :map, :to_a
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end

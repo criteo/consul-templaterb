@@ -59,6 +59,6 @@
     end
   end
 %><%
-  json_datacenters = datacenters
+  json_datacenters = datacenters.to_a
   json = { nodes: service_per_node, datacenters: json_datacenters, generated_at: Time.now}
 %><%= JSON.pretty_generate(json) %>
