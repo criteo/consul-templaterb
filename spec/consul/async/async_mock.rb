@@ -48,7 +48,7 @@ module Consul
          v1/agent/self
          v1/catalog/datacenters
          v1/catalog/nodes
-         v1/catalog/node/consul02-par.central.criteo.preprod
+         v1/catalog/node/consul02.prod
          v1/catalog/node/7a985997-3925-4f18-8613-637c81bd750b
          v1/catalog/services
          v1/health/checks/consul
