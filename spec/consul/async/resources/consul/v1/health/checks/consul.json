@@ -1,6 +1,6 @@
 [
     {
-        "Node": "consul04-par.central.criteo.preprod",
+        "Node": "consul04.prod",
         "CheckID": "consul-exta-check",
         "Name": "marathon_http_check_0",
         "Status": "passing",

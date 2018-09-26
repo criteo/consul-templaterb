@@ -1,6 +1,6 @@
 {
   "ID": "7a985997-3925-4f18-8613-637c81bd750b",
-  "Node": "consul02-par.central.criteo.preprod",
+  "Node": "consul02.prod",
   "Address": "10.251.1.96",
   "Datacenter": "par",
   "TaggedAddresses": {

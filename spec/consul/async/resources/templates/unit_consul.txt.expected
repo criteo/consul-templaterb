@@ -1,5 +1,5 @@
 Service Consul
-consul01-par.central.criteo.preprod:8300
-consul02-par.central.criteo.preprod:8300
-consul03-par.central.criteo.preprod:8300
-consul04-par.central.criteo.preprod:8300
+consul01.prod:8300
+consul02.prod:8300
+consul03.prod:8300
+consul04.prod:8300

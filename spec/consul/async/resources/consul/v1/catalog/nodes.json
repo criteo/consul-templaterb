@@ -1,7 +1,7 @@
 [
   {
     "ID": "",
-    "Node": "consul01-par.central.criteo.preprod",
+    "Node": "consul01.prod",
     "Address": "10.251.1.98",
     "Datacenter": "",
     "TaggedAddresses": {
@@ -14,7 +14,7 @@
   },
   {
     "ID": "7a985997-3925-4f18-8613-637c81bd750b",
-    "Node": "consul02-par.central.criteo.preprod",
+    "Node": "consul02.prod",
     "Address": "10.251.1.96",
     "Datacenter": "par",
     "TaggedAddresses": {
@@ -30,7 +30,7 @@
   },
   {
     "ID": "830c08a0-34d2-ed54-57ff-a30d9b1b6e35",
-    "Node": "consul03-par.central.criteo.preprod",
+    "Node": "consul03.prod",
     "Address": "10.251.1.97",
     "Datacenter": "par",
     "TaggedAddresses": {
@@ -46,7 +46,7 @@
   },
   {
     "ID": "830c08a0-34d2-ed54-0000-a30d9b1b6e35",
-    "Node": "consul04-par.central.criteo.preprod",
+    "Node": "consul04.prod",
     "Address": "10.251.1.99",
     "Datacenter": "par",
     "TaggedAddresses": {

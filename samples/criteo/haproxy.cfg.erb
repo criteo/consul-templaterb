@@ -116,25 +116,8 @@ listen stats
 
 # ==== Managed by consul-templaterb ====
 
-frontend fe_main # HTTP(S) Service
+frontend fe_main
     bind *:80 name http
-
-    # Monitoring
-    monitor-uri /delivery/monitor/mesos-haproxy/lb-check
-    errorfile 200 /etc/haproxy/200-criteo-ok.txt
-
-    # Adding a header indicating client side is using HTTPS
-    acl http  ssl_fc,not
-    acl https ssl_fc
-    http-request set-header X-Forwarded-Protocol https if https
-
-    # Disable CONNECT globally (identified as vulnerability by audit tools such as Qualys)
-    acl ::disabled_http_methods method CONNECT
-    http-request block if ::disabled_http_methods
-
-    # Consul-agent ACL
-    acl consul-agent-http-acl hdr_dom(host) -i  consul-agent-http.lb-ty5.crto.in consul-agent-http.lb-ty5.central.criteo.prod
-    use_backend bestatic_consul-agent-http if consul-agent-http-acl
 
     # ACLs, HTTP Host header based, following the pattern <consul_app_name>.<fqdn_suffix>
 <% backends.each_pair do |service_name, nodes|
@@ -144,10 +127,6 @@ frontend fe_main # HTTP(S) Service
 <% end %>
 
 # Backends
-backend bestatic_consul-agent-http
-    http-request deny if !METH_GET # Deny writes
-    server srv0 127.0.0.1:8500
-
 <% backends.each_pair do |service_name, nodes|
 %>
 backend be_<%= service_name %>
