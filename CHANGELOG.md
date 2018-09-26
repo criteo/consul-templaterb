@@ -2,9 +2,21 @@
 
 ## (UNRELEASED)
 
-## 1.5.2 (September 24, 2018)
+## 1.5.4 (September 26, 2018)
 
- * added to_a method to Arrays
+IMPROVEMENTS:
+
+ * [Prometheus template](samples/metrics.erb) to export easily Consul
+   informations about nodes, datacenters and all services states
+ * Code style cleanup + travis now enforces Rubocop
+ * Remove criteo references in spec files thanks to @pierrecdn
+ * Bitrate display more consistent thanks to @pierrecdn
+
+## 1.5.3 (September 24, 2018)
+
+IMPROVEMENTS:
+
+ * added to_a method to Arrays objects (ex: datacenters)
  * Improved Consul-UI templates to have proper list of DCs
 
 ## 1.5.2 (September 12, 2018)
