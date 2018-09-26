@@ -38,10 +38,8 @@ module Consul
           params: {}
         }
 
-        unless @vault_conf.token.nil? || !@vault_conf.token_renew
-          #Setup token renewal
-          vault_setup_token_renew
-        end
+        # Setup token renewal
+        vault_setup_token_renew unless @vault_conf.token.nil? || !@vault_conf.token_renew
       end
 
       # https://www.consul.io/api/health.html#list-nodes-for-service
@@ -135,16 +133,18 @@ module Consul
 
       def secrets(path = '')
         raise "You need to provide a vault token to use 'secret' keyword" if vault_conf.token.nil?
-        path = "/v1/#{path}".gsub(/\/{2,}/, '/')
-        query_params = {list: "true"}
-        create_if_missing(path, query_params) { ConsulTemplateVaultSecretList.new(VaultEndpoint.new(vault_conf, path, 'GET',true, query_params,JSON.generate(data: {keys: []}))) }
+        path = "/v1/#{path}".gsub(%r{/{2,}}, '/')
+        query_params = { list: 'true' }
+        create_if_missing(path, query_params) do
+          ConsulTemplateVaultSecretList.new(VaultEndpoint.new(vault_conf, path, 'GET', true, query_params, JSON.generate(data: { keys: [] })))
+        end
       end
 
       def secret(path = '', post_data = nil)
         raise "You need to provide a vault token to use 'secret' keyword" if vault_conf.token.nil?
-        path = "/v1/#{path}".gsub(/\/{2,}/, '/')
+        path = "/v1/#{path}".gsub(%r{/{2,}}, '/')
         query_params = {}
-        method = post_data ? "POST" : "GET"
+        method = post_data ? 'POST' : 'GET'
         create_if_missing(path, query_params) { ConsulTemplateVaultSecret.new(VaultEndpoint.new(vault_conf, path, method, true, query_params, JSON.generate(data: {}))) }
       end
 
@@ -228,7 +228,7 @@ module Consul
 
       def vault_setup_token_renew
         path = 'v1/auth/token/renew-self'
-        STDERR.print "[INFO] Setting up vault token renewal"
+        STDERR.print '[INFO] Setting up vault token renewal'
         VaultEndpoint.new(vault_conf, path, :POST, {}, {})
       end
 

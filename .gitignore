@@ -18,6 +18,7 @@ samples/consul-ui/*.json
 samples/consul-ui/common/*.html
 /samples/criteo/haproxy.cfg
 /samples/consul_template
+/samples/metrics
 /samples/find_blocked_choregraphies
 /spec/consul/async/resources/templates/*.txt
 /spec/consul/async/resources/templates/*.result

@@ -5,7 +5,7 @@ require_relative 'async_mock'
 RSpec.describe Consul::Async::VaultEndpoint do
   include Consul::AsyncMock
   before do
-    @conf = Consul::Async::VaultConfiguration.new()
+    @conf = Consul::Async::VaultConfiguration.new
   end
 
   it 'returns the right json from the body of the http request' do

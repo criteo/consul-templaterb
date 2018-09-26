@@ -55,11 +55,11 @@ class Endpoint
 
   def build_request(headers = {}, query_params = {})
     req = {
-        head: headers,
-        path: path,
-        query: query_params,
-        keepalive: true,
-        callback: method(:on_response)
+      head: headers,
+      path: path,
+      query: query_params,
+      keepalive: true,
+      callback: method(:on_response)
     }
     @query_params.each_pair do |k, v|
       req[:query][k] = v

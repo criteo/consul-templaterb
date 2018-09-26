@@ -29,7 +29,6 @@ module Consul
         @lease_duration_factor = lease_duration_factor
         @paths = paths
         @token = token
-
       end
 
       def ch(path, symbol)
@@ -85,7 +84,6 @@ module Consul
         @data_json = JSON.parse(data) if @data_json.nil?
         @data_json
       end
-
     end
     class VaultHttpResponse
       attr_reader :response_header, :response, :error, :json
@@ -107,7 +105,7 @@ module Consul
     class VaultEndpoint
       attr_reader :conf, :path, :http_method, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value, :query_params
 
-      def initialize(conf, path, http_method = 'GET', enforce_json_200 = true, query_params = {}, default_value = '{}', post_data ={})
+      def initialize(conf, path, http_method = 'GET', enforce_json_200 = true, query_params = {}, default_value = '{}', post_data = {})
         @conf = conf.create(path)
         @default_value = default_value
         @path = path
@@ -123,7 +121,7 @@ module Consul
         @post_data = post_data
         @stopping = false
         @stats = EndPointStats.new
-        @last_result = VaultResult.new(VaultHttpResponse.new(nil, default_value), false, stats ,1)
+        @last_result = VaultResult.new(VaultHttpResponse.new(nil, default_value), false, stats, 1)
         on_response { |result| @stats.on_response result }
         on_error { |http| @stats.on_error http }
         _enable_network_debug if conf.debug && conf.debug[:network]
@@ -161,7 +159,7 @@ module Consul
 
       private
 
-      def build_request()
+      def build_request
         res = {
           head: {
             'Accept' => 'application/json',
@@ -200,7 +198,7 @@ module Consul
         http_result = VaultHttpResponse.new(http, default_value)
         EventMachine.add_timer(retry_in) do
           yield
-          queue.push()
+          queue.push
         end
         @e_callbacks.each { |c| c.call(http_result) }
       end

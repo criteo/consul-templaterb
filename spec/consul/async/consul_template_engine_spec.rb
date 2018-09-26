@@ -6,7 +6,7 @@ RSpec.describe Consul::Async::ConsulTemplateEngine do
   include Consul::AsyncMock
   before do
     @consul_conf = Consul::Async::ConsulConfiguration.new
-    @vault_conf = Consul::Async::VaultConfiguration.new(token: "fake", token_renew: false)
+    @vault_conf = Consul::Async::VaultConfiguration.new(token: 'fake', token_renew: false)
   end
 
   it 'Renders properly ha_proxy.cfg.erb' do

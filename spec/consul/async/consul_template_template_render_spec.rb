@@ -6,7 +6,7 @@ RSpec.describe Consul::Async::ConsulTemplateRender do
   include Consul::AsyncMock
   before do
     @consul_conf = Consul::Async::ConsulConfiguration.new
-    @vault_conf = Consul::Async::VaultConfiguration.new(token: "fake")
+    @vault_conf = Consul::Async::VaultConfiguration.new(token: 'fake')
   end
 
   unit_templates = File.expand_path('../resources/templates', __FILE__)

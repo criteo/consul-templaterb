@@ -7,19 +7,19 @@ Metrics/AbcSize:
   Max: 80
 
 Metrics/BlockLength:
-  Max: 120
+  Max: 135
 
 Metrics/BlockNesting:
   Max: 4
 
 Metrics/ClassLength:
-  Max: 180
+  Max: 200
 
 Metrics/CyclomaticComplexity:
   Max: 15
 
 Metrics/LineLength:
-  Max: 150
+  Max: 175
 
 Metrics/MethodLength:
   Max: 50
