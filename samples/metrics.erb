@@ -1,0 +1,71 @@
+# A template for exporting metrics for prometheus using consul-templaterb
+# This template can be configure the following way with environment variables
+# Environment variables to filter services/instances
+#   SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
+#   INSTANCE_MUST_TAG: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
+#   INSTANCE_EXCLUDE_TAG: Exclude instances having the given tag
+#   EXCLUDE_SERVICES: comma-separated services to exclude (example: consul-agent-http,mesos-slave,mesos-agent-watcher)
+<%
+
+  service_tag_filter = ENV['SERVICES_TAG_FILTER'] || nil
+  instance_must_tag = ENV['INSTANCE_MUST_TAG'] || service_tag_filter
+  instance_exclude_tag = ENV['INSTANCE_EXCLUDE_TAG']
+
+  # Services to hide
+  services_blacklist = (ENV['EXCLUDE_SERVICES'] || '').split(',')
+  # Compute the health of a Service
+  def compute_state(snode)
+    states = ['passing', []]
+    snode['Checks'].each do |chk|
+      st = chk['Status']
+      states[1] << st
+      if st == 'critical'
+        states[0] = st
+      elsif st == 'warning' && states[0] == 'passing'
+        states[0] = st
+      end
+    end
+    states
+  end
+  backends = {}
+  service_count = 0
+  services(tag: service_tag_filter).each do |service_name, tags|
+    if !services_blacklist.include?(service_name) && (instance_must_tag.nil? || tags.include?(instance_must_tag))
+      service_count += 1
+      res = {
+        'passing'  => 0,
+        'warning'  => 0,
+        'critical' => 0,
+      }
+      service(service_name).each do |snode|
+        state = compute_state(snode)[0]
+        res[state] += 1
+      end
+      backends[service_name] = res
+    end
+  end
+%>
+# HELP consul_datacenters_count A gauge of number of datacenters available
+# TYPE consul_nodes_count gauge
+consul_datacenters_count <%= datacenters().count %>
+
+# HELP consul_nodes_count A gauge of number of nodes in the cluster
+# TYPE consul_nodes_count gauge
+consul_nodes_count <%= nodes().count %>
+
+# HELP consul_services_count A gauge of the number of services
+# TYPE consul_services_count gauge
+consul_services_count <%= service_count %>
+
+# HELP consul_service_count A gauge of number instances of service with their current state
+# TYPE consul_service_count gauge
+<%
+  json_backends = {}
+  backends.each_pair do |service_name, stats|
+    stats.each_pair do |state_name, state_count|
+%>consul_service_count{service="<%= service_name %>",state="<%= state_name %>"} <%= state_count %>
+<%
+    end
+  end
+%>
+
