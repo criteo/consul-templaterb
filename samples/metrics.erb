@@ -41,7 +41,10 @@
         state = compute_state(snode)[0]
         res[state] += 1
       end
-      backends[service_name] = res
+      backends[service_name] = {
+        state: res,
+        stats: service(service_name).endpoint.stats,
+      }
     end
   end
 %>
@@ -59,13 +62,31 @@ consul_services_count <%= service_count %>
 
 # HELP consul_service_count A gauge of number instances of service with their current state
 # TYPE consul_service_count gauge
+# HELP consul_service_stats_requests_total A counter of requests performed by consul-templaterb, show activity on a service
+# TYPE consul_service_stats_requests_total counter
+# HELP consul_service_stats_requests_bytes A counter of bytes transfered from Consul Agent to consul-templaterb
+# TYPE consul_service_stats_requests_bytes counter
+# HELP consul_service_stats_requests_bytes_per_sec A counter of bytes transfered from Consul Agent to consul-templaterb
+# TYPE consul_service_stats_requests_bytes_per_sec gauge
+
 <%
   json_backends = {}
-  backends.each_pair do |service_name, stats|
-    stats.each_pair do |state_name, state_count|
+  backends.each_pair do |service_name, service_info|
+    service_info[:state].each_pair do |state_name, state_count|
 %>consul_service_count{service="<%= service_name %>",state="<%= state_name %>"} <%= state_count %>
 <%
     end
+    current_stats = service_info[:stats]
+%>consul_service_stats_requests_total{service="<%= service_name %>",type="success"} <%= current_stats.successes %>
+<%
+    if current_stats.errors > 0
+%>consul_service_stats_requests_total{service="<%= service_name %>",type="errors"} <%= current_stats.errors %>
+<%
+    end
+%>consul_service_stats_requests_bytes{service="<%= service_name %>"} <%= service_info[:stats].body_bytes %>
+consul_service_stats_requests_bytes_per_sec{service="<%= service_name %>"} <%= service_info[:stats].bytes_per_sec %>
+
+<%
   end
 %>
 

@@ -19,12 +19,29 @@ Have a look to [samples/](samples/) directory to start writing your own template
 All objects returned by those functions described below all share the same structure:
 
 * `.result` : handle the result
-* `.endpoint` : get technical information about how data was retrieved and statistics
+* `.endpoint` : get technical information about how data was retrieved and statistics.
+
+## Accessing to statistics to monitor your cluster
+
+All endpoints implement technical interface that allow to get information about what
+is going on in your Consul Cluster.
+
+On each object, you can access the `.endpoint` object that includes several informations about the endpoint being queried:
+
+* `myresult.endpoint.x_consul_index` return the current index on blocking query
+* `myresult.endpoint.stats` a object with interresting fields: `bytes_per_sec`,
+  `bytes_per_sec_human`, `successes`, `errors`, `body_bytes`. All stats details
+  are available in the file [lib/consul/async/stats.rb](lib/consul/async/stats.rb).
+
+Using those statistics might be useful to trigger alerts very easily when something
+is going on. Have a look to [samples/metrics.erb](samples/metrics.erb) that exposes
+most of those metrics to [Prometheus](https://prometheus.io/).
 
 ## Common re-implemented functions for all objects
 
 Most objects returned by all those functions are contained within a `.result` object. However, in order
 to avoid having to write .result in all templates, some shortcuts have been added:
+
 * `[]` allow to either access values for map-based data or arrays
 * for all objects: `.each`, `sort`, `.select`, `.each_value`, `.count`, `.empty?`
 * additionnaly, for map based results, the following methods are available: `.keys`,  `.values`, `.each_pair`,
