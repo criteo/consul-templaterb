@@ -2,6 +2,15 @@
 
 ## (UNRELEASED)
 
+## 1.5.4 (September 27, 2018)
+
+IMPROVEMENTS:
+
+ * Improved [Prometheus template](samples/metrics.erb) with many new metrics
+ * Documentation improvements regarding statistics and endpoints
+ * Code cleanups, code style, remove unused source file
+ * Travis build now runs rubocop and test with Ruby version from 2.3.x to 2.5.x
+
 ## 1.5.4 (September 26, 2018)
 
 IMPROVEMENTS:
