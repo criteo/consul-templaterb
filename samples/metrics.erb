@@ -71,7 +71,8 @@ consul_services_count <%= service_count %> <%= services(tag: service_tag_filter)
 
 <%
   json_backends = {}
-  now = Time.now.utc.to_i * 1000
+  now = Time.now.utc
+  now_ms = now.to_i * 1000
   backends.each_pair do |service_name, service_info|
     last_update = service_info[:stats].last_success_or_error.to_i * 1000
     service_info[:state].each_pair do |state_name, state_count|
@@ -86,7 +87,7 @@ consul_services_count <%= service_count %> <%= services(tag: service_tag_filter)
 <%
     end
 %>consul_service_stats_requests_bytes{service="<%= service_name %>"} <%= service_info[:stats].body_bytes %> <%= last_update %>
-consul_service_stats_requests_bytes_per_sec{service="<%= service_name %>"} <%= service_info[:stats].bytes_per_sec %> <%= now %>
+consul_service_stats_requests_bytes_per_sec{service="<%= service_name %>"} <%= service_info[:stats].bytes_per_sec(now) %> <%= now_ms %>
 
 <%
   end

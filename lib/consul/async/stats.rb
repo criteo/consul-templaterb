@@ -25,14 +25,14 @@ module Consul
         @errors += 1
       end
 
-      def bytes_per_sec
-        diff = (Time.now.utc - start)
+      def bytes_per_sec(now = Time.now.utc)
+        diff = (now - start)
         diff = 1 if diff < 1
         (body_bytes / diff).round(0)
       end
 
-      def bytes_per_sec_human
-        "#{Utilities.bytes_to_h(bytes_per_sec)}/s"
+      def bytes_per_sec_human(now = Time.now.utc)
+        "#{Utilities.bytes_to_h(bytes_per_sec(now))}/s"
       end
 
       def body_bytes_human
