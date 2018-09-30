@@ -2,7 +2,14 @@
 
 ## (UNRELEASED)
 
-## 1.5.4 (September 27, 2018)
+## 1.5.6 (September 30, 2018)
+
+IMPROVEMENTS:
+
+ * Added methods to get timestamps on each endpoint
+ * Use timestamps in [Prometheus template](samples/metrics.erb) to get more precise metrics
+
+## 1.5.5 (September 27, 2018)
 
 IMPROVEMENTS:
 
