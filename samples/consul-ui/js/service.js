@@ -13,6 +13,7 @@ class ConsulService {
     this.serviceFilterCount = 0;
     this.showProxiesInList = false;
     var cs = this
+    this.loadFavorites();
     window.setTimeout(function(){
       cs.showTags($('#showTagsInList:checked').length > 0);
       cs.showProxies($('#showProxiesInList:checked').length > 0);
@@ -75,6 +76,9 @@ class ConsulService {
     }
     this.serviceList.html('');
     this.serviceFilterCount = 0;
+
+    let idx = 0;
+    let lastFav = null;
     for (var serviceName in this.data.services) {
       var service = this.data.services[serviceName];
       var serviceStatus = buildServiceStatus(service);
@@ -84,6 +88,8 @@ class ConsulService {
       listItem.setAttribute('onfocus','consulService.onClickServiceName(this)');
       listItem.setAttribute('onclick','consulService.onClickServiceName(this)');
       listItem.setAttribute('value',serviceName);
+      listItem.setAttribute('data-fav', this.favorites[serviceName] ? 1 : 0);
+      listItem.setAttribute('data-index', idx);
       var listItemClass = 'list-group-item list-group-item-action';
 
       var statuses = document.createElement('div');
@@ -105,6 +111,9 @@ class ConsulService {
       }
 
       statuses.appendChild(createBadge('badge-dark', (serviceStatus['total'] || 0)));
+
+      statuses.append(this.buildFavButton(serviceName));
+
       listItem.appendChild(statuses);
       if (!!service['kind']) {
         var kind = document.createElement('div');
@@ -129,7 +138,18 @@ class ConsulService {
 
       listItem.appendChild(serviceTagsItem);
       this.serviceFilterCount += 1;
-      this.serviceList.append(listItem);
+
+      if (this.favorites[serviceName] && lastFav) {
+        lastFav.after(listItem);
+        lastFav = listItem;
+      } else if (this.favorites[serviceName] && !lastFav) {
+        this.serviceList.prepend(listItem);
+        lastFav = listItem;
+      } else {
+        this.serviceList.append(listItem);
+      }
+
+      idx++;
     }
     this.serviceFilterCounter.html(this.serviceFilterCount);
     resizeWrapper('service-wrapper', 'service-list');
@@ -249,6 +269,86 @@ class ConsulService {
     $('pre code').each(function(i, block) {
       hljs.highlightBlock(block);
     });
+  }
+
+  loadFavorites() {
+    const all = (localStorage.getItem('favorite_services') || '').split(',').filter(e => e != '');
+    this.favorites = {}
+    for (var i in all) {
+      this.favorites[all[i]] = true;
+    }
+  }
+
+  saveFavorites() {
+    let str = "";
+    for (var i in this.favorites) {
+      if (!this.favorites[i]) {
+        continue;
+      }
+      str == "" || (str += ",");
+      str += i;
+    }
+    localStorage.setItem('favorite_services', str);
+  }
+
+  buildFavButton(serviceName) {
+    const btn = document.createElement('button');
+    btn.className = 'favorite';
+    btn.setAttribute('title', 'Add/Remove from favorites');
+
+    if (this.favorites[serviceName]) {
+      btn.className += ' favorited';
+    }
+
+    $(btn).click(e => {
+      this.toggleFav(serviceName, !this.favorites[serviceName]);
+    });
+    return btn;
+  }
+
+  toggleFav(serviceName, fav) {
+    this.favorites[serviceName] = fav;
+
+    let el = this.serviceList.find('[value="' + serviceName + '"]');
+    if (!el.length) {
+      return;
+    }
+
+    if (fav) {
+      el.find('.favorite').addClass('favorited');
+    } else {
+      el.find('.favorite').removeClass('favorited');
+    }
+    el.attr('data-fav', fav ? 1 : 0);
+
+    const elIdx = parseInt(el.attr('data-index'));
+
+    let prev = fav ? null : this.serviceList.find('[data-fav="1"]').last();
+    const others = this.serviceList.find('[data-fav="' + (fav ? 1 : 0) + '"]');
+    for (var i = 0; i < others.length; i++) {
+      const idx = parseInt($(others[i]).attr("data-index"));
+      if (idx < elIdx) {
+        prev = $(others[i]);
+      } else if (idx > elIdx) {
+        break;
+      }
+    };
+
+    if (!prev || !prev.length) {
+      this.serviceList.prepend(el);
+    } else {
+      prev.after(el);
+    }
+
+    // if favorited, scroll to element new position
+    if (fav) {
+      const container = $('#service-wrapper');
+      const top = el.position().top;
+      const scroll = container.scrollTop();
+      container.scrollTop(scroll + el.offset().top - container.offset().top);
+    }
+
+    this.saveFavorites();
   }
 }
 

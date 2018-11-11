@@ -18,6 +18,26 @@
   overflow: hidden;
 }
 
+#service-list .favorite {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  color: #f7d800;
+  cursor: pointer;
+  font-size: 1.3em;
+  vertical-align: middle;
+  line-height: 1;
+  background-color: transparent;
+}
+
+#service-list .favorite::before {
+  content: '☆';
+}
+
+#service-list .favorite.favorited::before {
+  content: '★';
+}
+
 .weights {
   float: right;
 }
