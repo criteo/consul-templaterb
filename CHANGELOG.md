@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.5.7 (November 12, 2018)
+
+NEW FEATURES:
+
+ * Services can be favorited. Favorited services are kept on top of the list for easier finding.
+
 ## 1.5.6 (September 30, 2018)
 
 IMPROVEMENTS:
