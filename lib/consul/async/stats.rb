@@ -3,13 +3,14 @@ require 'consul/async/utilities'
 module Consul
   module Async
     class EndPointStats
-      attr_reader :successes, :errors, :start, :body_bytes, :last_error, :last_success
+      attr_reader :successes, :errors, :start, :body_bytes, :last_error, :last_success, :changes
 
       def initialize
         @start = Time.now.utc
         @successes = 0
         @errors = 0
         @body_bytes = 0
+        @changes = 0
         @last_error = @start
         @last_success = @start
       end
@@ -18,6 +19,7 @@ module Consul
         @last_success = Time.now.utc
         @successes += 1
         @body_bytes = body_bytes + res.http.response.bytesize
+        @changes += res.modified? ? 1 : 0
       end
 
       def on_error(_http)
