@@ -2,6 +2,16 @@
 
 ## (UNRELEASED)
 
+## 1.5.8 (November 14, 2018)
+
+IMPROVEMENTS:
+
+ * Add consul_service_changes_total metric in samples/metrics.erb
+
+BUG FIXES:
+
+ * Remove metrics timestamping in samples/metrics.erb to allow datapoint collection when there are no changes on a service
+
 ## 1.5.7 (November 12, 2018)
 
 NEW FEATURES:
