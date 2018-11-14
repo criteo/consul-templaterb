@@ -31,7 +31,8 @@ module Consul
         @net_info = {
           success: 0,
           errors: 0,
-          bytes_read: 0
+          bytes_read: 0,
+          changes: 0
         }
         @context = {
           current_erb_path: nil,

@@ -62,12 +62,14 @@ consul_services_count <%= service_count %> <%= services(tag: service_tag_filter)
 
 # HELP consul_service_count A gauge of number instances of service with their current state
 # TYPE consul_service_count gauge
-# HELP consul_service_stats_requests_total A counter of requests performed by consul-templaterb, show activity on a service
+# HELP consul_service_stats_requests_total A counter of requests performed by consul-templaterb, shows activity on a service
 # TYPE consul_service_stats_requests_total counter
 # HELP consul_service_stats_requests_bytes A counter of bytes transfered from Consul Agent to consul-templaterb
 # TYPE consul_service_stats_requests_bytes counter
 # HELP consul_service_stats_requests_bytes_per_sec A counter of bytes transfered from Consul Agent to consul-templaterb
 # TYPE consul_service_stats_requests_bytes_per_sec gauge
+# HELP consul_service_changes_total A counter of changes that occured on a service
+# TYPE consul_service_changes_total counter
 
 <%
   json_backends = {}
@@ -86,6 +88,7 @@ consul_services_count <%= service_count %> <%= services(tag: service_tag_filter)
     end
 %>consul_service_stats_requests_bytes{service="<%= service_name %>"} <%= service_info[:stats].body_bytes %>
 consul_service_stats_requests_bytes_per_sec{service="<%= service_name %>"} <%= service_info[:stats].bytes_per_sec(now) %>
+consul_service_changes_total{service="<%= service_name %>"} <%= service_info[:stats].changes %>
 
 <%
   end
