@@ -140,6 +140,11 @@ USAGE: consul-templaterb [[options]]
     -v, --version                    Show Version
     -c, --consul-addr=<address>      Address of Consul, eg: http://localhost:8500
         --consul-token=<token>       Use a token to connect to Consul
+    -V, --vault-addr=<address>       Address of Vault, eg: http://localhost:8200
+        --vault-token=<token>        Token used to authenticate against vault.
+        --[no-]vault-renew           Control auto-renewal of the Vault token. Default: activated
+        --vault-lease-duration-factor=<factor>
+                                     Wait at least <factor> * lease time before updating a Vault secret. Default: 0.5
     -w, --wait=<min_duration>        Wait at least n seconds before each template generation
     -r, --retry-delay=<min_duration> Min Retry delay on Error/Missing Consul Index
     -k, --hot-reload=<behavior>      Control hot reload behaviour, one of :[die (kill daemon on hot reload failure), keep (on error, keep running), disable (hot reload disabled)]
@@ -150,7 +155,7 @@ USAGE: consul-templaterb [[options]]
     -d, --debug-network-usage        Debug the network usage
     -t erb_file:[output]:[command]:[params_file],
         --template                   Add a erb template, its output and optional reload command
-        --once                       Do not run the process as a daemon
+    -o, --once                       Do not run the process as a daemon
 ```
 
 When launched with file arguments ending with .erb, the executable will assume
