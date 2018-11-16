@@ -2,6 +2,16 @@
 
 ## (UNRELEASED)
 
+## 1.5.9 (November 17, 2018)
+
+BUG FIXES:
+
+ * Upgraded potentially vulnerable bootstrap library
+
+IMPROVEMENTS:
+
+ * Clearer help (indentation issue), added `-o` option as synonym for `--once`
+
 ## 1.5.8 (November 14, 2018)
 
 IMPROVEMENTS:
