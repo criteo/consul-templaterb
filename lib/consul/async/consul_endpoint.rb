@@ -7,7 +7,7 @@ module Consul
   module Async
     class ConsulConfiguration
       attr_reader :base_url, :token, :retry_duration, :min_duration, :wait_duration, :max_retry_duration, :retry_on_non_diff,
-                  :missing_index_retry_time_on_diff, :missing_index_retry_time_on_unchanged, :debug
+                  :missing_index_retry_time_on_diff, :missing_index_retry_time_on_unchanged, :debug, :enable_gzip_compression
       def initialize(base_url: 'http://localhost:8500',
                      debug: { network: false },
                      token: nil,
@@ -18,10 +18,12 @@ module Consul
                      max_retry_duration: 600,
                      missing_index_retry_time_on_diff: 15,
                      missing_index_retry_time_on_unchanged: 60,
+                     enable_gzip_compression: true,
                      paths: {})
         @base_url = base_url
         @token = token
         @debug = debug
+        @enable_gzip_compression = enable_gzip_compression
         @retry_duration = retry_duration
         @min_duration = min_duration
         @wait_duration = wait_duration
@@ -54,6 +56,7 @@ module Consul
                                 max_retry_duration: ch(path, :max_retry_duration),
                                 missing_index_retry_time_on_diff: ch(path, :missing_index_retry_time_on_diff),
                                 missing_index_retry_time_on_unchanged: ch(path, :missing_index_retry_time_on_unchanged),
+                                enable_gzip_compression: enable_gzip_compression,
                                 paths: @paths)
       end
     end
@@ -171,6 +174,7 @@ module Consul
           keepalive: true,
           callback: method(:on_response)
         }
+        res[:head]['accept-encoding'] = 'identity' unless conf.enable_gzip_compression
         @query_params.each_pair do |k, v|
           res[:query][k] = v
         end

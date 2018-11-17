@@ -51,6 +51,7 @@ options = {
     max_retry_duration: 600, # On consecutive errors, delay will increase, max value
     missing_index_retry_time_on_diff: 15, # On endpoints without X-Consul-Index => next request
     missing_index_retry_time_on_unchanged: 60, # Endpoints with X-Consul index and no diff
+    enable_gzip_compression: true,
     paths: {
       '/v1/catalog/services': {
         min_duration: 30,    # Since services change a lot, refresh services every 30 seconds
@@ -86,6 +87,10 @@ optparse = OptionParser.new do |opts|
   opts.on('-v', '--version', 'Show Version') do
     STDERR.puts Consul::Async::VERSION
     exit 0
+  end
+
+  opts.on('-g', '--no-gzip-compression', 'Disable GZIP compression in HTTP requests') do
+    options[:consul][:enable_gzip_compression] = false
   end
 
   opts.on('-c', '--consul-addr=<address>', String, 'Address of Consul, eg: http://localhost:8500') do |consul_url|
