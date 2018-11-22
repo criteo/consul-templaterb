@@ -83,8 +83,7 @@ class ConsulService {
       var service = this.data.services[serviceName];
       var serviceStatus = buildServiceStatus(service);
 
-      var listItem = document.createElement('button');
-      listItem.setAttribute('type','button');
+      var listItem = document.createElement('li');
       listItem.setAttribute('onfocus','consulService.onClickServiceName(this)');
       listItem.setAttribute('onclick','consulService.onClickServiceName(this)');
       listItem.setAttribute('value',serviceName);
@@ -229,7 +228,7 @@ class ConsulService {
       $(this.selectedService).removeClass('active');
     }
     var serviceName = $(source).find(".service-name").html()
-    this.selectedService = source.closest( "button" );
+    this.selectedService = source.closest('li');
     $(this.selectedService).addClass('active');
 
     this.displayService(this.data.services[serviceName]);
