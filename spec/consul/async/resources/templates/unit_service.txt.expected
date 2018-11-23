@@ -1,8 +1,8 @@
 Service Consul
-5.6.7.8:8300 (consul01.prod)
-10.251.1.96:8300 (consul02.prod)
-10.251.1.97:8300 (consul03.prod)
-10.251.1.99:8300 (consul04.prod)
+5.6.7.8:8300 (consul01.prod) status: passing current_weight: 42
+10.251.1.96:8300 (consul02.prod) status: warning current_weight: 3
+10.251.1.97:8300 (consul03.prod) status: passing current_weight: 1
+10.251.1.99:8300 (consul04.prod) status: critical current_weight: 0
 ---
 Service Consul filter UI
-consul04.prod:8300
+consul04.prod:8300 status: critical current_weight: 0

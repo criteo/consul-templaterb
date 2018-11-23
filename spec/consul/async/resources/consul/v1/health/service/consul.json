@@ -21,7 +21,11 @@
       "Port": 8300,
       "EnableTagOverride": false,
       "CreateIndex": 228090242,
-      "ModifyIndex": 228090242
+      "ModifyIndex": 228090242,
+      "Weights": {
+        "Passing": 42,
+        "Warning": 3
+      }
     },
     "Checks": [
       {
@@ -64,7 +68,11 @@
       "Port": 8300,
       "EnableTagOverride": false,
       "CreateIndex": 228090242,
-      "ModifyIndex": 228090242
+      "ModifyIndex": 228090242,
+      "Weights": {
+        "Passing": 42,
+        "Warning": 3
+      }
     },
     "Checks": [
       {
@@ -79,6 +87,15 @@
         "ServiceTags": [],
         "CreateIndex": 228090242,
         "ModifyIndex": 228090242
+      },
+      {
+        "Node": "consul02.prod",
+        "CheckID": "df",
+        "Name": "Disk Free",
+        "Status": "warning",
+        "Notes": "",
+        "Output": "Disk almost full",
+        "ServiceID": ""
       }
     ]
   },

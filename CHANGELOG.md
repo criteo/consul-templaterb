@@ -2,6 +2,21 @@
 
 ## (UNRELEASED)
 
+## 1.6.0 (November 23, 2018)
+
+BUG FIXES:
+
+ * Fixed rendering of favorites on Firefox in consul-ui
+
+NEW FEATURES:
+
+ * Added the following helpers to help dealing with new Consul features and simplify writting templates in results
+   of `service()` calls:
+     * `status` to compute aggregated status of a service taking into account all checks
+     * `weights` to deal with weights added in Consul 1.2.3
+     * `current_weight` to deal with weight computed using the current status
+ * Added new option `-g` for disabling GZIP compression
+
 ## 1.5.9 (November 17, 2018)
 
 BUG FIXES:

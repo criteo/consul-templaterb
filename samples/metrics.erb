@@ -13,20 +13,6 @@
 
   # Services to hide
   services_blacklist = (ENV['EXCLUDE_SERVICES'] || '').split(',')
-  # Compute the health of a Service
-  def compute_state(snode)
-    states = ['passing', []]
-    snode['Checks'].each do |chk|
-      st = chk['Status']
-      states[1] << st
-      if st == 'critical'
-        states[0] = st
-      elsif st == 'warning' && states[0] == 'passing'
-        states[0] = st
-      end
-    end
-    states
-  end
   backends = {}
   service_count = 0
   services(tag: service_tag_filter).each do |service_name, tags|
@@ -38,7 +24,7 @@
         'critical' => 0,
       }
       service(service_name).each do |snode|
-        state = compute_state(snode)[0]
+        state = node.status
         res[state] += 1
       end
       backends[service_name] = {
