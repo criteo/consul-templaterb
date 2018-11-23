@@ -310,6 +310,33 @@ module Consul
         val = self['Node']['Address'] unless !val.nil? && val != ''
         val
       end
+
+      # Return the global state of a Service, will return passing|warning|critical
+      def status
+        ret = 'passing'
+        checks = self['Checks']
+        return ret unless checks
+        checks.each do |chk|
+          st = chk['Status']
+          if st == 'critical'
+            ret = st
+          elsif st == 'warning' && ret == 'passing'
+            ret = st
+          end
+        end
+        ret
+      end
+
+      # Return Consul weights even if Consul version < 1.2.3 with same semantics
+      def weights
+        self['Service']['Weights'] || { 'Passing' => 1, 'Warning' => 1 }
+      end
+
+      # Return the weights applied on instance according to current status
+      def current_weight
+        current_status = status
+        weights[current_status.capitalize] || 0
+      end
     end
 
     class ConsulTemplateService < ConsulTemplateAbstractMap

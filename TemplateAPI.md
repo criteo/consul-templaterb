@@ -114,8 +114,31 @@ Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
 optional tag. If no tag is specified, will return all instances of service. By default, it will return all the
 services that are passing or not. An optional argument passing might be used to retrieve only passing instances.
 
+### Helpers
+
+#### service_address
+
 This object also contains a Helper to get easily the correct Address by using `service_address` which returns
 the optional `['Service']['Address']` if found or `['Node']['Address']` otherwise.
+
+#### status
+
+Computing the status of an instance is non-trivial as it requires to parses all statuses of all checks and take
+the worse of all thoses Status object. The `.status` attribute can be used as an alternative as it precomputes
+this state in the same way consul does, it will then return the worse of all the statuses of all checks.
+Returned value will be one of `passing`|`warning`|`critical`.
+
+#### weights
+
+`.weights` give the ability to deal with new `Weights` feature added in Consul 1.2.3.
+It returns a Hash with `{"Passing": weight_when_service_is_passing, "Warning": weight_when_value_is_warning}`
+to allow having weighted load balancing when statuses in Consul do change. It also deals nicely with versions
+of Consul not yet supporting Weights.
+
+#### current_weight
+
+`.current_weight` computes automagically weight given the current status of service. It works the same way as
+the DNS implementation of Consul.
 
 <details><summary>Examples</summary>
 <div class="samples">
@@ -129,7 +152,7 @@ the optional `['Service']['Address']` if found or `['Node']['Address']` otherwis
 <%     service(service_name, tag:'http').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
 %>  * <%= service_name %> -> <%=
   snode['Node']['Node'] %>:<%= snode['Service']['Port'] %>  <%=
-  snode['Service']['Tags'] %> status: <%
+  snode['Service']['Tags'] %> status: <%= snode.status %> Current Weight: <%= snode.current_weight %> Checks: <%
   snode['Checks'].each do |c| %> <%= c['Status']
   %><% end if snode['Checks'] %>
 <%     end
