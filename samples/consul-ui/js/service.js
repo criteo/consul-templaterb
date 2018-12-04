@@ -89,7 +89,7 @@ class ConsulService {
       listItem.setAttribute('value',serviceName);
       listItem.setAttribute('data-fav', this.favorites[serviceName] ? 1 : 0);
       listItem.setAttribute('data-index', idx);
-      var listItemClass = 'list-group-item list-group-item-action';
+      var listItemClass = 'serviceListItem list-group-item list-group-item-action';
 
       var statuses = document.createElement('div');
       statuses.setAttribute('class','statuses float-right');
@@ -167,7 +167,7 @@ class ConsulService {
     }
     consulService.serviceFilterCount = 0;
     var showProxiesInList = this.showProxiesInList;
-    consulService.serviceList.children('button').each(function (){
+    consulService.serviceList.children('.serviceListItem').each(function (){
       var ui = $(this);
       if(serviceMatcher(this, filter, showProxiesInList)) {
         ui.removeClass('d-none');

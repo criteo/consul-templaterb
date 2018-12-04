@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.6.3 (December 4, 2018)
+
+BUG FIXES:
+
+ * consul-ui: Filtering per tag / service name was broken by commit 410a5407dbff10ae565c214674d986cd84ffed53
+
 ## 1.6.2 (December 4, 2018)
 
 BUG FIXES:
