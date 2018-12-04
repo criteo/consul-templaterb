@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.6.1 (December 4, 2018)
+
+BUG FIXES:
+
+ * In consul-ui, display the port only when port is set
+
 ## 1.6.0 (November 23, 2018)
 
 BUG FIXES:

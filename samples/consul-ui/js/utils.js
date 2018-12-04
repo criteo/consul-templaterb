@@ -40,11 +40,16 @@ function serviceTitleGenerator(instance) {
 
   var instanceLink = document.createElement('a');
   instanceLink.setAttribute('class',  'instance-name');
+  var appendPort = "";
+  if (instance.port > 0) {
+    appendPort = ':' + instance.port;
+  }
   if (protocol != null) {
-    instanceLink.setAttribute('href',  protocol + instance.addr + ':' + instance.port);
+    instanceLink.setAttribute('href',  protocol + instance.addr + appendPort);
     instanceLink.setAttribute('target',  '_blank');
   }
-  instanceLink.appendChild(document.createTextNode(instance.name + ':' + instance.port));
+
+  instanceLink.appendChild(document.createTextNode(instance.name + appendPort));
   htmlTitle.appendChild(instanceLink);
 
   return htmlTitle;
