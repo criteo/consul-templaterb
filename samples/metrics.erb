@@ -24,7 +24,7 @@
         'critical' => 0,
       }
       service(service_name).each do |snode|
-        state = node.status
+        state = snode.status
         res[state] += 1
       end
       backends[service_name] = {

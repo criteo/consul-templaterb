@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.6.2 (December 4, 2018)
+
+BUG FIXES:
+
+ * Fixed bug in samples/metrics.erb
+
 ## 1.6.1 (December 4, 2018)
 
 BUG FIXES:
