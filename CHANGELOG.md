@@ -2,6 +2,17 @@
 
 ## (UNRELEASED)
 
+## 1.7.0 (December 7, 2018)
+
+OPTIMIZATIONS:
+
+ * Improved startup time (especially useful with `--once` option)
+ * Now iterate as fast as possible until scheduled rendering has started, so rendering is way faster
+
+BUG FIXES:
+
+ * --wait was not working as expected, no properly set the minimum time between templates generation
+
 ## 1.6.3 (December 4, 2018)
 
 BUG FIXES:

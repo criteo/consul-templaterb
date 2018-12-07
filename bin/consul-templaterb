@@ -118,8 +118,9 @@ optparse = OptionParser.new do |opts|
     options[:vault][:lease_duration_factor] = factor
   end
 
-  opts.on('-w', '--wait=<min_duration>', Float, 'Wait at least n seconds before each template generation') do |min_duration|
-    options[:consul][:min_duration] = min_duration
+  opts.on('-w', '--wait=<min_duration>', Integer, 'Wait at least n seconds before each template generation') do |min_duration|
+    raise "--wait=#{min_duration} must be greater than 0" unless min_duration.positive?
+    consul_engine.template_frequency = min_duration
   end
 
   opts.on('-r', '--retry-delay=<min_duration>', Float, 'Min Retry delay on Error/Missing Consul Index') do |min_duration|
