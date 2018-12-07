@@ -290,8 +290,8 @@ Please consult [CHANGELOG.md](CHANGELOG.md) for fixed bugs.
 
 * [x] Hashi's Vault support (EXPERIMENTAL)
 * [ ] Implement automatic dynamic rate limit
-* [ ] More samples: apache, nginx, full website displaying consul information...
-* [ ] Optimize rendering speed at start-up: an iteration is done very second by default, but it would be possible to speed
+* [x] More samples: apache, nginx, full website displaying consul information...
+* [x] Optimize rendering speed at start-up: an iteration is done very second by default, but it would be possible to speed
       up rendering by iterating with higher frequency until the first write of result has been performed.
 * [ ] Allow to tune bandwidth using a simple configuration file (while it should not be necessary for 90% of use-cases)
 
