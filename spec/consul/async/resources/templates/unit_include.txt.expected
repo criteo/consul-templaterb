@@ -1,0 +1,11 @@
+Myself:
+unit_include.erb, root=unit_include.erb
+----
+Included File:
+unit_included.erb, root=unit_include.erb
+was_rendered_once: true
+destination: unit_include.txt
+----
+Myself:
+unit_include.erb, root=unit_include.erb
+----

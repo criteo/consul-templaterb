@@ -377,3 +377,48 @@ secret('secret/foo', [force_ttl: intInSecond])
 
 </div>
 </details>
+
+## template_info()
+
+It returns information about current template being rendered.
+The information returned has the following structure:
+
+```json
+{
+  'destination':       destination_file_for_root_template
+  'source':            absolute_path_to_template_file.erb
+  'source_root':       absolute_path_to_root_template.erb
+  'was_rendered_once': true|false
+}
+```
+
+- `destination`: absolute path where the file is gonna be written
+- `source`: the template absolute path file, most of the time, if will be
+  equal to `source_root`, except when the current template is included
+  in another template using `render_file()`
+- `source_root`: the root template absolute file.
+- `was_rendered_once` true if whole template structure has been rendered
+  at least once, false if current template data is still incomplete.
+
+<details><summary>Examples</summary>
+<div class="samples">
+
+### Display template info
+
+```erb
+I am the file <%= File.basename(template_info['source']) %><%
+  if template_info['source'] != template_info['source_root']
+%> included from template <%= File.basename(template_info['source_root']) %><%
+  end
+%> rendered as <%= File.basename(template_info['destination']) %>
+```
+
+The command `consul-template template_info.erb` would render:
+`I am the file template_info.erb rendered as template_info`
+
+If creating a file called include.erb with contents: `<%= render_file('template_info.erb') %>`,
+the command `consul-templaterb --template include.erb:destination_file.txt` would render:
+`I am the file template_info.erb included from template include.erb rendered as destination_file.txt`
+
+</div>
+</details>

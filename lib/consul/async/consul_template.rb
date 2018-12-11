@@ -36,6 +36,12 @@ module Consul
         }
         @context = {
           current_erb_path: nil,
+          template_info: {
+            'source_root'       => nil,
+            'source'            => nil,
+            'destination'       => nil,
+            'was_rendered_once' => false
+          },
           params: {}
         }
 
@@ -104,6 +110,11 @@ module Consul
         v
       end
 
+      # Get information about current template
+      def template_info
+        @context[:template_info]
+      end
+
       # https://www.consul.io/api/catalog.html#list-services
       def services(dc: nil, tag: nil)
         path = '/v1/catalog/services'
@@ -153,7 +164,7 @@ module Consul
       def render_file(path, params = {})
         new_path = File.expand_path(path, File.dirname(@context[:current_erb_path]))
         raise "render_file ERROR: #{path} is resolved as #{new_path}, but the file does not exists" unless File.exist? new_path
-        render(File.read(new_path), new_path, params)
+        render(File.read(new_path), new_path, params, current_template_info: template_info)
       end
 
       def find_line(e)
@@ -164,12 +175,14 @@ module Consul
         nil
       end
 
-      def render(tpl, tpl_file_path, params = {})
+      def render(tpl, tpl_file_path, params = {}, current_template_info: nil)
         # Ugly, but allow to use render_file well to support stack of calls
         old_value = @context
+        tpl_info = current_template_info.merge('source' => tpl_file_path.freeze)
         @context = {
           current_erb_path: tpl_file_path,
-          params: params
+          params: params,
+          template_info: tpl_info
         }
         result = ERB.new(tpl, nil, @trim_mode).result(binding)
         @context = old_value
@@ -182,8 +195,8 @@ module Consul
         raise e2, "[TEMPLATE SYNTAX ERROR] #{tpl_file_path}#{find_line(e)}: #{e.message}"
       end
 
-      def write(file, tpl, last_result, tpl_file_path, params = {})
-        data = render(tpl, tpl_file_path, params)
+      def write(file, tpl, last_result, tpl_file_path, params = {}, current_template_info: {})
+        data = render(tpl, tpl_file_path, params, current_template_info: current_template_info)
         not_ready = []
         ready = 0
         @iteration = Time.now.utc - @start_time

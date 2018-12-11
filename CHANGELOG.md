@@ -2,6 +2,13 @@
 
 ## (UNRELEASED)
 
+## 1.8.0 (December 11, 2018)
+
+NEW FEATURES:
+
+ * Added new function `template_info` to get information about the file being rendered and whether
+   the first rendering phase is completed.
+
 ## 1.7.0 (December 7, 2018)
 
 OPTIMIZATIONS:
