@@ -2,6 +2,17 @@
 
 ## (UNRELEASED)
 
+## 1.8.1 (December 12, 2018)
+
+BUGFIX:
+
+ * Properly fill `template_info` strtucture when hot reload is performed so templates using
+   `template_info()` new function can behave nicely.
+
+NEW FEATURES:
+
+ * template_info now includes `hot_reloading_in_progress: true` when the hotreloading is in progress.
+
 ## 1.8.0 (December 11, 2018)
 
 NEW FEATURES:

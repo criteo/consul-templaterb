@@ -80,13 +80,11 @@ module Consul
         new_time = File.ctime(template_file)
         if template_file_ctime != new_time
           begin
-            current_template_info = {}
-            current_template_info.!merge(current_template_info)
-            current_template_info['ready'] = false
+            current_template_info = _build_default_template_info.merge('ready' => false, 'hot_reloading_in_progress' => true)
             @template_file_ctime = new_time
             return update_template(load_template, current_template_info: current_template_info)
           rescue Consul::Async::InvalidTemplateException => e
-            STDERR.puts "****\n[ERROR] HOT Reload of template #{template_file} did fail due to:\n #{e}\n****\n"
+            STDERR.puts "****\n[ERROR] HOT Reload of template #{template_file} did fail due to:\n #{e}\n****\n template_info: #{current_template_info}\n****"
             raise e unless hot_reload_failure == 'keep'
             STDERR.puts "[WARN] Hot reload of #{template_file} was not taken into account, keep running with previous version"
           end
