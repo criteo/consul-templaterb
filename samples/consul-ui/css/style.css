@@ -17,6 +17,36 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
+.checkTransition {
+  float: left;
+}
+.checkName {
+  padding-left: 5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+td.serviceName {
+  max-width: 15%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+td.instance {
+  max-width: 15em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#all-instances-header {
+  width: 12em;
+  text-align: right;
+  padding-right: 1em;
+}
+td.ts {
+  width: 9em;
+}
+td.serviceName {
+  max-width: 12em;
+}
 
 #service-list .favorite {
   width: 20px;
@@ -60,7 +90,13 @@
   border-left: 0px;
   border-right: 0px;
 }
-
+.service-status {
+  width: 10em;
+}
+.all-instances {
+  width: 14em;
+  text-align: right;
+}
 #node-statuses span {
   font-size: 1rem;
   transition: background-color .16s linear;

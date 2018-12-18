@@ -1,7 +1,7 @@
 <%
 require 'json'
 
-@current_time = Time.now.utc
+@current_time = Time.now.utc.iso8601
 cur_state = services.map do |service_name, _tags|
   next if service_name.match?(/^lbl7-/)
   next if service_name.match?(/^wmi-/)
@@ -79,7 +79,7 @@ def diff(old, new)
   diff
 end
 
-@events = RingBuffer.new(max_size: (ENV['CONSUL_TIMELINE_BUFFER'] || 1000).to_i) unless @events
+@events = RingBuffer.new(max_size: (ENV['CONSUL_TIMELINE_BUFFER'] || 10000).to_i) unless @events
 
 def log_event(line)
   puts "#{Time.now.to_i} #{line}" if ENV['DEBUG_TIMELINE']

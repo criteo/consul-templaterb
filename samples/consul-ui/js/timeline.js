@@ -146,8 +146,7 @@ class ServiceTimeline {
       return span;
     }
 
-    doFilter() {
-        var filterValue = $('#instance-filter')[0].value;
+    performFiltering(filterValue) {
         this.refreshTimeout = null;
         var matcher;
         try {
@@ -197,6 +196,16 @@ class ServiceTimeline {
             }
             });
         }
+    }
+
+    doFilter() {
+        var filterValue = $('#instance-filter')[0].value;
+        if (this.refreshTimeout) {
+            clearTimeout(this.refreshTimeout);
+        }
+        this.refreshTimeout = window.setTimeout(function(){
+            serviceTimeline.performFiltering(filterValue);
+        }, 16);
     }
 
     selectService(source, updateUrl) {
@@ -260,7 +269,24 @@ class ServiceTimeline {
             var e = this.data[i];
             var row = document.createElement('tr');
             row.setAttribute("class", 'srv-' + e.service);
-            this.buildCell(row, 'td', 'ts', this.appChild('time', document.createTextNode(e.ts)));
+            var timestamp;
+            var fullTimestamp;
+            try {
+                var tsMs = Date.parse(e.ts);
+                if (isNaN(tsMs)) {
+                    timestamp = e.ts;
+                    fullTimestamp = e.ts;
+                } else {
+                    fullTimestamp = new Date();
+                    timestamp = formatDate(fullTimestamp);
+                }
+            } catch (e){ console.log("Failed parsing date", e.ts);}
+            {
+              var timeElement = this.appChild('time', document.createTextNode(timestamp));
+              timeElement.setAttribute('datetime', fullTimestamp);
+              timeElement.setAttribute('title', fullTimestamp);
+              this.buildCell(row, 'td', 'ts', timeElement);
+            }
             this.buildCell(row, 'td', 'lookup serviceName serviceCol', document.createTextNode(e.service));
             var text = e.instance;
             if (e.instance_info && e.instance_info.node) {
@@ -272,39 +298,38 @@ class ServiceTimeline {
             var instanceCell = this.buildCell(row, 'td', 'lookup instance', document.createTextNode(text));
             instanceCell.setAttribute("title", e.instance);
             {
-                var checksCell = document.createElement("div")
+                var checksCell;
+                if (e.checks.length == 0) {
+                    checksCell = this.createBadge('No check modified', 'primary');
+                } else {
+                    checksCell = document.createElement("div");
+                    for (var j = 0; j < e.checks.length; j++) {
+                        var c = e.checks[j];
+                        var statusSpan = document.createElement('div');
+                        statusSpan.setAttribute('class', 'checkTransition');
+                        statusSpan.appendChild(this.createBadge(c['old']));
+                        statusSpan.appendChild(document.createTextNode('→'));
+                        var newBadge = this.createBadge(c['new']);
+                        statusSpan.appendChild(newBadge);
+                        checksCell.appendChild(statusSpan);
+                        var checkName = document.createElement('div');
+                        checkName.setAttribute('class', 'lookup checkName');
+                        checkName.setAttribute('data-toggle', 'tooltip');
+                        checkName.setAttribute('title', c['id']+'\n\n' + c.output);
+                        checkName.appendChild(document.createTextNode(c['name']));
+                        checksCell.appendChild(checkName);
+                    }
+                }
                 this.buildCell(row, 'td', 'lookup checks', checksCell);
-                for (var j = 0; j < e.checks.length; j++) {
-                    var c = e.checks[j];
-                    var statusSpan = document.createElement('div');
-                    statusSpan.setAttribute('class', 'checkTransition');
-                    statusSpan.appendChild(this.createBadge(c['old']));
-                    statusSpan.appendChild(document.createTextNode('→'));
-                    var newBadge = this.createBadge(c['new']);
-                    newBadge.setAttribute('title', c['output']);
-                    statusSpan.appendChild(newBadge);
-                    checksCell.appendChild(statusSpan);
-                    var checkName = document.createElement('div');
-                    checkName.setAttribute('class', 'lookup checkName');
-                    checkName.setAttribute('title', c['id']);
-                    checkName.appendChild(document.createTextNode(c['name']));
-                    checksCell.appendChild(checkName);
-                }
             }
             {
-                var statusSpan = document.createElement('span');
-                statusSpan.appendChild(this.createBadge(e['old_state']));
-                statusSpan.appendChild(document.createTextNode('→'));
-                statusSpan.appendChild(this.createBadge(e['new_state']));
-                this.buildCell(row, 'td', 'status', statusSpan);
+                var td = this.buildCell(row, 'td', 'service-status', this.createBadge(e['old_state']));
+                td.appendChild(document.createTextNode('→'));
+                td.appendChild(this.createBadge(e['new_state']));
             }
             {
-                var allInstances = document.createElement('span');
                 var nSuccess = e['stats']['passing'];
-                if (nSuccess > 0) {
-                    var success = this.createBadge(nSuccess, 'success');
-                    allInstances.appendChild(success);
-                }
+                var allInstances = this.buildCell(row, 'td', 'all-instances', this.createBadge(nSuccess, 'success'));
                 var nWarnings = e['stats']['warning'];
                 if (nWarnings > 0) {
                     var elem = this.createBadge(nWarnings, 'warning');
@@ -325,8 +350,7 @@ class ServiceTimeline {
                 } else if (percent < 50) {
                     clazz = 'warning';
                 }
-                allInstances.appendChild(this.createBadge(percent + " %", clazz));
-                row.appendChild(allInstances);
+                this.buildCell(row, 'td', 'ipercents', this.createBadge(percent + " %", clazz));
             }
             tbody.prepend(row)
         }

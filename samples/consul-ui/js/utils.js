@@ -12,6 +12,15 @@ function buildServiceStatus(service) {
   return serviceStatus;
 }
 
+function padDateUnit(x) {
+  return x > 10 ? x : '0' + x;
+}
+
+function formatDate(date) {
+  return padDateUnit(date.getMonth()+1) + "/" + padDateUnit(date.getDate()) + " " + padDateUnit(date.getHours()) + ':' + padDateUnit(date.getMinutes()) + ':' + padDateUnit(date.getSeconds());
+}
+
+
 function nodeState(checks) {
   status='passing';
   for (var checkKey in checks) {
