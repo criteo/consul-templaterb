@@ -2,7 +2,7 @@
 
 ## (UNRELEASED)
 
-## 1.8.3 (December 18, 2018)
+## 1.8.3 / 1.8.4 (December 18, 2018)
 
 OPTIMIZATIONS:
 

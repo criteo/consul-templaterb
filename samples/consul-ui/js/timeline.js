@@ -58,7 +58,7 @@ class ServiceTimeline {
     }
 
     reloadDataFromJSON(){
-        if (document.getElementById('autorefresh-check').checked) {
+        if (document.getElementById('autorefresh-check') && document.getElementById('autorefresh-check').checked) {
             if (serviceTimeline.currentlyUpdating == false) {
                 serviceTimeline.currentlyUpdating = true;
                 serviceTimeline.fetchRessource(false);
