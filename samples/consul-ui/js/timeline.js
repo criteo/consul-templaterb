@@ -181,7 +181,6 @@ class ServiceTimeline {
             isCorrectService = function(ui) { return ui.hasClass('srv-' + serviceTimeline.serviceInstanceFilter) };
         }
         if (filterValue) {
-            console.log("Additional filter: ", filterValue);
             $("#all-events > tbody").children('tr').each(function (){
             var ui = $(this);
             var shouldShow = isCorrectService(ui) && ui.children('.lookup').is(function (){

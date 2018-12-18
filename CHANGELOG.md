@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.8.2 (December 18, 2018)
+
+NEW FEATURES:
+
+ * Added Consul timeline that displays all the changes on services in Consul UI.
+
 ## 1.8.1 (December 12, 2018)
 
 BUGFIX:
