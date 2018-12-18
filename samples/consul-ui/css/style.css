@@ -31,6 +31,9 @@ td.serviceName {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+#autorefresh{
+  float: right;
+}
 td.instance {
   max-width: 15em;
   overflow: hidden;

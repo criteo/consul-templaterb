@@ -1,13 +1,10 @@
 <%
 require 'json'
+services_blacklist = (ENV['EXCLUDE_SERVICES'] || 'consul-agent-http,mesos-slave,mesos-agent-watcher,mesos-exporter-slave').split(',')
 
 @current_time = Time.now.utc.iso8601
 cur_state = services.map do |service_name, _tags|
-  next if service_name.match?(/^lbl7-/)
-  next if service_name.match?(/^wmi-/)
-  next if service_name.match?(/collectd-/)
-  next if service_name.match?(/-(eu|as|us)$/)
-  next if service_name.match?(/-admin$/)
+  next if services_blacklist.include?(service_name)
 
   snodes = service(service_name)
   cur_stats = {

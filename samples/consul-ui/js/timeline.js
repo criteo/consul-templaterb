@@ -2,7 +2,7 @@
 class ServiceTimeline {
     constructor(ressourceURL, refresh) {
       this.ressourceURL = ressourceURL;
-      this.fetchRessource();
+      this.fetchRessource(true);
       this.serviceList = $("#service-list");
       this.serviceFilter = $("#service-filter");
       this.serviceFilter.keyup(this.filterService);
@@ -12,26 +12,34 @@ class ServiceTimeline {
       this.refresh = parseInt(refresh);
       this.filterStatus = null;
       this.refreshTimeout = null;
-      this.serviceFilterCounter = $("#service-counter");
-      this.serviceFilterCount = 0;
+      this.reloadData = null;
       this.services = {}
+      this.lastEntryLoaded = null;
       this.presentServices = {}
+      this.currentlyUpdating = false;
       var sT = this;
     }
 
-    fetchRessource() {
-        $.ajax({url: this.ressourceURL, cache: false, dataType: "json", sourceObject: this, success: function(result){
-          serviceTimeline.initRessource(result);
-        }});
+    fetchRessource(firstReload) {
+        $.ajax({url: this.ressourceURL, cache: false, dataType: "json", sourceObject: this,
+                success: function(result){
+                           serviceTimeline.initRessource(result, firstReload);
+                },
+                error: function(err) {
+                           console.log("Error updating data", err);
+                           serviceTimeline.currentlyUpdating = false;
+                }
+         });
     }
 
-    initRessource(data) {
+    initRessource(data, firstReload) {
         this.data = data;
-        this.reloadTimeline(true);
+        this.reloadTimeline(firstReload);
     }
 
     createServiceDefItem(label, serviceName, counter) {
         var listItem = document.createElement('li');
+        listItem.setAttribute('id', 'service-item-filter-' + serviceName);
         listItem.setAttribute('onfocus','serviceTimeline.selectService(this, true)');
         listItem.setAttribute('onclick','serviceTimeline.selectService(this, true)');
         listItem.setAttribute('value', serviceName);
@@ -44,17 +52,25 @@ class ServiceTimeline {
 
         var statuses = document.createElement('div');
         statuses.setAttribute('class','statuses float-right');
-        statuses.appendChild(this.createBadge(counter, 'dark'));
+        statuses.appendChild(this.createBadge(counter, 'dark instanceCounter'));
         listItem.prepend(statuses);
         return listItem;
+    }
+
+    reloadDataFromJSON(){
+        if (document.getElementById('autorefresh-check').checked) {
+            if (serviceTimeline.currentlyUpdating == false) {
+                serviceTimeline.currentlyUpdating = true;
+                serviceTimeline.fetchRessource(false);
+            }
+        }
     }
 
     reloadTimeline(firstReload) {
         if (!this.data) {
           console.log("No data to display");
+          serviceTimeline.currentlyUpdating = false;
         }
-        this.serviceList.html('');
-        this.serviceFilterCount = 0;
         var servicesPerName = {};
         var numberOfEvents = this.data.length;
         for (var i = 0 ; i < numberOfEvents; i++) {
@@ -68,17 +84,22 @@ class ServiceTimeline {
         }
         var sorted = Object.keys(servicesPerName).sort();
         var serviceListItems = this.serviceList[0];
-        var allServices = this.createServiceDefItem('All', '', numberOfEvents);
-        allServices.setAttribute('id', 'anyService');
-        serviceListItems.appendChild(allServices);
+        $('#allServicesCount').html(numberOfEvents)
         this.presentServices = servicesPerName;
         for (var i = 0 ; i < sorted.length; i++) {
             var serviceName = sorted[i];
             var counter = servicesPerName[serviceName];
-            var listItem = this.createServiceDefItem(serviceName, serviceName, counter);
-            serviceListItems.appendChild(listItem);
+            var existing = $('#service-item-filter-' + serviceName);
+            if (existing.length > 0) {
+                $('#service-item-filter-' + serviceName+ ' .instanceCounter').html(counter);
+            } else {
+                var listItem = this.createServiceDefItem(serviceName, serviceName, counter);
+                serviceListItems.appendChild(listItem);
+            }
+            
         }
-        this.displayEvents();
+        this.displayEvents(firstReload);
+        serviceTimeline.currentlyUpdating = false;
         if (firstReload) {
             var sT = this;
             setTimeout(function(){
@@ -111,7 +132,10 @@ class ServiceTimeline {
                 if (!found) {
                     sT.selectService($('#anyService', false));
                 }
+                setInterval(sT.reloadDataFromJSON, 10000);
             }, 150);
+        } else {
+            this.doFilter();
         }
     }
 
@@ -245,7 +269,6 @@ class ServiceTimeline {
           console.log("Failed to compile regexp for '" + serviceVal + "', using strict lookup due to: " + e);
           filter = new RegExp(safeReg);
         }
-        serviceTimeline.serviceFilterCount = 0;
         var showProxiesInList = this.showProxiesInList;
         serviceTimeline.serviceList.children('.serviceListItem').each(function (){
           var ui = $(this);
@@ -259,14 +282,30 @@ class ServiceTimeline {
         });
       }
 
-    displayEvents() {
+    displayEvents(firstReload) {
         //$("#service-title").html(service['name']);
         var tableBody = $('#all-events > tbody');
-        tableBody.html("");
+        var startIndex = 0;
+        if (firstReload || this.lastEntryLoaded == null) {
+            tableBody.html("");
+        } else {
+            // We first try to find new entries...
+            var o = this.lastEntryLoaded;
+            for (var i = 0 ; i < this.data.length; i++) {
+                var e = this.data[i];
+                if (o.ts == e.ts && o.instance == e.instance) {
+                    startIndex = i + 1;
+                    console.log('Resuming at ', startIndex, " with ", e);
+                    break;
+                }
+            }
+        }
         var tbody = tableBody[0];
         var filter = "";
-        for (var i = 0 ; i < this.data.length; i++) {
+        var lastEntryFound = null;
+        for (var i = startIndex ; i < this.data.length; i++) {
             var e = this.data[i];
+            lastEntryFound = e;
             var row = document.createElement('tr');
             row.setAttribute("class", 'srv-' + e.service);
             var timestamp;
@@ -277,10 +316,10 @@ class ServiceTimeline {
                     timestamp = e.ts;
                     fullTimestamp = e.ts;
                 } else {
-                    fullTimestamp = new Date();
+                    fullTimestamp = new Date(tsMs);
                     timestamp = formatDate(fullTimestamp);
                 }
-            } catch (e){ console.log("Failed parsing date", e.ts);}
+            } catch (err){ console.log("Failed parsing date", e.ts, err);}
             {
               var timeElement = this.appChild('time', document.createTextNode(timestamp));
               timeElement.setAttribute('datetime', fullTimestamp);
@@ -354,5 +393,6 @@ class ServiceTimeline {
             }
             tbody.prepend(row)
         }
+        this.lastEntryLoaded = lastEntryFound;
     }
 }

@@ -13,7 +13,7 @@ function buildServiceStatus(service) {
 }
 
 function padDateUnit(x) {
-  return x > 10 ? x : '0' + x;
+  return x > 9 ? x : '0' + x;
 }
 
 function formatDate(date) {
