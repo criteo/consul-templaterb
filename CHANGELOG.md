@@ -2,6 +2,13 @@
 
 ## (UNRELEASED)
 
+## 1.8.3 (December 18, 2018)
+
+OPTIMIZATIONS:
+
+ * Consul timeline now autorefresh itself
+ * large performance improvement in Consul
+
 ## 1.8.2 (December 18, 2018)
 
 NEW FEATURES:
