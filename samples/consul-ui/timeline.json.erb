@@ -1,0 +1,188 @@
+<%
+require 'json'
+
+@current_time = Time.now.utc
+cur_state = services.map do |service_name, _tags|
+  next if service_name.match?(/^lbl7-/)
+  next if service_name.match?(/^wmi-/)
+  next if service_name.match?(/collectd-/)
+  next if service_name.match?(/-(eu|as|us)$/)
+  next if service_name.match?(/-admin$/)
+
+  snodes = service(service_name)
+  cur_stats = {
+    'passing'  => 0,
+    'warning'  => 0,
+    'critical' => 0,
+    'total'    => snodes.count
+  }
+  snodes.each do |snode|
+    case snode.status.downcase
+    when 'passing'
+      cur_stats['passing'] += 1
+    when 'warning'
+      cur_stats['warning'] += 1
+    else
+      cur_stats['critical'] += 1
+    end
+  end
+  instances = snodes
+              .sort { |a, b| a['Node']['Node'] <=> b['Node']['Node'] }
+              .map do |instance|
+    ["#{instance['Node']['Node']}:#{instance['Service']['ID']}",
+     {
+       'address' => instance.service_address,
+       'node' => instance['Node']['Node'],
+       'port' => instance['Service']['Port'],
+       'idx'  => instance['Service']['ModifyIndex'],
+       'status' => instance.status,
+       'stats'  => cur_stats,
+       'checks' => instance['Checks'].map { |check| [check['CheckID'], { 'name' => check['Name'], 'status' => check['Status'], 'output' => check['Output'] }] }.to_h
+     }]
+  end.to_h
+  [service_name, instances]
+end
+                    .compact
+                    .to_h
+
+old_state = if @previous_state
+              @previous_state
+            else
+              cur_state
+            end
+
+class RingBuffer < Array
+  attr_reader :max_size
+
+  def initialize(max_size:, enum: nil)
+    @max_size = max_size
+    enum&.each { |e| self << e }
+  end
+
+  def <<(element)
+    if size < @max_size || @max_size.nil?
+      super
+    else
+      shift
+      push(element)
+    end
+  end
+
+  alias push <<
+end
+
+def diff(old, new)
+  diff = OpenStruct.new
+  diff.appeared = new - old
+  diff.disappeared = old - new
+  diff.stayed = new & old
+  diff
+end
+
+@events = RingBuffer.new(max_size: (ENV['CONSUL_TIMELINE_BUFFER'] || 1000).to_i) unless @events
+
+def log_event(line)
+  puts "#{Time.now.to_i} #{line}" if ENV['DEBUG_TIMELINE']
+end
+
+def store_event(service: service_name, instance: nil, old_state: nil, new_state: nil, instance_info: nil, checks: [])
+  STDERR.puts "empty instance_info for  #{service} ; #{instance} ; #{new_state}" unless instance_info
+  @events << { 'service' => service, 'instance' => instance, 'old_state' => old_state, 'new_state' => new_state,
+               'ts' => @current_time, 'instance_info' => instance_info }.tap do |ev|
+    ev['checks'] = checks if checks
+    ev['stats'] = if instance_info
+                    instance_info['stats']
+                  else
+                    {}
+                  end
+  end
+end
+
+def compute_checks(old_state, cur_state, service_name, instance_name)
+  old_checks = old_state.dig(service_name, instance_name, 'checks') || {}
+  new_checks = cur_state.dig(service_name, instance_name, 'checks') || {}
+  check_diff = diff(old_checks.keys, new_checks.keys)
+  checks = []
+  check_diff.stayed.each do |check_id|
+    old_status = old_state.dig(service_name, instance_name, 'checks', check_id, 'status')
+    cur_status = cur_state.dig(service_name, instance_name, 'checks', check_id, 'status')
+
+    next if old_status == cur_status
+    check_name = cur_state.dig(service_name, instance_name, 'checks', check_id, 'name')
+    check_name = old_state.dig(service_name, instance_name, 'checks', check_id, 'name') unless check_name
+    check_name = check_id unless check_name
+    checks << { 'id' => check_id,
+                'old' => old_status,
+                'new' => cur_status,
+                'name' => check_name }.tap do |check|
+                  check['output'] = (cur_state.dig(service_name, instance_name, 'checks', check_id, 'output') || '')[0..512]
+                end
+  end
+  checks
+end
+
+service_diff = diff(old_state.keys, cur_state.keys)
+
+service_diff.disappeared.each do |service_name|
+  old_state[service_name].each do |instance_name, instance_info|
+    checks = compute_checks(old_state, cur_state, service_name, instance_name)
+    store_event(service: service_name,
+                instance: instance_name,
+                old_state: old_state[service_name][instance_name]['status'],
+                new_state: nil,
+                instance_info: instance_info,
+                checks: checks)
+  end
+end
+
+def instances_are_equal(o_state, n_state)
+  return true if o_state == n_state
+  return false unless o_state.nil? || n_state.nil?
+  %w[address node port status].each do |field|
+    return false if o_state[field] != n_state[field]
+  end
+  true
+end
+
+(service_diff.stayed + service_diff.appeared).each do |service_name|
+  instance_diff = diff((old_state[service_name] || {}).keys, cur_state[service_name].keys)
+
+  instance_diff.disappeared.each do |instance_name|
+    checks = compute_checks(old_state, cur_state, service_name, instance_name)
+    store_event(service: service_name,
+                old_state: old_state[service_name][instance_name]['status'],
+                new_state: nil,
+                instance: instance_name,
+                instance_info: old_state[service_name][instance_name],
+                checks: checks)
+  end
+  instance_diff.appeared.each do |instance_name|
+    checks = compute_checks(old_state, cur_state, service_name, instance_name)
+    store_event(service: service_name,
+                old_state: nil,
+                new_state: cur_state[service_name][instance_name]['status'],
+                instance: instance_name,
+                instance_info: cur_state[service_name][instance_name],
+                checks: checks)
+  end
+
+  instance_diff.stayed.each do |instance_name, _instance_info|
+    checks = compute_checks(old_state, cur_state, service_name, instance_name)
+    o_state = old_state[service_name][instance_name]['status']
+    n_state = cur_state[service_name][instance_name]['status']
+    next if instances_are_equal(o_state, n_state) && checks.empty?
+    store_event(service: service_name,
+                old_state: o_state,
+                new_state: n_state,
+                instance: instance_name,
+                instance_info: cur_state[service_name][instance_name],
+                checks: checks)
+  end
+end
+# We save the previous state only when we have a complete state once
+if template_info['was_rendered_once']
+  warn "First full rendering completed at #{@current_time} !" unless @previous_state
+  @previous_state = cur_state
+end
+
+%><%= JSON.generate(@events)%>

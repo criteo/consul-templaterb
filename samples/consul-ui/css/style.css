@@ -11,6 +11,9 @@
   border-width: 1px 1px 1px 1px;
   border-color: rgba(0,0,0,.125);
 }
+tr.collapsed {
+  display: none;
+}
 
 .service-tags .badge {
   max-width: 8em;

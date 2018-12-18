@@ -3,7 +3,7 @@
   # CONSUL_TOOLS_SUFFIX: suffix for the address of consul tools
   # CONSUL_TOOLS_PREFIX: prefix for the address of consul tools
   # CONSUL_TOOLS: comma sperated list of consul tools
-  tools = (ENV['CONSUL_TOOLS'] || 'services,nodes,keys').split(",")
+  tools = (ENV['CONSUL_TOOLS'] || 'services,nodes,keys,timeline').split(",")
   tools_suffix = ENV['CONSUL_TOOLS_PREFIX'] || '-ui.html'
   tools_prefix = ENV['CONSUL_TOOLS_SUFFIX'] || 'consul-'
 

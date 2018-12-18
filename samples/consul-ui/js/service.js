@@ -235,7 +235,8 @@ class ConsulService {
   }
 
   displayService(service) {
-    $("#service-title").html(service['name']);
+    var titleText = service['name'] + ' <a href="consul-timeline-ui.html?service=' + service['name'] + '">timeline</a>';
+    $("#service-title").html(titleText);
     $("#instances-list").html("");
 
     var serviceStatus = buildServiceStatus(service);

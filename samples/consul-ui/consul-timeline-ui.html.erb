@@ -1,0 +1,60 @@
+<% datasource = ENV['TIMELINE_DATASOURCE'] || 'timeline.json'
+   # Time to wait before reloading configuration again in seconds (0 = never)
+   refresh = ENV['REFRESH'] || '3600' %><%= render_file('common/header.html.erb', title: 'Services Timeline') %>
+    <div class="main">
+      <div class="row mx-0">
+        <div id="filter-menu" class="col-2 col-m-3 px-4 pt-4">
+          <div class="form-group">
+            <div class="input-group">
+              <input id="service-filter" type="text" placeholder="filter instances" class="form-control" />
+              <div class="input-group-append">
+                <span class="input-group-text" id="service-counter"></span>
+              </div>
+            </div>
+          </div>
+          <div id="service-wrapper" >
+            <ul id="service-list" class="list-group">
+            <li onfocus="serviceTimeline.selectService(this)" onclick="serviceTimeline.selectService(this)" value="" class="serviceListItem list-group-item list-group-item-actionn active" id="anyService"><div class="statuses float-right"><span class="lookup badge badge-pill badge-dark">1000</span></div><div class="service-name">All</div></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-10 col-m-9">
+          <h2 class="text-center" id="service-title"></h2>
+          <div class="row mb-2">
+            <div class="input-group float-left col-12">
+              <input id="instance-filter" type="text" placeholder="filter nodes by name or tags" class="form-control" />
+            </div>
+          </div>
+          <div id="instances-wrapper">
+            <div id="events-list" class="list-group">
+            <table id="all-events" class="table table-striped table-hover table-sm">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Time</th>
+                  <th scope="col">Service</th>
+                  <th scope="col">Instance</th>
+                  <th scope="col">Check State</th>
+                  <th scope="col">Service&nbsp;Status&nbsp;Change</th>
+                  <th colspan="2" scope="col">Service&nbsp;Instances</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- Optional JavaScript -->
+  <!-- JavaScript Dependencies: jQuery, Popper.js, Bootstrap JS, Shards JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/timeline.js"></script>
+  <script type="text/javascript">
+    serviceTimeline = new ServiceTimeline('<%= datasource %>','<%= refresh %>');
+  </script>
+  <script src="vendors/highlight/highlight.pack.js"></script>
+  </body>
+</html>

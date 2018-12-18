@@ -4,6 +4,14 @@ A simple HTML5 app that displays all services within Consul with AJAX requests.
 It supports fitering based on tags and does not rely on Consul to display pages,
 meaning that it can be scaled horizontally without any troubles with Consul.
 
+## Features
+
+* List all services details, with very fast lookups.
+* `consul-timeline-ui.html` Let you see all changes applied to your services with history
+* List all keys
+* List all nodes
+* List datacenters
+
 ## Is it prod ready?
 
 This application is used for several months within Criteo to replace Consul native interface and
@@ -44,8 +52,8 @@ instead. Example:
 
 ```shell
 consul-templaterb -c http://localhost:8500 \
-  --template samples/consul-ui/consul-services-ui.html:samples/consul-ui/index.html \
-  samples/consul-ui/consul_template.json.erb
+  --template samples/consul-ui/consul-services-ui.html.erb:samples/consul-ui/index.html \
+  samples/consul-ui/*.erb
 ```
 
 Will generate index.html and consul_template.json in your directory, so you might serve it directly.
@@ -58,3 +66,4 @@ This app supports the following environment variables:
 * INSTANCE_MUST_TAG: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
 * INSTANCE_EXCLUDE_TAG: Exclude instances having the given tag (default: canary)
 * EXCLUDE_SERVICES: comma-separated services to exclude (default: consul-agent-http,mesos-slave,mesos-agent-watcher)
+* CONSUL_TIMELINE_BUFFER: number of entries to keep in the timeline. 1000 by default.
