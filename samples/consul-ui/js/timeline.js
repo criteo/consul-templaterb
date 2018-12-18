@@ -6,7 +6,7 @@ class ServiceTimeline {
       this.serviceList = $("#service-list");
       this.serviceFilter = $("#service-filter");
       this.serviceFilter.keyup(this.filterService);
-      this.serviceInstanceFilter = '^.*$';
+      this.serviceInstanceFilter = '';
       this.instanceFilter = $("#instance-filter");
       this.instanceFilter.keyup(this.doFilter);
       this.refresh = parseInt(refresh);
@@ -15,6 +15,7 @@ class ServiceTimeline {
       this.serviceFilterCounter = $("#service-counter");
       this.serviceFilterCount = 0;
       this.services = {}
+      this.presentServices = {}
       var sT = this;
     }
 
@@ -70,6 +71,7 @@ class ServiceTimeline {
         var allServices = this.createServiceDefItem('All', '', numberOfEvents);
         allServices.setAttribute('id', 'anyService');
         serviceListItems.appendChild(allServices);
+        this.presentServices = servicesPerName;
         for (var i = 0 ; i < sorted.length; i++) {
             var serviceName = sorted[i];
             var counter = servicesPerName[serviceName];
@@ -156,35 +158,46 @@ class ServiceTimeline {
           matcher = new RegExp(safeReg);
         }
         console.log("Filtering on service", serviceTimeline.serviceInstanceFilter, " with ", matcher, "filterValue:=", filterValue);
-        $("#all-events > tbody").children('tr').each(function (){
-          var ui = $(this);
-          if (serviceTimeline.serviceInstanceFilter == '^.*$'){
+        var isCorrectService = function(){ return true; };
+        if (serviceTimeline.serviceInstanceFilter == ''){
             var stylesheet = document.getElementById('serviceCol');
-            stylesheet.textContent = '';
-          } else {
-              var stylesheet = document.getElementById('serviceCol');
-              stylesheet.textContent = '.serviceCol { display: none; }';
-          }
-          var isCorrectService = ui.children('.serviceName').is(function(){
-            var elem = $(this);
-            if (elem[0].innerHTML.match(serviceTimeline.serviceInstanceFilter)) {
-              return true;
+            var txt = '';
+            if (filterValue) {
+                txt+='tr.filtered { display: none; }';
             }
-            return false;
-          });
-          var shouldShow = isCorrectService && ui.children('.lookup').is(function (){
-            var elem = $(this);
-            if (elem[0].innerHTML.match(matcher)) {
-              return isCorrectService;
+            stylesheet.textContent = txt;
+        } else {
+            var stylesheet = document.getElementById('serviceCol');
+            var txt = '.serviceCol';
+            if (filterValue) {
+                txt+=',tr.filtered'
             }
-            return false;
-          });
-          if (shouldShow) {
-            ui.removeClass('collapsed');
-          } else {
-            ui.addClass('collapsed');
-          }
-        });
+            for (var i in this.presentServices) {
+                if (i != serviceTimeline.serviceInstanceFilter) {
+                    txt+=',tr.srv-'+i;
+                }
+            }
+            stylesheet.textContent = txt + ' { display: none; }';
+            isCorrectService = function(ui) { return ui.hasClass('srv-' + serviceTimeline.serviceInstanceFilter) };
+        }
+        if (filterValue) {
+            console.log("Additional filter: ", filterValue);
+            $("#all-events > tbody").children('tr').each(function (){
+            var ui = $(this);
+            var shouldShow = isCorrectService(ui) && ui.children('.lookup').is(function (){
+                var elem = $(this);
+                if (elem[0].innerHTML.match(matcher)) {
+                return true;
+                }
+                return false;
+            });
+            if (shouldShow) {
+                ui.removeClass('filtered');
+            } else {
+                ui.addClass('filtered');
+            }
+            });
+        }
     }
 
     selectService(source, updateUrl) {
@@ -193,13 +206,13 @@ class ServiceTimeline {
         this.selectedService = source.closest('li');
         $(this.selectedService).addClass('active');
         if (serviceName == 'All') {
-            serviceName = '.*';
+            serviceName = '';
             $("#service-title").html('');
         } else {
             var titleText = '<a href="consul-services-ui.html?service=' + serviceName + '">'+serviceName+'</a>';
             $("#service-title").html(titleText);
         }
-        serviceTimeline.serviceInstanceFilter = '^' + serviceName + '$';
+        serviceTimeline.serviceInstanceFilter = serviceName;
         if (updateUrl) {
           serviceTimeline.updateURL(serviceName == 'All' ? '' : serviceName);
         }
@@ -247,6 +260,7 @@ class ServiceTimeline {
         for (var i = 0 ; i < this.data.length; i++) {
             var e = this.data[i];
             var row = document.createElement('tr');
+            row.setAttribute("class", 'srv-' + e.service);
             this.buildCell(row, 'td', 'ts', this.appChild('time', document.createTextNode(e.ts)));
             this.buildCell(row, 'td', 'lookup serviceName serviceCol', document.createTextNode(e.service));
             var text = e.instance;
