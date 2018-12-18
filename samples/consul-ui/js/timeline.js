@@ -158,6 +158,13 @@ class ServiceTimeline {
         console.log("Filtering on service", serviceTimeline.serviceInstanceFilter, " with ", matcher, "filterValue:=", filterValue);
         $("#all-events > tbody").children('tr').each(function (){
           var ui = $(this);
+          if (serviceTimeline.serviceInstanceFilter == '^.*$'){
+            var stylesheet = document.getElementById('serviceCol');
+            stylesheet.textContent = '';
+          } else {
+              var stylesheet = document.getElementById('serviceCol');
+              stylesheet.textContent = '.serviceCol { display: none; }';
+          }
           var isCorrectService = ui.children('.serviceName').is(function(){
             var elem = $(this);
             if (elem[0].innerHTML.match(serviceTimeline.serviceInstanceFilter)) {
@@ -241,7 +248,7 @@ class ServiceTimeline {
             var e = this.data[i];
             var row = document.createElement('tr');
             this.buildCell(row, 'td', 'ts', this.appChild('time', document.createTextNode(e.ts)));
-            this.buildCell(row, 'td', 'lookup serviceName', document.createTextNode(e.service));
+            this.buildCell(row, 'td', 'lookup serviceName serviceCol', document.createTextNode(e.service));
             var text = e.instance;
             if (e.instance_info && e.instance_info.node) {
                 text = e.instance_info.node;
