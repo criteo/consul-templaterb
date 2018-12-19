@@ -2,6 +2,13 @@
 
 ## (UNRELEASED)
 
+## 1.8.6 (December 19, 2018)
+
+OPTIMIZATIONS:
+
+ * Full rewrite of filtering of consul-timeline to allow handling
+   history of 100k+ records 
+
 ## 1.8.5 (December 18, 2018)
 
 OPTIMIZATIONS:
