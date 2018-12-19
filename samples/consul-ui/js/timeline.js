@@ -304,22 +304,6 @@ class ServiceTimeline {
             if (this.data.length > 0) {
                 newestIndexInNewDocument = indexOfTimelineEvent(this.data[this.data.length - 1]);
             }
-            /*
-            if (lastDisplayedIndex >= newestIndexInNewDocument) {
-                // Might happen when behind a VIP
-                console.log("Skip reload, index: ", lastDisplayedIndex, ", new is ", newestIndexInNewDocument);
-                return;
-            } else {
-                console.log("Index ", lastDisplayedIndex, " -> ", newestIndexInNewDocument);
-            }
-            for (var i = 0 ; i < this.data.length; i++) {
-                var e = this.data[i];
-                if (lastDisplayedIndex < indexOfTimelineEvent(e)) {
-                    startIndex = i + 1;
-                    console.log('Resuming at ', startIndex, " with ", e);
-                    break;
-                }
-            }*/
         }
         var newDoc = document.createDocumentFragment();
         var frag = document.createElement('tbody');

@@ -61,7 +61,14 @@ class RingBuffer < Array
       super
     else
       shift
+      previous_e = last
+      after = []
+      while !previous_e.nil && previous_e['idx'] > element['idx']
+        after << pop
+        previous_e = last
+      end
       push(element)
+      push after
     end
   end
 
