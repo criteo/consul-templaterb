@@ -20,6 +20,12 @@ function formatDate(date) {
   return padDateUnit(date.getMonth()+1) + "/" + padDateUnit(date.getDate()) + " " + padDateUnit(date.getHours()) + ':' + padDateUnit(date.getMinutes()) + ':' + padDateUnit(date.getSeconds());
 }
 
+function indexOfTimelineEvent(e) {
+  if (e == null) {
+    return 'k/0000000000/0000/0000';
+  }
+  return 'k/' + e.idx.toString().padStart(10, '0') + '/' + e.service + '/' + e.instance;
+}
 
 function nodeState(checks) {
   status='passing';

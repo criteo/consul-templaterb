@@ -11,13 +11,17 @@
           </div>
           <div id="service-wrapper" >
             <ul id="service-list" class="list-group">
-            <li onfocus="serviceTimeline.selectService(this)" onclick="serviceTimeline.selectService(this)" value="" class="serviceListItem list-group-item list-group-item-actionn" id="anyService"><div class="statuses float-right"><span id="allServicesCount" class="lookup badge badge-pill badge-secondary">loading&hellip;</span></div><div class="service-name">All</div></li>
+            <li onfocus="serviceTimeline.selectService(this)" onclick="serviceTimeline.selectService(this, true)" value="" class="serviceListItem list-group-item list-group-item-actionn" id="anyService"><div class="statuses float-right"><span id="allServicesCount" class="lookup badge badge-pill badge-secondary">loading&hellip;</span></div><div class="service-name">All</div></li>
             </ul>
           </div>
         </div>
         <div class="col-10 col-m-9">
-          <div id="autorefresh"><input id="autorefresh-check" type="checkbox" checked><label for="autorefresh-check">Autorefresh</label></div>
-          <h2 class="text-center" id="service-title"></h2>
+          <div id="autorefresh">
+            <input id="autorefresh-check" type="checkbox" checked><label for="autorefresh-check">Autorefresh</label><br/>
+            <label for="autorefresh-check">Max Rows:</label>
+            <input id="maxRows" style="width: 5em;" type="number" min="100" max="<%= (ENV['CONSUL_TIMELINE_BUFFER'] || 10000) %>" step="100" value="5000"/>
+          </div>
+          <h2 class="text-center" id="service-title" style="clear:both"></h2>
           <div class="row mb-2">
             <div class="input-group float-left col-12">
               <input id="instance-filter" type="search" placeholder="filter events" class="form-control" />

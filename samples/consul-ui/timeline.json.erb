@@ -77,6 +77,7 @@ def diff(old, new)
 end
 
 @events = RingBuffer.new(max_size: (ENV['CONSUL_TIMELINE_BUFFER'] || 10000).to_i) unless @events
+@new_events = []
 
 def log_event(line)
   puts "#{Time.now.to_i} #{line}" if ENV['DEBUG_TIMELINE']
@@ -84,7 +85,7 @@ end
 
 def store_event(service: service_name, instance: nil, old_state: nil, new_state: nil, instance_info: nil, checks: [])
   STDERR.puts "empty instance_info for  #{service} ; #{instance} ; #{new_state}" unless instance_info
-  @events << { 'service' => service, 'instance' => instance, 'old_state' => old_state, 'new_state' => new_state,
+  @new_events << { 'service' => service, 'instance' => instance, 'idx' => instance_info['idx'], 'old_state' => old_state, 'new_state' => new_state,
                'ts' => @current_time, 'instance_info' => instance_info }.tap do |ev|
     ev['checks'] = checks if checks
     ev['stats'] = if instance_info
@@ -176,10 +177,20 @@ end
                 checks: checks)
   end
 end
+sorted_events = @new_events.sort do |a, b|
+  res = 0
+  %w[idx service instance].each do |f|
+    res = a[f] <=> b[f]
+    break if res != 0
+  end
+  res
+end
+sorted_events.each { |e| @events << e }
+@new_events.clear
+
 # We save the previous state only when we have a complete state once
 if template_info['was_rendered_once']
   warn "First full rendering completed at #{@current_time} !" unless @previous_state
   @previous_state = cur_state
 end
-
-%><%= JSON.generate(@events)%>
+%><%= JSON.generate(@events) %>
