@@ -134,8 +134,6 @@ class ServiceTimeline {
                 }
                 setInterval(sT.reloadDataFromJSON, 10000);
             }, 150);
-        } else {
-            this.performFiltering($('#instance-filter')[0].value);
         }
     }
 
@@ -170,61 +168,6 @@ class ServiceTimeline {
       return span;
     }
 
-    performFiltering(filterValue) {
-        this.refreshTimeout = null;
-        var matcher;
-        try {
-            matcher = new RegExp(filterValue);
-        } catch (e) {
-          var safeReg = filterValue.replace(/[-[\]{}()*+?.,\\^$|]/g, "\\$&")
-          console.log("Failed to compile regexp for '" + filterValue + "', using strict lookup due to: " + e);
-          matcher = new RegExp(safeReg);
-        }
-        console.log("Filtering on service", serviceTimeline.serviceInstanceFilter, " with ", matcher, "filterValue:=", filterValue);
-        var isCorrectService = function(){ return true; };
-        if (serviceTimeline.serviceInstanceFilter == 'All') {
-            serviceTimeline.serviceInstanceFilter = '';
-        }
-        if (serviceTimeline.serviceInstanceFilter == ''){
-            var stylesheet = document.getElementById('serviceCol');
-            var txt = '';
-            if (filterValue != '') {
-                txt+='tr.filtered { display: none; }';
-            }
-            stylesheet.textContent = txt;
-        } else {
-            var stylesheet = document.getElementById('serviceCol');
-            var txt = '.serviceCol';
-            if (filterValue != '') {
-                txt+=',tr.filtered'
-            }
-            for (var i in this.presentServices) {
-                if (i != serviceTimeline.serviceInstanceFilter) {
-                    txt+=',tr.srv-'+i;
-                }
-            }
-            stylesheet.textContent = txt + ' { display: none; }';
-            isCorrectService = function(ui) { return ui.hasClass('srv-' + serviceTimeline.serviceInstanceFilter) };
-        }
-        if (filterValue != '') {
-            $("#all-events > tbody").children('tr').each(function (){
-            var ui = $(this);
-            var shouldShow = isCorrectService(ui) && ui.children('.lookup').is(function (){
-                var elem = $(this);
-                if (elem[0].innerHTML.match(matcher)) {
-                return true;
-                }
-                return false;
-            });
-            if (shouldShow) {
-                ui.removeClass('filtered');
-            } else {
-                ui.addClass('filtered');
-            }
-            });
-        }
-    }
-
     doFilter() {
         var filterValue = $('#instance-filter')[0].value;
         if (this.refreshTimeout) {
@@ -232,7 +175,7 @@ class ServiceTimeline {
             this.refreshTimeout = null;
         }
         this.refreshTimeout = window.setTimeout(function(){
-            serviceTimeline.performFiltering(filterValue);
+            serviceTimeline.displayEvents(false, filterValue);
         }, 16);
     }
 
@@ -286,31 +229,67 @@ class ServiceTimeline {
       }
 
     displayEvents(firstReload) {
+        var filterValue = $('#instance-filter')[0].value;
         var serviceName = serviceTimeline.serviceInstanceFilter;
         var serviceEvaluator = function(){return true};
         if (serviceName != '' && serviceName != 'All') {
-            serviceEvaluator = function(sName){ return sName === serviceName }
+            serviceEvaluator = function(e){ return e.service === serviceName }
         }
         var maxRows = document.getElementById("maxRows").value;
         //$("#service-title").html(service['name']);
         var tableBody = $('#all-events > tbody');
         var startIndex = 0;
-        if (firstReload || this.lastEntryLoaded == null) {
-            tableBody.html("");
-        } else {
-            // We first try to find new entries...
-            var lastDisplayedIndex = indexOfTimelineEvent(this.lastEntryLoaded);
-            var newestIndexInNewDocument = "000";
-            if (this.data.length > 0) {
-                newestIndexInNewDocument = indexOfTimelineEvent(this.data[this.data.length - 1]);
-            }
-        }
         var newDoc = document.createDocumentFragment();
         var frag = document.createElement('tbody');
         newDoc.appendChild(frag);
         var filter = "";
         var count = 0;
-        for (var i = this.data.length - 1 ; i > 0 && count < maxRows; i--) {
+        if (filterValue != ''){
+            var matcher;
+            try {
+                matcher = new RegExp(filterValue);
+            } catch (e) {
+                var safeReg = filterValue.replace(/[-[\]{}()*+?.,\\^$|]/g, "\\$&")
+                console.log("Failed to compile regexp for '" + filterValue + "', using strict lookup due to: " + e);
+                matcher = new RegExp(safeReg);
+            }
+            var delegateServiceEvaluator = serviceEvaluator;
+            const fields = ['instance', 'service'];
+            const instance_info_fields = ['node', 'port'];
+            const check_fields = ['name', 'output'];
+            serviceEvaluator = function(e) {
+                var res = delegateServiceEvaluator(e);
+                if (!res) {
+                    return false;
+                }
+                for (var i = 0; i < fields.length; i++) {
+                    var field = fields[i];
+                    if (matcher.test(e[field])){
+                        return true;
+                    }
+                }
+                for (var i = 0; i < instance_info_fields.length; i++) {
+                    var field = instance_info_fields[i];
+                    if (matcher.test(e.instance_info[field])){
+                        return true;
+                    }
+                }
+                for (var checkId in e.instance_info.checks) {
+                    if (matcher.test(checkId)) {
+                        return true;
+                    }
+                    var check = e.instance_info.checks[checkId];
+                    for (var i = 0; i < check_fields.length; i++) {
+                        var field = check_fields[i];
+                        if (matcher.test(check[field])){
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+        for (var i = this.data.length - 1 ; i >= 0 && count <= maxRows; i--) {
             var e = this.data[i];
             if (!serviceEvaluator(e)) {
                 continue;
@@ -403,6 +382,7 @@ class ServiceTimeline {
             }
             frag.append(row);
         }
+        $('#numRowsDisplayed').html(count + ' / ' + this.data.length);
         var tbody = tableBody[0];
         tbody.parentNode.replaceChild(frag, tbody);
         if (this.data.length > 1) {

@@ -16,14 +16,19 @@
           </div>
         </div>
         <div class="col-10 col-m-9">
-          <div id="autorefresh">
-            <input id="autorefresh-check" type="checkbox" checked><label for="autorefresh-check">Autorefresh</label><br/>
-            <label for="maxRows">Rows:</label><input id="maxRows" style="width: 5em;" type="number" min="100" max="<%= (ENV['CONSUL_TIMELINE_BUFFER'] || 10000) %>" step="25" value="5000"/>
-          </div>
           <h2 class="text-center" id="service-title" style="clear:both"></h2>
           <div class="row mb-2">
             <div class="input-group float-left col-12">
               <input id="instance-filter" type="search" placeholder="filter events" class="form-control" />
+              <div class="input-group-append">
+                <div class="input-group-append">
+                  <span class="input-group-text">
+                    <input title="Auto-Refresh" id="autorefresh-check" type="checkbox" checked>&nbsp;
+                    <span id="numRowsDisplayed" class="lookup badge badge-pill badge-primary">loading&hellip;</span>
+                  </span>
+               </div>
+                <input id="maxRows" title="max rows to display" placeholder="max rows" style="width: 5em !important;" type="number" min="100" max="<%= (ENV['CONSUL_TIMELINE_BUFFER'] || 10000) %>" step="25" value="5000" class="form-control"/>
+              </div>
             </div>
           </div>
           <div id="instances-wrapper">
