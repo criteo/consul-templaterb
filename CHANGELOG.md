@@ -2,6 +2,13 @@
 
 ## (UNRELEASED)
 
+## 1.8.5 (December 18, 2018)
+
+OPTIMIZATIONS:
+
+ * Use less memory on the client side for consul-timeline
+ * Properly handle multiple instances of JSON file behinf a LB
+
 ## 1.8.3 / 1.8.4 (December 18, 2018)
 
 OPTIMIZATIONS:
