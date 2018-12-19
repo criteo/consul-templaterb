@@ -286,6 +286,11 @@ class ServiceTimeline {
       }
 
     displayEvents(firstReload) {
+        var serviceName = serviceTimeline.serviceInstanceFilter;
+        var serviceEvaluator = function(){return true};
+        if (serviceName != '' && serviceName != 'All') {
+            serviceEvaluator = function(sName){ return sName === serviceName }
+        }
         var maxRows = document.getElementById("maxRows").value;
         //$("#service-title").html(service['name']);
         var tableBody = $('#all-events > tbody');
@@ -299,6 +304,7 @@ class ServiceTimeline {
             if (this.data.length > 0) {
                 newestIndexInNewDocument = indexOfTimelineEvent(this.data[this.data.length - 1]);
             }
+            /*
             if (lastDisplayedIndex >= newestIndexInNewDocument) {
                 // Might happen when behind a VIP
                 console.log("Skip reload, index: ", lastDisplayedIndex, ", new is ", newestIndexInNewDocument);
@@ -313,21 +319,19 @@ class ServiceTimeline {
                     console.log('Resuming at ', startIndex, " with ", e);
                     break;
                 }
-            }
+            }*/
         }
-        var frag = document.createDocumentFragment();
+        var newDoc = document.createDocumentFragment();
+        var frag = document.createElement('tbody');
+        newDoc.appendChild(frag);
         var filter = "";
-        var lastEntryFound = null;
-        if (this.data.length > maxRows) {
-            var remaining = this.data.length - startIndex;
-            if (startIndex < remaining) {
-                startIndex = this.data.length - maxRows;
-                console.log('Skip first ', startIndex, " entries on ", this.data.length, " lines...");
-            }
-        }
-        for (var i = startIndex ; i < this.data.length; i++) {
+        var count = 0;
+        for (var i = this.data.length - 1 ; i > 0 && count < maxRows; i--) {
             var e = this.data[i];
-            lastEntryFound = e;
+            if (!serviceEvaluator(e)) {
+                continue;
+            }
+            count++;
             var row = document.createElement('tr');
             row.setAttribute("class", 'srv-' + e.service);
             var timestamp;
@@ -413,22 +417,13 @@ class ServiceTimeline {
                 }
                 this.buildCell(row, 'td', 'ipercents', this.createBadge(percent + " %", clazz));
             }
-            frag.prepend(row);
+            frag.append(row);
         }
         var tbody = tableBody[0];
-        tbody.prepend(frag);
-        this.lastEntryLoaded = lastEntryFound;
-        console.log("Last entry loaded: ", indexOfTimelineEvent(this.lastEntryLoaded));
-        var i = 0;
-        
-        var tbody = tableBody.children('tr').each (function() {
-            i++;
-            if (i > maxRows) {
-                $(this).remove()
-            }
-        });
-        if (i > maxRows) {
-            console.log("Removed ", maxRows - i, " lines.")
+        tbody.parentNode.replaceChild(frag, tbody);
+        if (this.data.length > 1) {
+          this.lastEntryLoaded = this.data[this.data.length - 1];
+          console.log("Last entry loaded: ", indexOfTimelineEvent(this.lastEntryLoaded));
         }
     }
 }

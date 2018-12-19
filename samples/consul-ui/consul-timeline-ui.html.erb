@@ -18,8 +18,7 @@
         <div class="col-10 col-m-9">
           <div id="autorefresh">
             <input id="autorefresh-check" type="checkbox" checked><label for="autorefresh-check">Autorefresh</label><br/>
-            <label for="autorefresh-check">Max Rows:</label>
-            <input id="maxRows" style="width: 5em;" type="number" min="100" max="<%= (ENV['CONSUL_TIMELINE_BUFFER'] || 10000) %>" step="100" value="5000"/>
+            <label for="maxRows">Rows:</label><input id="maxRows" style="width: 5em;" type="number" min="100" max="<%= (ENV['CONSUL_TIMELINE_BUFFER'] || 10000) %>" step="25" value="5000"/>
           </div>
           <h2 class="text-center" id="service-title" style="clear:both"></h2>
           <div class="row mb-2">
