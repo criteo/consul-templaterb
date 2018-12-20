@@ -351,9 +351,15 @@ class ServiceTimeline {
                 this.buildCell(row, 'td', 'lookup checks', checksCell);
             }
             {
-                var td = this.buildCell(row, 'td', 'service-status', this.createBadge(e['old_state']));
-                td.appendChild(document.createTextNode('→'));
-                td.appendChild(this.createBadge(e['new_state']));
+                if (e.new_state == e.old_state) {
+                    var td = this.buildCell(row, 'td', 'service-status', this.createBadge(e['new_state']));
+                } else {
+                    var old = e.old_state == null ? this.createBadge('new', 'primary') : this.createBadge(e.old_state);
+                    var td = this.buildCell(row, 'td', 'service-status', old);
+                    td.appendChild(document.createTextNode('→'));
+                    var newState = (e.new_state == null) ? this.createBadge('removed', 'dark') : this.createBadge(e.new_state);
+                    td.appendChild(newState);
+                }
             }
             {
                 var nSuccess = e['stats']['passing'];

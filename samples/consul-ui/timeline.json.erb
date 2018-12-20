@@ -75,11 +75,12 @@ class RingBuffer < Array
   alias push <<
 end
 
-def diff(old, new)
+def diff(old, new_e)
   diff = OpenStruct.new
-  diff.appeared = new - old
-  diff.disappeared = old - new
-  diff.stayed = new & old
+  diff.appeared = new_e - old
+  diff.disappeared = old - new_e
+  diff.stayed = new_e & old
+  diff.all = new_e + old
   diff
 end
 
@@ -106,9 +107,9 @@ end
 def compute_checks(old_state, cur_state, service_name, instance_name)
   old_checks = old_state.dig(service_name, instance_name, 'checks') || {}
   new_checks = cur_state.dig(service_name, instance_name, 'checks') || {}
-  check_diff = diff(old_checks.keys, new_checks.keys)
+  all_checks = Set.new(old_checks.keys + new_checks.keys)
   checks = []
-  check_diff.stayed.each do |check_id|
+  all_checks.each do |check_id|
     old_status = old_state.dig(service_name, instance_name, 'checks', check_id, 'status')
     cur_status = cur_state.dig(service_name, instance_name, 'checks', check_id, 'status')
 
