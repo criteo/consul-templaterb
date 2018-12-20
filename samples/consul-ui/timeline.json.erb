@@ -1,5 +1,6 @@
 <%
 require 'json'
+require 'set'
 services_blacklist = (ENV['EXCLUDE_SERVICES'] || 'consul-agent-http,mesos-slave,mesos-agent-watcher,mesos-exporter-slave').split(',')
 
 @current_time = Time.now.utc.iso8601
