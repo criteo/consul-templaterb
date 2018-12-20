@@ -2,6 +2,13 @@
 
 ## (UNRELEASED)
 
+IMPROVEMENTS:
+
+ * Now hide service column when filtering on a service
+ * apply row limits immediately
+ * auto-refresh duration is now configurable by `TIMELINE_REFRESH_MS`
+   environment variable
+
 ## 1.8.6 / 1.8.7 / 1.8.8 (December 20, 2018)
 
 OPTIMIZATIONS:

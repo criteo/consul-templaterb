@@ -132,7 +132,8 @@ class ServiceTimeline {
                 if (!found) {
                     sT.selectService($('#anyService', false));
                 }
-                setInterval(sT.reloadDataFromJSON, 10000);
+                console.log("Starting autorefresh every ", serviceTimeline.refresh, "ms.")
+                setInterval(sT.reloadDataFromJSON, serviceTimeline.refresh);
             }, 150);
         }
     }
@@ -232,9 +233,13 @@ class ServiceTimeline {
         var filterValue = $('#instance-filter')[0].value;
         var serviceName = serviceTimeline.serviceInstanceFilter;
         var serviceEvaluator = function(){return true};
+        var stylesheetText = '';
         if (serviceName != '' && serviceName != 'All') {
-            serviceEvaluator = function(e){ return e.service === serviceName }
+           stylesheetText = '.serviceCol { display: none; }';
+           serviceEvaluator = function(e){ return e.service === serviceName }
         }
+        // Show / hide .serviceCol content
+        document.getElementById('serviceCol').textContent = stylesheetText;
         var maxRows = document.getElementById("maxRows").value;
         //$("#service-title").html(service['name']);
         var tableBody = $('#all-events > tbody');
@@ -289,7 +294,7 @@ class ServiceTimeline {
                 return false;
             }
         }
-        for (var i = this.data.length - 1 ; i >= 0 && count <= maxRows; i--) {
+        for (var i = this.data.length - 1 ; i >= 0 && count < maxRows; i--) {
             var e = this.data[i];
             if (!serviceEvaluator(e)) {
                 continue;
@@ -393,7 +398,6 @@ class ServiceTimeline {
         tbody.parentNode.replaceChild(frag, tbody);
         if (this.data.length > 1) {
           this.lastEntryLoaded = this.data[this.data.length - 1];
-          console.log("Last entry loaded: ", indexOfTimelineEvent(this.lastEntryLoaded));
         }
     }
 }

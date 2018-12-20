@@ -1,6 +1,6 @@
 <% datasource = ENV['TIMELINE_DATASOURCE'] || 'timeline.json'
    # Time to wait before reloading configuration again in seconds (0 = never)
-   refresh = ENV['REFRESH'] || '3600' %><%= render_file('common/header.html.erb', title: 'Services Timeline') %>
+   refresh = ENV['TIMELINE_REFRESH_MS'] || '10000' %><%= render_file('common/header.html.erb', title: 'Services Timeline') %>
     <div class="main">
       <div class="row mx-0">
         <div id="filter-menu" class="col-2 col-m-3 px-4 pt-4">
@@ -27,7 +27,7 @@
                     <span id="numRowsDisplayed" class="lookup badge badge-pill badge-primary">loading&hellip;</span>
                   </span>
                </div>
-                <input id="maxRows" title="max rows to display" placeholder="max rows" style="width: 5em !important;" type="number" min="100" max="<%= (ENV['CONSUL_TIMELINE_BUFFER'] || 10000) %>" step="25" value="5000" class="form-control"/>
+                <input id="maxRows" title="max rows to display" placeholder="max rows" style="width: 5em !important;" type="number" min="100" max="<%= (ENV['CONSUL_TIMELINE_BUFFER'] || 10000) %>" step="25" value="5000" class="form-control" onchange="serviceTimeline.displayEvents(false)"/>
               </div>
             </div>
           </div>
