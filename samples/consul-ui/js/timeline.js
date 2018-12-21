@@ -21,7 +21,7 @@ class ServiceTimeline {
     }
 
     fetchRessource(firstReload) {
-        $.ajax({url: this.ressourceURL, cache: false, dataType: "json", sourceObject: this,
+        $.ajax({url: this.ressourceURL, cache: true, dataType: "json", sourceObject: this,
                 success: function(result){
                            serviceTimeline.initRessource(result, firstReload);
                            serviceTimeline.currentlyUpdating = false;
@@ -48,7 +48,7 @@ class ServiceTimeline {
                     return;
                 } else if (newIndex == previousMaxIndex) {
                     if (this.data.length >= data.length) {
-                        console.log("new := (idx=", newIndex, ",len=", data.length, ") old := (idx:=", previousMaxIndex, this.data.length, "), no need to reload");
+                        //console.log("new := (idx=", newIndex, ",len=", data.length, ") old := (idx:=", previousMaxIndex, this.data.length, "), no need to reload");
                         return;
                     }
                 } else {
@@ -56,20 +56,29 @@ class ServiceTimeline {
                     if (this.data.length > data.length) {
                         var diff = this.data.length - data.length;
                         var firstNewItem = indexOfTimelineEvent(data[0]);
-                        for (var i = 0 ; i < this.data.length; i++){
-                            var oldVal = indexOfTimelineEvent(this.data[i]);
-                            if (oldVal == firstNewItem) {
-                                // We found the common start
-                                console.log("Did preprend ", i, "items to data");
-                                data = this.data.slice(0, i).concat(data);
-                                break;
+                        var maxRows = document.getElementById("maxRows").value;
+                        if (maxRows > data.length) {
+                            console.log("Looking for matches with ", firstNewItem);
+                            for (var i = 0 ; i < this.data.length; i++){
+                                var oldVal = indexOfTimelineEvent(this.data[i]);
+                                if (oldVal == firstNewItem) {
+                                    // We found the common start
+                                    var maxItemsToAdd = maxRows - data.length;
+                                    var start = 0;
+                                    if (i > maxItemsToAdd) {
+                                        start = i - maxItemsToAdd;
+                                    }
+                                    console.log("Did preprend ", (i - start), "items to data");
+                                    data = this.data.slice(start, i).concat(data);
+                                    break;
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        console.log("Loading", data.length, "items...")
+        console.log("Loading", data.length, "items...");
         this.data = data;
         this.reloadTimeline(firstReload);
     }
