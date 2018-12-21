@@ -24,6 +24,7 @@ class ServiceTimeline {
         $.ajax({url: this.ressourceURL, cache: false, dataType: "json", sourceObject: this,
                 success: function(result){
                            serviceTimeline.initRessource(result, firstReload);
+                           serviceTimeline.currentlyUpdating = false;
                 },
                 error: function(err) {
                            console.log("Error updating data", err);
@@ -33,6 +34,42 @@ class ServiceTimeline {
     }
 
     initRessource(data, firstReload) {
+        if (!data || data.length < 1) {
+            console.log("No new data to load ", data);
+            return;
+        }
+        if (this.data != null) {
+            var previousCount = this.data.length;
+            if (previousCount > 0) {
+                var previousMaxIndex = indexOfTimelineEvent(this.data[previousCount - 1]);
+                var newIndex = indexOfTimelineEvent(data[data.length - 1]);
+                if (newIndex < previousMaxIndex) {
+                    console.log("New index " + newIndex + " is lower than previous one", previousMaxIndex, " no need to reload");
+                    return;
+                } else if (newIndex == previousMaxIndex) {
+                    if (this.data.length >= data.length) {
+                        console.log("new := (idx=", newIndex, ",len=", data.length, ") old := (idx:=", previousMaxIndex, this.data.length, "), no need to reload");
+                        return;
+                    }
+                } else {
+                    // Lets merge old data with new one
+                    if (this.data.length > data.length) {
+                        var diff = this.data.length - data.length;
+                        var firstNewItem = indexOfTimelineEvent(data[0]);
+                        for (var i = 0 ; i < this.data.length; i++){
+                            var oldVal = indexOfTimelineEvent(this.data[i]);
+                            if (oldVal == firstNewItem) {
+                                // We found the common start
+                                console.log("Did preprend ", i, "items to data");
+                                data = this.data.slice(0, i).concat(data);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        console.log("Loading", data.length, "items...")
         this.data = data;
         this.reloadTimeline(firstReload);
     }
