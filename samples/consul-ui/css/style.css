@@ -94,7 +94,7 @@ td.serviceName {
   border-left: 0px;
   border-right: 0px;
 }
-td.service-status {
+td.evt-service-status {
   min-width: 10em;
 }
 td.all-instances {
