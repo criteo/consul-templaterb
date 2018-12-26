@@ -27,7 +27,10 @@
                     <span id="numRowsDisplayed" class="lookup badge badge-pill badge-primary">loading&hellip;</span>
                   </span>
                </div>
-                <input id="maxRows" title="max rows to display" placeholder="max rows" style="width: 5em !important;" type="number" min="100" max="<%= (ENV['CONSUL_TIMELINE_BUFFER'] || 10000) %>" step="25" value="5000" class="form-control" onchange="serviceTimeline.displayEvents(false)"/>
+               <button class="btn btn-primary btn-sm" id="firstPage" title="Newest entries" onclick="serviceTimeline.firstPage()">⇤</button>
+               <button class="btn btn-primary btn-sm" id="prevPage" title="Newer entries" disabled="disabled" onclick="serviceTimeline.prevPage()">←</button>
+               <input id="maxRows" title="max rows to display" placeholder="max rows" style="width: 5.5em" type="number" min="25" max="<%= (ENV['CONSUL_TIMELINE_BUFFER'] || 10000) %>" step="25" value="100" class="form-control" onchange="serviceTimeline.displayEvents(false)"/>
+               <button class="btn btn-primary btn-sm" id="nextPage" onclick="serviceTimeline.nextPage()">→</button>
               </div>
             </div>
           </div>

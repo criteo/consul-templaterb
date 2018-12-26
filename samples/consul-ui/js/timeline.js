@@ -17,6 +17,9 @@ class ServiceTimeline {
       this.lastEntryLoaded = null;
       this.presentServices = {}
       this.currentlyUpdating = false;
+      this.start = null;
+      this.next = null;
+      this.prev = null;
       var sT = this;
     }
 
@@ -31,6 +34,21 @@ class ServiceTimeline {
                            serviceTimeline.currentlyUpdating = false;
                 }
          });
+    }
+
+    nextPage() {
+        this.start = this.next;
+        this.displayEvents(false);
+    }
+
+    prevPage() {
+        this.start = this.prev;
+        this.displayEvents(false);
+    }
+
+    firstPage() {
+        this.start = null;
+        this.displayEvents(false);
     }
 
     initRessource(data, firstReload) {
@@ -56,14 +74,14 @@ class ServiceTimeline {
                     if (this.data.length > data.length) {
                         var diff = this.data.length - data.length;
                         var firstNewItem = indexOfTimelineEvent(data[0]);
-                        var maxRows = document.getElementById("maxRows").value;
-                        if (maxRows > data.length) {
+                        var maxItemsInMemory = 50000;
+                        if (maxItemsInMemory > data.length) {
                             console.log("Looking for matches with ", firstNewItem);
                             for (var i = 0 ; i < this.data.length; i++){
                                 var oldVal = indexOfTimelineEvent(this.data[i]);
                                 if (oldVal == firstNewItem) {
                                     // We found the common start
-                                    var maxItemsToAdd = maxRows - data.length;
+                                    var maxItemsToAdd = maxItemsInMemory - data.length;
                                     var start = 0;
                                     if (i > maxItemsToAdd) {
                                         start = i - maxItemsToAdd;
@@ -340,12 +358,43 @@ class ServiceTimeline {
                 return false;
             }
         }
-        for (var i = this.data.length - 1 ; i >= 0 && count < maxRows; i--) {
+        var startTs = this.start;
+        if (startTs == null) {
+            startTs = this.data[this.data.length - 1].ts;
+        }
+        var previousElements = [];
+        this.prev = null;
+        document.getElementById('prevPage').setAttribute('disabled', 'disabled');
+        document.getElementById('firstPage').setAttribute('disabled', 'disabled');
+        document.getElementById('nextPage').setAttribute('disabled', 'disabled');
+        for (var i = this.data.length - 1 ; i >= 0; i--) {
+            if (count >= maxRows) {
+                this.next = this.data[i].ts;
+                document.getElementById('nextPage').removeAttribute('disabled');
+                break;
+            }
             var e = this.data[i];
             if (!serviceEvaluator(e)) {
                 continue;
             }
+            if (startTs < e.ts) {
+                previousElements.push(e.ts);
+                var previousCounter = previousElements.length;
+                if (previousCounter == 1) {
+                    this.prev = null;
+                    document.getElementById('prevPage').removeAttribute('disabled');
+                    document.getElementById('firstPage').removeAttribute('disabled');
+                } else if (previousCounter >= maxRows){
+                    previousElements.shift();
+                }
+                continue;
+            }
             count++;
+            if (count == 1) {
+                if (previousElements.length > 0) {
+                    this.prev = previousElements.shift();
+                }
+            }
             var row = document.createElement('tr');
             row.setAttribute("class", 'srv-' + e.service);
             var timestamp;
