@@ -4,6 +4,8 @@ require 'set'
 services_blacklist = (ENV['EXCLUDE_SERVICES'] || 'consul-agent-http,mesos-slave,mesos-agent-watcher,mesos-exporter-slave').split(',')
 
 @current_time = Time.now.utc.iso8601
+@last_service_info = {}
+@newest_index = 0 unless @newest_index
 cur_state = services.map do |service_name, _tags|
   next if services_blacklist.include?(service_name)
 
@@ -14,6 +16,9 @@ cur_state = services.map do |service_name, _tags|
     'critical' => 0,
     'total'    => snodes.count
   }
+  cur_index = snodes.endpoint.x_consul_index.to_i
+  @newest_index = cur_index if @newest_index < cur_index
+  @last_service_info[service_name] = { 'idx' => cur_index, 'stats' => cur_stats }
   snodes.each do |snode|
     case snode.status.downcase
     when 'passing'
@@ -32,9 +37,9 @@ cur_state = services.map do |service_name, _tags|
        'address' => instance.service_address,
        'node' => instance['Node']['Node'],
        'port' => instance['Service']['Port'],
-       'idx'  => instance['Service']['ModifyIndex'],
+       'idx'  => (instance['Service']['ModifyIndex'] || cur_index).to_i,
        'status' => instance.status,
-       'stats'  => cur_stats,
+       'stats' => cur_stats,
        'checks' => instance['Checks'].map { |check| [check['CheckID'], { 'name' => check['Name'], 'status' => check['Status'], 'output' => check['Output'] }] }.to_h
      }]
   end.to_h
@@ -54,26 +59,27 @@ class RingBuffer < Array
 
   def initialize(max_size:, enum: nil)
     @max_size = max_size
+    warn "Ringbuffer initialized with #{max_size}"
     enum&.each { |e| self << e }
   end
 
   def <<(element)
-    if size < @max_size || @max_size.nil?
-      super
-    else
+    return unless element
+    if size >= @max_size
       shift
-      previous_e = last
-      after = []
-      while previous_e && (previous_e['idx'] > element['idx'])
-        after << pop
-        previous_e = last
-      end
-      push(element)
-      push after
     end
+    previous_e = last
+    after = []
+    while !previous_e.nil? && (previous_e['idx'] > element['idx'])
+      after.insert(0, pop)
+      previous_e = last
+    end
+    push(element)
+    after.each do |x|
+      push(x)
+    end
+    self
   end
-
-  alias push <<
 end
 
 def diff(old, new_e)
@@ -92,16 +98,12 @@ def log_event(line)
   puts "#{Time.now.to_i} #{line}" if ENV['DEBUG_TIMELINE']
 end
 
-def store_event(service: service_name, instance: nil, old_state: nil, new_state: nil, instance_info: nil, checks: [])
-  STDERR.puts "empty instance_info for  #{service} ; #{instance} ; #{new_state}" unless instance_info
-  @new_events << { 'service' => service, 'instance' => instance, 'idx' => instance_info['idx'], 'old_state' => old_state, 'new_state' => new_state,
+def store_event(service: nil, instance: nil, old_state: nil, new_state: nil, instance_info: nil, checks: [])
+  @new_events << { 'service' => service, 'instance' => instance, 'old_state' => old_state, 'new_state' => new_state,
                'ts' => @current_time, 'instance_info' => instance_info }.tap do |ev|
     ev['checks'] = checks if checks
-    ev['stats'] = if instance_info
-                    instance_info['stats']
-                  else
-                    {}
-                  end
+    ev['stats'] = instance_info['stats']
+    ev['idx'] = instance_info['idx']
   end
 end
 
@@ -133,11 +135,19 @@ service_diff = diff(old_state.keys, cur_state.keys)
 service_diff.disappeared.each do |service_name|
   old_state[service_name].each do |instance_name, instance_info|
     checks = compute_checks(old_state, cur_state, service_name, instance_name)
+    the_info = {}.merge(instance_info)
+    the_info['idx'] = @newest_index
+    the_info['stats'] = {
+      'passing'  => 0,
+      'warning'  => 0,
+      'critical' => 0,
+      'total'    => 0,
+    }
     store_event(service: service_name,
                 instance: instance_name,
                 old_state: old_state[service_name][instance_name]['status'],
                 new_state: nil,
-                instance_info: instance_info,
+                instance_info: the_info,
                 checks: checks)
   end
 end
@@ -156,11 +166,14 @@ end
 
   instance_diff.disappeared.each do |instance_name|
     checks = compute_checks(old_state, cur_state, service_name, instance_name)
+    the_info = {}.merge(old_state[service_name][instance_name])
+    the_info['idx'] = @last_service_info[service_name]['idx']
+    the_info['stats'] = @last_service_info[service_name]['stats']
     store_event(service: service_name,
                 old_state: old_state[service_name][instance_name]['status'],
                 new_state: nil,
                 instance: instance_name,
-                instance_info: old_state[service_name][instance_name],
+                instance_info: the_info,
                 checks: checks)
   end
   instance_diff.appeared.each do |instance_name|

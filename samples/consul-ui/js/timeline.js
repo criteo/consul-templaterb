@@ -38,17 +38,19 @@ class ServiceTimeline {
 
     nextPage() {
         this.start = this.next;
-        this.displayEvents(false);
+        console.log("nextPage() at ", this.start);
+        this.doFilter();
     }
 
     prevPage() {
         this.start = this.prev;
-        this.displayEvents(false);
+        console.log("prevPage() at ", this.start);
+        this.doFilter();
     }
 
     firstPage() {
         this.start = null;
-        this.displayEvents(false);
+        this.doFilter();
     }
 
     initRessource(data, firstReload) {
@@ -307,7 +309,6 @@ class ServiceTimeline {
         var maxRows = document.getElementById("maxRows").value;
         //$("#service-title").html(service['name']);
         var tableBody = $('#all-events > tbody');
-        var startIndex = 0;
         var newDoc = document.createDocumentFragment();
         var frag = document.createElement('tbody');
         newDoc.appendChild(frag);
@@ -358,32 +359,44 @@ class ServiceTimeline {
                 return false;
             }
         }
-        var startTs = this.start;
-        if (startTs == null) {
-            startTs = this.data[this.data.length - 1].ts;
+        var startIdx = this.start;
+        if (startIdx == null) {
+            startIdx = (this.data[this.data.length - 1].idx);
+        } else {
+            //console.log("startIdx := ", startIdx);
         }
         var previousElements = [];
-        this.prev = null;
         document.getElementById('prevPage').setAttribute('disabled', 'disabled');
+        this.next = null;
         document.getElementById('firstPage').setAttribute('disabled', 'disabled');
+        this.prev = null;
         document.getElementById('nextPage').setAttribute('disabled', 'disabled');
+        var totalSkipped = 0;
         for (var i = this.data.length - 1 ; i >= 0; i--) {
             if (count >= maxRows) {
-                this.next = this.data[i].ts;
-                document.getElementById('nextPage').removeAttribute('disabled');
+                this.next = this.data[i].idx;
+                //console.log("next is ", this.data[i].ts, ' at ', this.next);
+                var nextTs = this.data[i].ts;
+                setTimeout(function(){
+                  nextPage = document.getElementById('nextPage');
+                  nextPage.removeAttribute('disabled');
+                  nextPage.setAttribute('title', 'Older entries at ' + nextTs);
+                }, 1);
                 break;
             }
             var e = this.data[i];
             if (!serviceEvaluator(e)) {
                 continue;
             }
-            if (startTs < e.ts) {
-                previousElements.push(e.ts);
+            if (startIdx < e.idx) {
+                totalSkipped++;
+                previousElements.push(e);
                 var previousCounter = previousElements.length;
                 if (previousCounter == 1) {
-                    this.prev = null;
-                    document.getElementById('prevPage').removeAttribute('disabled');
-                    document.getElementById('firstPage').removeAttribute('disabled');
+                    setTimeout(function(){
+                      document.getElementById('prevPage').removeAttribute('disabled');
+                      document.getElementById('firstPage').removeAttribute('disabled');
+                    }, 1);
                 } else if (previousCounter >= maxRows){
                     previousElements.shift();
                 }
@@ -392,7 +405,8 @@ class ServiceTimeline {
             count++;
             if (count == 1) {
                 if (previousElements.length > 0) {
-                    this.prev = previousElements.shift();
+                    //console.log("Current is ", e.ts, ' aka  ',  e.idx, ", Had ", previousElements.length, 'elements before, skipped := ', totalSkipped, "skipped elements", previousElements);
+                    this.prev = previousElements.shift().idx;
                 }
             }
             var row = document.createElement('tr');
@@ -412,7 +426,7 @@ class ServiceTimeline {
             {
               var timeElement = this.appChild('time', document.createTextNode(timestamp));
               timeElement.setAttribute('datetime', fullTimestamp);
-              timeElement.setAttribute('title', fullTimestamp);
+              timeElement.setAttribute('title', fullTimestamp + '\nX-Consul-Index: ' +e.idx);
               this.buildCell(row, 'td', 'ts', timeElement);
             }
             this.buildCell(row, 'td', 'lookup serviceName serviceCol', document.createTextNode(e.service));
@@ -475,20 +489,24 @@ class ServiceTimeline {
                     allInstances.appendChild(elem);
                 }
                 var elem = this.createBadge(nCritical);
-                var percent = Math.round(nSuccess * 100 / e['stats']['total']);
-                var clazz = 'secondary'
-                if (percent > 90) {
-                    clazz = 'success';
-                } else if (percent < 20) {
-                    clazz = 'danger';
-                } else if (percent < 50) {
-                    clazz = 'warning';
+                if (e['stats']['total'] > 0) {
+                    var percent = Math.round(nSuccess * 100 / e['stats']['total']);
+                    var clazz = 'secondary'
+                    if (percent > 90) {
+                        clazz = 'success';
+                    } else if (percent < 20) {
+                        clazz = 'danger';
+                    } else if (percent < 50) {
+                        clazz = 'warning';
+                    }
+                    this.buildCell(row, 'td', 'ipercents', this.createBadge(percent + " %", clazz));
+                } else {
+                    this.buildCell(row, 'td', 'ipercents', this.createBadge('none', 'danger'));
                 }
-                this.buildCell(row, 'td', 'ipercents', this.createBadge(percent + " %", clazz));
             }
             frag.append(row);
         }
-        $('#numRowsDisplayed').html(count + ' / ' + this.data.length);
+        $('#numRowsDisplayed').html(totalSkipped + '…' + (totalSkipped + count) + ' / ' + this.data.length);
         var tbody = tableBody[0];
         tbody.parentNode.replaceChild(frag, tbody);
         if (this.data.length > 1) {
