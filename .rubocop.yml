@@ -16,7 +16,7 @@ Metrics/ClassLength:
   Max: 225
 
 Metrics/CyclomaticComplexity:
-  Max: 15
+  Max: 20
 
 Metrics/LineLength:
   Max: 175
@@ -28,7 +28,7 @@ Metrics/ParameterLists:
   Max: 12
 
 Metrics/PerceivedComplexity:
-  Max: 18
+  Max: 20
 
 Style/Documentation:
   Enabled: false

@@ -181,8 +181,8 @@ module Consul
         res
       end
 
-      def find_x_consul_token(http)
-        http.response_header['X_CONSUL_INDEX']
+      def find_x_consul_index(http)
+        http.response_header['X-Consul-Index']
       end
 
       def _handle_error(http, consul_index)
@@ -211,7 +211,8 @@ module Consul
             if !is_kv_empty && enforce_json_200 && http.response_header.status != 200 && http.response_header['Content-Type'] != 'application/json'
               _handle_error(http, consul_index) { connection = EventMachine::HttpRequest.new(conf.base_url, options) }
             else
-              n_consul_index = find_x_consul_token(http)
+              n_consul_index = find_x_consul_index(http)
+              @x_consul_index = n_consul_index.to_i if n_consul_index
               @consecutive_errors = 0
               http_result = if is_kv_empty
                               HttpResponse.new(http, default_value)

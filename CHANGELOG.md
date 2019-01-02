@@ -2,8 +2,16 @@
 
 ## (UNRELEASED)
 
-IMPROVEMENTS:
+## 1.9.0
 
+OPTIMIZATIONS:
+ * Better network issue because of X-Consul-Index parsing bug
+
+NEW FEATURES:
+ * value.endpoint.x_consul_index now works as expected
+
+IMPROVEMENTS:
+ * timeline now works well behing load balancer without stickyness
  * Now hide service column when filtering on a service
  * apply row limits immediately
  * auto-refresh duration is now configurable by `TIMELINE_REFRESH_MS`
