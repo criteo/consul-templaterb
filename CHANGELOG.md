@@ -2,15 +2,25 @@
 
 ## (UNRELEASED)
 
+## 1.9.1
+
+NEW FEATURES:
+ 
+ * Now display effective network bandwidth instead of uncompressed bandwidth
+ * for catalog/services and catalog/nodes, now min delay is 15s instead of 30s
+
 ## 1.9.0
 
 OPTIMIZATIONS:
+
  * Better network issue because of X-Consul-Index parsing bug
 
 NEW FEATURES:
+
  * value.endpoint.x_consul_index now works as expected
 
 IMPROVEMENTS:
+
  * timeline now works well behing load balancer without stickyness
  * Now hide service column when filtering on a service
  * apply row limits immediately

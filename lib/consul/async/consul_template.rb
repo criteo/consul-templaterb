@@ -32,7 +32,8 @@ module Consul
           success: 0,
           errors: 0,
           bytes_read: 0,
-          changes: 0
+          changes: 0,
+          network_bytes: 0
         }
         @context = {
           current_erb_path: nil,
@@ -224,7 +225,7 @@ module Consul
         if last_result != data
           STDERR.print "[INFO] Write #{Utilities.bytes_to_h data.bytesize} bytes to #{file}, "\
                        "netinfo=#{@net_info} aka "\
-                       "#{Utilities.bytes_to_h((net_info[:bytes_read] / (Time.now.utc - @start_time)).round(1))}/s ...\n"
+                       "#{Utilities.bytes_to_h((net_info[:network_bytes] / (Time.now.utc - @start_time)).round(1))}/s ...\n"
           tmp_file = "#{file}.tmp"
           File.open(tmp_file, 'w') do |f|
             f.write data
@@ -258,8 +259,10 @@ module Consul
           STDERR.print "[INFO] path #{path.ljust(64)} #{query_params.inspect}\r"
           @endpoints[fqdn] = tpl
           tpl.endpoint.on_response do |result|
-            @net_info[:success] = @net_info[:success] + 1
-            @net_info[:bytes_read] = @net_info[:bytes_read] + result.data.bytesize
+            @net_info[:success] += 1
+            @net_info[:bytes_read] += result.data.bytesize
+            @net_info[:changes] += 1 if result.modified?
+            @net_info[:network_bytes] += result.http.response_header['Content-Length'].to_i
           end
           tpl.endpoint.on_error { @net_info[:errors] = @net_info[:errors] + 1 }
         end

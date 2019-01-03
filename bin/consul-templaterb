@@ -54,10 +54,10 @@ options = {
     enable_gzip_compression: true,
     paths: {
       '/v1/catalog/services': {
-        min_duration: 30,    # Since services change a lot, refresh services every 30 seconds
+        min_duration: 15,    # Since services change a lot, refresh services every 15 seconds
       },
       '/v1/catalog/nodes': {
-        min_duration: 30,    # Do not wake up before 30 seconds when node appear/disappear
+        min_duration: 15,    # Do not wake up before 15 seconds when node appear/disappear
       },
       '/v1/catalog/datacenters': {
         min_duration: 60,    # Datacenters are not added every minute, right?
