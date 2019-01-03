@@ -2,14 +2,18 @@
 
 ## (UNRELEASED)
 
-## 1.9.1
+## 1.9.1 (January 3, 2019)
 
 NEW FEATURES:
  
  * Now display effective network bandwidth instead of uncompressed bandwidth
  * for catalog/services and catalog/nodes, now min delay is 15s instead of 30s
 
-## 1.9.0
+IMPROVEMENTS:
+
+ * Removed Ruby 2.3 from Travis, build with Ruby 2.6 in Travis
+
+## 1.9.0 (January 2, 2019)
 
 OPTIMIZATIONS:
 
