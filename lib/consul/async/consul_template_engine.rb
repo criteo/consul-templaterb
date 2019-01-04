@@ -9,8 +9,8 @@ require 'erb'
 module Consul
   module Async
     class ConsulTemplateEngine
-      attr_reader :template_manager, :hot_reload_failure, :template_frequency
-      attr_writer :hot_reload_failure, :template_frequency
+      attr_reader :template_manager, :hot_reload_failure, :template_frequency, :debug_memory
+      attr_writer :hot_reload_failure, :template_frequency, :debug_memory
       def initialize
         @templates = []
         @template_callbacks = []
@@ -18,6 +18,17 @@ module Consul
         @all_templates_rendered = false
         @template_frequency = 1
         @periodic_started = false
+        @debug_memory = false
+        @last_memory_state = build_memory_info
+      end
+
+      def build_memory_info
+        s = GC.stat
+        {
+          pages: s[:total_allocated_pages] - s[:total_freed_pages],
+          objects: s[:total_allocated_objects] - s[:total_freed_objects],
+          time: Time.now.utc
+        }
       end
 
       def add_template_callback(&block)
@@ -81,6 +92,21 @@ module Consul
           EventMachine.add_periodic_timer(template_frequency) do
             @periodic_started = true
             do_run(template_manager, template_renders)
+            if debug_memory
+              GC.start
+              new_memory_state = build_memory_info
+              diff_allocated = new_memory_state[:pages] - @last_memory_state[:pages]
+              diff_num_objects = new_memory_state[:objects] - @last_memory_state[:objects]
+              if diff_allocated != 0 || diff_num_objects.abs > (@last_memory_state[:pages] / 3)
+                timediff = new_memory_state[:time] - @last_memory_state[:time]
+                STDERR.puts "[MEMORY] #{new_memory_state[:time]} significant RAM Usage detected\n" \
+                            "[MEMORY] #{new_memory_state[:time]} Pages  : #{new_memory_state[:pages]}" \
+                            " (diff #{diff_allocated} aka #{(diff_allocated / timediff).round(0)}/s) \n" \
+                            "[MEMORY] #{new_memory_state[:time]} Objects: #{new_memory_state[:objects]}"\
+                            " (diff #{diff_num_objects} aka #{(diff_num_objects / timediff).round(0)}/s)"
+                @last_memory_state = new_memory_state
+              end
+            end
           end
         end
       end

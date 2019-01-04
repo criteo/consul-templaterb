@@ -157,6 +157,10 @@ optparse = OptionParser.new do |opts|
     cur_sig_reload = compute_signal(sig, 'NONE')
   end
 
+  opts.on('-M', '--debug-memory-usage', 'Display messages when RAM grows') do
+    consul_engine.debug_memory = true
+  end
+
   opts.on('-e', '--exec=<command>', String, 'Execute the following command') do |cmd|
     sig_reload = cur_sig_reload
     sig_term = cur_sig_term
@@ -217,7 +221,6 @@ optparse = OptionParser.new do |opts|
     params = {}
     params = Consul::Async::Utilities.load_parameters_from_file(parameter_file) if parameter_file
     consul_engine.add_template(source, dest, params)
-
     if command
       consul_engine.add_template_callback do |_all_ready, _template_manager, results|
         results.each do |res|

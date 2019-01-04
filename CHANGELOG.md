@@ -2,6 +2,17 @@
 
 ## (UNRELEASED)
 
+## 1.9.2 (January 4, 2019)
+
+IMPROVEMENTS:
+
+ * Nicer display of messages at startup
+ * Minor consul-timeline improvements
+
+NEW FEATURES:
+
+ * -M flag to debug memory for templates having leaks
+
 ## 1.9.1 (January 3, 2019)
 
 NEW FEATURES:

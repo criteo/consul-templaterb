@@ -138,6 +138,7 @@ $ consul-templaterb --help
 USAGE: consul-templaterb [[options]]
     -h, --help                       Show help
     -v, --version                    Show Version
+    -g, --no-gzip-compression        Disable GZIP compression in HTTP requests
     -c, --consul-addr=<address>      Address of Consul, eg: http://localhost:8500
         --consul-token=<token>       Use a token to connect to Consul
     -V, --vault-addr=<address>       Address of Vault, eg: http://localhost:8200
@@ -151,6 +152,7 @@ USAGE: consul-templaterb [[options]]
     -K, --sig-term=kill_signal       Signal to send to next --exec command on kill, default=TERM
     -T, --trim-mode=trim_mode        ERB Trim mode to use (- by default)
     -R, --sig-reload=reload_signal   Signal to send to next --exec command on reload (NONE supported), default=HUP
+    -M, --debug-memory-usage         Display messages when RAM grows
     -e, --exec=<command>             Execute the following command
     -d, --debug-network-usage        Debug the network usage
     -t erb_file:[output]:[command]:[params_file],
