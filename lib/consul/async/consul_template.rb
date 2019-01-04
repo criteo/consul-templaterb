@@ -28,6 +28,7 @@ module Consul
         @endpoints = {}
         @iteration = 1
         @start_time = Time.now.utc
+        @last_debug_time = 0
         @net_info = {
           success: 0,
           errors: 0,
@@ -212,7 +213,10 @@ module Consul
           to_cleanup << endpoint_key if (@iteration - endpt.seen_at) > 60
         end
         if not_ready.count.positive?
-          STDERR.print "[INFO] Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}..."
+          if @iteration - @last_debug_time > 1
+            @last_debug_time = @iteration
+            STDERR.print "[INFO] #{@last_debug} Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}..."
+          end
           return [false, false, nil]
         end
         if to_cleanup.count > 1
