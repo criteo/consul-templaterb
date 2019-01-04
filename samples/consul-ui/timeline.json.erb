@@ -54,44 +54,46 @@ old_state = if @previous_state
               cur_state
             end
 
-class RingBuffer < Array
-  attr_reader :max_size
+unless @events
+  class RingBuffer < Array
+    attr_reader :max_size
 
-  def initialize(max_size:, enum: nil)
-    @max_size = max_size
-    warn "Ringbuffer initialized with #{max_size}"
-    enum&.each { |e| self << e }
-  end
-
-  def <<(element)
-    return unless element
-    if size >= @max_size
-      shift
+    def initialize(max_size:, enum: nil)
+      @max_size = max_size
+      warn "Ringbuffer initialized with #{max_size}"
+      enum&.each { |e| self << e }
     end
-    previous_e = last
-    after = []
-    while !previous_e.nil? && (previous_e['idx'] > element['idx'])
-      after.insert(0, pop)
+
+    def <<(element)
+      return unless element
+      if size >= @max_size
+        shift
+      end
       previous_e = last
+      after = []
+      while !previous_e.nil? && (previous_e['idx'] > element['idx'])
+        after.insert(0, pop)
+        previous_e = last
+      end
+      push(element)
+      after.each do |x|
+        push(x)
+      end
+      self
     end
-    push(element)
-    after.each do |x|
-      push(x)
-    end
-    self
   end
-end
 
-def diff(old, new_e)
-  diff = OpenStruct.new
-  diff.appeared = new_e - old
-  diff.disappeared = old - new_e
-  diff.stayed = new_e & old
-  diff.all = new_e + old
-  diff
-end
+  def diff(old, new_e)
+    diff = OpenStruct.new
+    diff.appeared = new_e - old
+    diff.disappeared = old - new_e
+    diff.stayed = new_e & old
+    diff.all = new_e + old
+    diff
+  end
 
-@events = RingBuffer.new(max_size: (ENV['CONSUL_TIMELINE_BUFFER'] || 10000).to_i) unless @events
+  @events = RingBuffer.new(max_size: (ENV['CONSUL_TIMELINE_BUFFER'] || 10000).to_i)
+end
 @new_events = []
 
 def log_event(line)
