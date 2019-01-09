@@ -55,33 +55,7 @@ old_state = if @previous_state
             end
 
 unless @events
-  class RingBuffer < Array
-    attr_reader :max_size
-
-    def initialize(max_size:, enum: nil)
-      @max_size = max_size
-      warn "Ringbuffer initialized with #{max_size}"
-      enum&.each { |e| self << e }
-    end
-
-    def <<(element)
-      return unless element
-      if size >= @max_size
-        shift
-      end
-      previous_e = last
-      after = []
-      while !previous_e.nil? && (previous_e['idx'] > element['idx'])
-        after.insert(0, pop)
-        previous_e = last
-      end
-      push(element)
-      after.each do |x|
-        push(x)
-      end
-      self
-    end
-  end
+  load File.expand_path(File.join(File.dirname(__FILE__), 'ringbuffer.rb'))
 
   def diff(old, new_e)
     diff = OpenStruct.new
@@ -92,7 +66,7 @@ unless @events
     diff
   end
 
-  @events = RingBuffer.new(max_size: (ENV['CONSUL_TIMELINE_BUFFER'] || 10000).to_i)
+  @events = ::ConsulTimeline::SortedRingBuffer.new((ENV['CONSUL_TIMELINE_BUFFER'] || 10000).to_i, lambda {|a, b| a['idx'] <=> b['idx'] })
 end
 @new_events = []
 
@@ -209,7 +183,7 @@ sorted_events = @new_events.sort do |a, b|
   end
   res
 end
-sorted_events.each { |e| @events << e }
+sorted_events.each { |e| @events.push e }
 @new_events.clear
 
 # We save the previous state only when we have a complete state once
@@ -217,4 +191,4 @@ if template_info['was_rendered_once']
   warn "First full rendering completed at #{@current_time} !" unless @previous_state
   @previous_state = cur_state
 end
-%><%= JSON.generate(@events) %>
+%><%= JSON.generate(@events.to_a) %>
