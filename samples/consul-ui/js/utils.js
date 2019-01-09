@@ -52,6 +52,10 @@ function serviceTitleGenerator(instance) {
   }
 
   var htmlTitle = document.createElement('h5');
+  htmlTitle.setAttribute('title', 'Node Name: ' + instance.name +
+                                  '\nAddress : ' + instance.addr +
+                                  '\nService ID: ' + instance.id +
+                                  '\nService Port : ' + instance.port);
 
   var instanceLink = document.createElement('a');
   instanceLink.setAttribute('class',  'instance-name');
@@ -223,14 +227,16 @@ function servicesGenerator(instanceServices) {
   return services;
 }
 
-function checksStatusGenerator(instanceChecks) {
+function checksStatusGenerator(instance) {
+  var instanceChecks = instance.checks;
   var checks = document.createElement('div');
   checks.className = 'checks';
   checks.appendChild(document.createTextNode("Checks: "));
   checks.appendChild(document.createElement('br'));
 
   for (var checkKey in instanceChecks) {
-    checkId = Math.floor(Math.random()*10000);
+    var checkInstance = instanceChecks[checkKey];
+    var checkId = instance.name + '::' + checkInstance.checkid;
     var btn = 'btn-' + toCSSClass(instanceChecks[checkKey]['status'])
     var check = document.createElement('div');
 
@@ -240,6 +246,7 @@ function checksStatusGenerator(instanceChecks) {
     btnCheck.setAttribute('data-toggle', 'collapse');
     btnCheck.setAttribute('data-target', '#' + checkId);
     btnCheck.setAttribute('aria-expanded', 'false');
+    btnCheck.setAttribute('title', checkInstance.checkid);
 
     btnCheck.appendChild(document.createTextNode(instanceChecks[checkKey]['name']));
 

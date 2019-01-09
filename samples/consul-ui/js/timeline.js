@@ -457,7 +457,7 @@ class ServiceTimeline {
                         var checkName = document.createElement('div');
                         checkName.setAttribute('class', 'lookup checkName');
                         checkName.setAttribute('data-toggle', 'tooltip');
-                        checkName.setAttribute('title', c['id']+'\n\n' + c.output);
+                        checkName.setAttribute('title', 'ID: ' + c['id'] + '\nName: ' + c['name'] + '\n\n' + c.output);
                         checkName.appendChild(document.createTextNode(c['name']));
                         checksCell.appendChild(checkName);
                     }

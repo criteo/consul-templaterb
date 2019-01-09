@@ -251,7 +251,7 @@ class ConsulService {
       serviceHtml.appendChild(tagsGenerator(instance.tags));
       serviceHtml.appendChild(serviceMetaGenerator(instance.sMeta));
       serviceHtml.appendChild(connectGenerator(instance))
-      serviceHtml.appendChild(checksStatusGenerator(instance.checks));
+      serviceHtml.appendChild(checksStatusGenerator(instance));
       serviceHtml.setAttribute('status', state);
       $("#instances-list").append(serviceHtml);
     }
