@@ -2,6 +2,11 @@
 
 ## (UNRELEASED)
 
+IMPROVEMENTS:
+
+ * Perform some randomization on retries, so in case of massive errors,
+   system will likely re-open all connections at the same time.
+
 ## 1.9.2 (January 4, 2019)
 
 IMPROVEMENTS:

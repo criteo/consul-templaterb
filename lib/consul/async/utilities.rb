@@ -33,6 +33,11 @@ module Consul
           raise "Don't know how to load parameters file #{parameters_file}: JSON and YAML supported"
         end
       end
+
+      def self.random
+        @random = Random.new unless @random
+        @random
+      end
     end
   end
 end

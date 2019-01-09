@@ -137,7 +137,7 @@ module Consul
           "[#{stats.body_bytes_human.ljust(8)}][#{stats.bytes_per_sec_human.ljust(9)}]"\
           " #{path.ljust(48)} idx:#{result.x_consul_index}, next in #{result.retry_in} s"
         end
-        on_error { |http| STDERR.puts "[ERROR]: #{path}: #{http.error}" }
+        on_error { |http| STDERR.puts "[ERROR]: #{path}: #{http.error.inspect}" }
       end
 
       def on_response(&block)
@@ -185,8 +185,12 @@ module Consul
         http.response_header['X-Consul-Index']
       end
 
+      def _compute_retry_in(retry_in)
+        retry_in / 2 + Consul::Async::Utilities.random.rand(retry_in)
+      end
+
       def _handle_error(http, consul_index)
-        retry_in = [600, conf.retry_duration + 2**@consecutive_errors].min
+        retry_in = _compute_retry_in([600, conf.retry_duration + 2**@consecutive_errors].min)
         STDERR.puts "[ERROR][#{path}] X-Consul-Index:#{consul_index} - #{http.error} - Retry in #{retry_in}s #{stats.body_bytes_human}"
         @consecutive_errors += 1
         http_result = HttpResponse.new(http)
@@ -227,6 +231,7 @@ module Consul
               else
                 retry_in = modified ? conf.min_duration : conf.retry_on_non_diff
               end
+              retry_in = _compute_retry_in(retry_in)
               retry_in = 0.1 if retry_in < 0.1
               unless @stopping
                 EventMachine.add_timer(retry_in) do
