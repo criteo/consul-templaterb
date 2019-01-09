@@ -93,7 +93,7 @@ end
 
 if ARGV.count.positive? && ARGV[0] == 'debug'
   require 'json'
-  size = 10
+  size = (ARGV[1] || 10).to_i
   ringbuff = ConsulTimeline::SortedRingBuffer.new(size, ->(a, b) { a <=> b })
   ringbuff.push 0.5
   puts ringbuff.to_a

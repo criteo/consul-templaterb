@@ -55,7 +55,7 @@ old_state = if @previous_state
             end
 
 unless @events
-  load File.expand_path(File.join(File.dirname(__FILE__), 'ringbuffer.rb'))
+  load File.expand_path(File.join(File.dirname(template_info['source']), 'ringbuffer.rb'))
 
   def diff(old, new_e)
     diff = OpenStruct.new
