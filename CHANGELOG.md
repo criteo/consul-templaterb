@@ -2,10 +2,14 @@
 
 ## (UNRELEASED)
 
+## 1.9.3 (January 9, 2019)
+
 IMPROVEMENTS:
 
  * Perform some randomization on retries, so in case of massive errors,
    system will likely re-open all connections at the same time.
+ * consul-timeline more optimize ringbuffer for larger history
+ * UI improvements (tooltips for services/checks)
 
 ## 1.9.2 (January 4, 2019)
 
