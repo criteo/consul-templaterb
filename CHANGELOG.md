@@ -2,6 +2,17 @@
 
 ## (UNRELEASED)
 
+## 1.9.4 (January 11, 2019)
+
+OPTIMIZATIONS:
+
+ * inactivity_timeout now includes Consul Jitter for services not changing much
+   (less than every 10 minutes)
+
+IMPROVEMENTS:
+
+ * Minor UX improvements in consul-timeline
+
 ## 1.9.3 (January 9, 2019)
 
 IMPROVEMENTS:

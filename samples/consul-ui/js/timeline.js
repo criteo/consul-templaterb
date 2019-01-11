@@ -76,7 +76,7 @@ class ServiceTimeline {
                     if (this.data.length > data.length) {
                         var diff = this.data.length - data.length;
                         var firstNewItem = indexOfTimelineEvent(data[0]);
-                        var maxItemsInMemory = 50000;
+                        var maxItemsInMemory = 100000;
                         if (maxItemsInMemory > data.length) {
                             console.log("Looking for matches with ", firstNewItem);
                             for (var i = 0 ; i < this.data.length; i++){
