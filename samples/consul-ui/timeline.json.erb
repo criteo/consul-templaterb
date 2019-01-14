@@ -32,12 +32,17 @@ cur_state = services.map do |service_name, _tags|
   instances = snodes
               .sort { |a, b| a['Node']['Node'] <=> b['Node']['Node'] }
               .map do |instance|
+    mod_index = instance['Service']['ModifyIndex'] || 0
+    instance['Checks'].each do |chk|
+      mindex = chk['ModifyIndex'] || 0
+      mod_index = mindex if mod_index < mindex
+    end
     ["#{instance['Node']['Node']}:#{instance['Service']['ID']}",
      {
        'address' => instance.service_address,
        'node' => instance['Node']['Node'],
        'port' => instance['Service']['Port'],
-       'idx'  => (instance['Service']['ModifyIndex'] || cur_index).to_i,
+       'idx'  => mod_index || cur_index,
        'status' => instance.status,
        'stats' => cur_stats,
        'checks' => instance['Checks'].map { |check| [check['CheckID'], { 'name' => check['Name'], 'status' => check['Status'], 'output' => check['Output'] }] }.to_h
