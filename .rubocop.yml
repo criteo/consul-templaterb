@@ -22,7 +22,7 @@ Metrics/LineLength:
   Max: 175
 
 Metrics/MethodLength:
-  Max: 50
+  Max: 55
 
 Metrics/ParameterLists:
   Max: 12

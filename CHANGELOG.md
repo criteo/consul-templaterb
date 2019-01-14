@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.9.5 (January 14, 2019)
+
+BUGFIX:
+
+ * Ensure to always re-open Connection to Consul agent in case of network error
+
 ## 1.9.4 (January 11, 2019)
 
 OPTIMIZATIONS:

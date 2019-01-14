@@ -206,14 +206,16 @@ module Consul
           connect_timeout: 5, # default connection setup timeout
           inactivity_timeout: conf.wait_duration + 1 + (conf.wait_duration / 16), # default connection inactivity (post-setup) timeout
         }
-        connection = EventMachine::HttpRequest.new(conf.base_url, options)
+        connection = {
+          conn: EventMachine::HttpRequest.new(conf.base_url, options)
+        }
         cb = proc do |consul_index|
-          http = connection.get(build_request(consul_index))
+          http = connection[:conn].get(build_request(consul_index))
           http.callback do
             # Dirty hack, but contrary to other path, when key is not present, Consul returns 404
             is_kv_empty = path.start_with?('/v1/kv') && http.response_header.status == 404
             if !is_kv_empty && enforce_json_200 && http.response_header.status != 200 && http.response_header['Content-Type'] != 'application/json'
-              _handle_error(http, consul_index) { connection = EventMachine::HttpRequest.new(conf.base_url, options) }
+              _handle_error(http, consul_index) { connection[:conn] = EventMachine::HttpRequest.new(conf.base_url, options) }
             else
               n_consul_index = find_x_consul_index(http)
               @x_consul_index = n_consul_index.to_i if n_consul_index
@@ -247,7 +249,9 @@ module Consul
 
           http.errback do
             unless @stopping
-              _handle_error(http, consul_index) { connection = EventMachine::HttpRequest.new(conf.base_url, options) }
+              _handle_error(http, consul_index) do
+                connection[:conn] = EventMachine::HttpRequest.new(conf.base_url, options)
+              end
             end
           end
           queue.pop(&cb)
