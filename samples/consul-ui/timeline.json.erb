@@ -2,12 +2,15 @@
 require 'json'
 require 'set'
 services_blacklist = (ENV['EXCLUDE_SERVICES'] || 'consul-agent-http,mesos-slave,mesos-agent-watcher,mesos-exporter-slave').split(',')
+timeline_blacklist = ENV['CONSUL_TIMELINE_BLACKLIST'] || '(lbl7-.*|netsvc-.*)'
+timeline_blacklist = Regexp.new(timeline_blacklist)
 
 @current_time = Time.now.utc.iso8601
 @last_service_info = {}
 @newest_index = 0 unless @newest_index
 cur_state = services.map do |service_name, _tags|
   next if services_blacklist.include?(service_name)
+  next if timeline_blacklist.match(service_name)
 
   snodes = service(service_name)
   cur_stats = {

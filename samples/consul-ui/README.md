@@ -62,8 +62,9 @@ Will generate index.html and consul_template.json in your directory, so you migh
 
 This app supports the following environment variables:
 
-* SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
-* INSTANCE_MUST_TAG: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
-* INSTANCE_EXCLUDE_TAG: Exclude instances having the given tag (default: canary)
-* EXCLUDE_SERVICES: comma-separated services to exclude (default: consul-agent-http,mesos-slave,mesos-agent-watcher)
-* CONSUL_TIMELINE_BUFFER: number of entries to keep in the timeline. 1000 by default.
+* `SERVICES_TAG_FILTER`: basic tag filter for service (default HTTP)
+* `INSTANCE_MUST_TAG`: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
+* `INSTANCE_EXCLUDE_TAG`: Exclude instances having the given tag (default: canary)
+* `EXCLUDE_SERVICES`: comma-separated services to exclude (default: consul-agent-http,mesos-slave,mesos-agent-watcher)
+* `CONSUL_TIMELINE_BUFFER`: number of entries to keep in the timeline. 1000 by default.
+* `CONSUL_TIMELINE_BLACKLIST`: regexp of services to hide from timeline

@@ -2,6 +2,13 @@
 
 ## (UNRELEASED)
 
+## 1.9.7 (January 15, 2019)
+
+IMPROVEMENTS:
+
+ * `timeline.json.erb` now uses `CONSUL_TIMELINE_BLACKLIST` environment variable
+   to blacklist services to be hidden from timeline.
+
 ## 1.9.6 (January 15, 2019)
 
 BUGFIX:
