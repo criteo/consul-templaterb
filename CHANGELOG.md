@@ -2,6 +2,17 @@
 
 ## (UNRELEASED)
 
+## 1.9.6 (January 15, 2019)
+
+BUGFIX:
+
+ * Keep connections open properly as it increase timeouts on Consul servers on
+   very large templates
+
+IMPROVEMENTS:
+
+ * Display error message when Retrying every 10 errors
+
 ## 1.9.5 (January 14, 2019)
 
 BUGFIX:

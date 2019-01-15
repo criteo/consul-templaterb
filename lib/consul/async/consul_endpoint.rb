@@ -215,7 +215,9 @@ module Consul
             # Dirty hack, but contrary to other path, when key is not present, Consul returns 404
             is_kv_empty = path.start_with?('/v1/kv') && http.response_header.status == 404
             if !is_kv_empty && enforce_json_200 && http.response_header.status != 200 && http.response_header['Content-Type'] != 'application/json'
-              _handle_error(http, consul_index) { connection[:conn] = EventMachine::HttpRequest.new(conf.base_url, options) }
+              _handle_error(http, consul_index) do
+                STDERR.puts "[RETRY][#{path}] (#{@consecutive_errors} errors)" if (@consecutive_errors % 10) == 1
+              end
             else
               n_consul_index = find_x_consul_index(http)
               @x_consul_index = n_consul_index.to_i if n_consul_index
@@ -250,7 +252,7 @@ module Consul
           http.errback do
             unless @stopping
               _handle_error(http, consul_index) do
-                connection[:conn] = EventMachine::HttpRequest.new(conf.base_url, options)
+                STDERR.puts "[RETRY][#{path}] (#{@consecutive_errors} errors) due to #{http.error}" if (@consecutive_errors % 10) == 1
               end
             end
           end
