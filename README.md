@@ -303,9 +303,10 @@ Please consult [CHANGELOG.md](CHANGELOG.md) for fixed bugs.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/criteo/consul-templaterb.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidance: Bug reports and pull requests are welcome on GitHub at https://github.com/criteo/consul-templaterb.
+
 This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the
-[Contributor Covenant](http://contributor-covenant.org) code of conduct.
+[Contributor Covenant](http://contributor-covenant.org) code of conduct. See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ## License
 
