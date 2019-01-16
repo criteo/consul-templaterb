@@ -62,7 +62,7 @@ module Consul
     end
     class ConsulResult
       attr_reader :data, :http, :x_consul_index, :last_update, :stats, :retry_in
-      def initialize(data, modified, http, x_consul_index, stats, retry_in)
+      def initialize(data, modified, http, x_consul_index, stats, retry_in, fake: false)
         @data = data
         @modified = modified
         @http = http
@@ -70,6 +70,11 @@ module Consul
         @last_update = Time.now.utc
         @stats = stats
         @retry_in = retry_in
+        @fake = fake
+      end
+
+      def fake?
+        @fake
       end
 
       def modified?
@@ -120,7 +125,7 @@ module Consul
         @query_params = query_params
         @stopping = false
         @stats = EndPointStats.new
-        @last_result = ConsulResult.new(default_value, false, HttpResponse.new(nil), 0, stats, 1)
+        @last_result = ConsulResult.new(default_value, false, HttpResponse.new(nil), 0, stats, 1, fake: true)
         on_response { |result| @stats.on_response result }
         on_error { |http| @stats.on_error http }
         _enable_network_debug if conf.debug && conf.debug[:network]
@@ -228,7 +233,7 @@ module Consul
                               HttpResponse.new(http)
                             end
               new_content = http_result.response.freeze
-              modified = @last_result.nil? ? true : @last_result.data != new_content
+              modified = @last_result.fake? || @last_result.data != new_content
               if n_consul_index == consul_index || n_consul_index.nil?
                 retry_in = modified ? conf.missing_index_retry_time_on_diff : conf.missing_index_retry_time_on_unchanged
                 n_consul_index = consul_index
@@ -242,7 +247,7 @@ module Consul
                   queue.push(n_consul_index)
                 end
               end
-              result = ConsulResult.new(new_content, modified, http_result, n_consul_index, stats, retry_in)
+              result = ConsulResult.new(new_content, modified, http_result, n_consul_index, stats, retry_in, fake: false)
               @last_result = result
               @ready = true
               @s_callbacks.each { |c| c.call(result) }

@@ -2,6 +2,15 @@
 
 ## (UNRELEASED)
 
+## 1.9.8 (January 16, 2019)
+
+BUGFIX:
+
+ * When default value was the same as real value, endpoints were always marked as
+   dirty, thus rendering of templates did never succeed.
+   Since default value for service was '[]', trying to fetch a non-existing service
+   did forbid templates to converge.
+
 ## 1.9.7 (January 15, 2019)
 
 IMPROVEMENTS:
