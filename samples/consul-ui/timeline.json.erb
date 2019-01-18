@@ -1,7 +1,8 @@
 <%
 require 'json'
 require 'set'
-services_blacklist = (ENV['EXCLUDE_SERVICES'] || 'consul-agent-http,mesos-slave,mesos-agent-watcher,mesos-exporter-slave').split(',')
+services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || 'lbl7.*,netsvc-probe.*,consul-probed.*').split(',')
+services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }  # Compute the health of a Service
 timeline_blacklist = ENV['CONSUL_TIMELINE_BLACKLIST'] || '(lbl7-.*|netsvc-.*)'
 timeline_blacklist = Regexp.new(timeline_blacklist)
 
@@ -9,7 +10,7 @@ timeline_blacklist = Regexp.new(timeline_blacklist)
 @last_service_info = {}
 @newest_index = 0 unless @newest_index
 cur_state = services.map do |service_name, _tags|
-  next if services_blacklist.include?(service_name)
+  next if services_blacklist.any? {|r| r.match(service_name)}
   next if timeline_blacklist.match(service_name)
 
   snodes = service(service_name)

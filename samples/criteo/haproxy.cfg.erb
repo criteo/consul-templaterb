@@ -4,7 +4,7 @@
 #   SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
 #   INSTANCE_MUST_TAG: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
 #   INSTANCE_EXCLUDE_TAG: Exclude instances having the given tag (default: canary)
-#   EXCLUDE_SERVICES: comma-separated services to exclude (default: consul-agent-http,mesos-slave,mesos-agent-watcher)
+#   EXCLUDE_SERVICES: comma-separated service regexps to exclude (default: lbl7.*,netsvc-probe.*,consul-probed.*)
 # Environment variables to configure HaProxy
 #   PORT0 : HaProxy main port (default to 8000)
 #   PORT1 : HaProxy admin port (default to 8001)
@@ -19,7 +19,8 @@
   optional_dns_suffix = ENV['DNS_SUFFIX'] || ''
 
   # Services to hide
-  services_blacklist = (ENV['EXCLUDE_SERVICES'] || 'consul-agent-http,mesos-slave,mesos-agent-watcher,mesos-exporter-slave').split(',')
+  services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || 'lbl7.*,netsvc-probe.*,consul-probed.*').split(',')
+  services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }
 
   def compute_attributes(node)
     w = node.currrent_weight
@@ -38,7 +39,7 @@
   backends = {}
   all_kv = {}
   services(tag: service_tag_filter).each do |service_name, tags|
-    if !services_blacklist.include?(service_name) && tags.include?(instance_must_tag)
+    if !services_blacklist.any? {|r| r.match(service_name)} && tags.include?(instance_must_tag)
       the_backends = []
       kv_data = kv("#{kv_root}/#{service_name}/network-service").get_value_json
       all_kv[service_name] = kv_data if kv_data

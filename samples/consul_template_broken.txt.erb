@@ -1,0 +1,10 @@
+<%
+services.each do |service_name, tags|
+     if tags.include? 'marathon'
+       service(service_name, tag:'marathon').sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
+         if (compute_state(snode)[0] == 'critical') && (snode['Service']['Tags'].include? 'marathon')
+%>wssh "<%= snode['Node']['Node'] %>" time curl -v -XPUT localhost:8500/v1/agent/service/deregister/<%= snode['Service']['ID'] %>
+<%       end
+       end
+     end
+   end %>

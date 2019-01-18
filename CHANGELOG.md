@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.9.9 (January 18, 2019)
+
+IMPROVEMENTS:
+
+ * `EXCLUDE_SERVICES` now supports regexps to blacklist many services easily
+
 ## 1.9.8 (January 16, 2019)
 
 BUGFIX:

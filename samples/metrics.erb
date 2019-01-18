@@ -4,7 +4,7 @@
 #   SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
 #   INSTANCE_MUST_TAG: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
 #   INSTANCE_EXCLUDE_TAG: Exclude instances having the given tag
-#   EXCLUDE_SERVICES: comma-separated services to exclude (example: consul-agent-http,mesos-slave,mesos-agent-watcher)
+#   EXCLUDE_SERVICES: comma-separated services regexps to exclude (example: lbl7.*,netsvc-probe.*,consul-probed.*)
 <%
 
   service_tag_filter = ENV['SERVICES_TAG_FILTER'] || nil
@@ -12,11 +12,13 @@
   instance_exclude_tag = ENV['INSTANCE_EXCLUDE_TAG']
 
   # Services to hide
-  services_blacklist = (ENV['EXCLUDE_SERVICES'] || '').split(',')
+  services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || 'lbl7.*,netsvc-probe.*,consul-probed.*').split(',')
+  services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }
+
   backends = {}
   service_count = 0
   services(tag: service_tag_filter).each do |service_name, tags|
-    if !services_blacklist.include?(service_name) && (instance_must_tag.nil? || tags.include?(instance_must_tag))
+    if !services_blacklist.any? {|r| r.match(service_name)} && (instance_must_tag.nil? || tags.include?(instance_must_tag))
       service_count += 1
       res = {
         'passing'  => 0,
