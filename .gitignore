@@ -20,6 +20,7 @@ samples/consul-ui/common/*.html
 /samples/consul_template
 /samples/metrics
 /samples/find_blocked_choregraphies
+/samples/tools/*.txt
 /spec/consul/async/resources/templates/*.txt
 /spec/consul/async/resources/templates/*.result
 /out.txt

@@ -239,6 +239,7 @@ examples:
 9. [Export Consul Statistics to Prometheus](samples/metrics.erb) : count all services, their state,
    datacenters and nodes and export it to prometheus easily to trigger alerts.
 10. [List all services/Nodes with their statuses for all datacenters](samples/all_services.txt.erb)
+11. [Show all services/instances not passing on all DCs](samples/tools/find_all_failing_services.txt.erb)
 
 If you want to test it quickly, you might try with (assuming your consul agent is listening on
 `http://localhost:8500`):

@@ -2,6 +2,11 @@
 
 ## (UNRELEASED)
 
+IMPROVEMENTS:
+
+ * new sample [samples/tools/find_all_failing_services.txt.erb](samples/tools/find_all_failing_services.txt.erb)
+   to find all failing service instances on all DCs very easily.
+
 ## 1.9.9 (January 18, 2019)
 
 IMPROVEMENTS:
