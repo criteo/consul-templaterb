@@ -1,0 +1,14 @@
+<%
+# find all nodes without ID
+# Usage: consul-templaterb --once samples/tools/find_all_failing_services.txt.erb
+#
+
+datacenters.each do |dc|
+  nodes(dc:dc).each do |snode|
+    if snode['ID'] == ''
+%><%= snode['Node'] %>; <%= snode.inspect %>
+<%
+    end
+  end
+end
+%>
