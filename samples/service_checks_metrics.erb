@@ -1,0 +1,34 @@
+# A template for exporting metrics for prometheus using consul-templaterb
+# This template can be configure the following way with environment variables
+# Environment variables to filter services/instances
+#   SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
+#   INSTANCE_MUST_TAG: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
+#   INSTANCE_EXCLUDE_TAG: Exclude instances having the given tag
+#   EXCLUDE_SERVICES: comma-separated services regexps to exclude (example: lbl7.*,netsvc-probe.*,consul-probed.*)
+
+
+# HELP consul_service_check_count The number of service check for each service
+# TYPE consul_service_check_count gauge
+# HELP consul_node_check_count The number of node check for each service
+# TYPE consul_node_check_count gauge
+
+<%
+  service_tag_filter = ENV['SERVICES_TAG_FILTER'] || nil
+  instance_must_tag = ENV['INSTANCE_MUST_TAG'] || service_tag_filter
+  instance_exclude_tag = ENV['INSTANCE_EXCLUDE_TAG']
+
+  # Services to hide
+  services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || 'lbl7.*,netsvc-probe.*,consul-probed.*').split(',')
+  services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }
+
+
+  services().each do |service_name, tags|
+    if !services_blacklist.any? {|r| r.match(service_name)} && (instance_must_tag.nil? || tags.include?(instance_must_tag))
+      service(service_name).each do |snode|
+    %>consul_service_check_count{service="<%= service_name %>", node="<%= snode['Node']['Node'] %>"} <%= snode['Checks'].select{|chk| chk['ServiceID'] != ""}.length %>
+consul_node_check_count{service="<%= service_name %>", node="<%= snode['Node']['Node'] %>"} <%= snode['Checks'].select{|chk| chk['ServiceID'] == ""}.length %>
+<%
+      end
+    end
+  end
+%>
