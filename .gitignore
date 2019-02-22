@@ -19,6 +19,7 @@ samples/consul-ui/common/*.html
 /samples/criteo/haproxy.cfg
 /samples/consul_template
 /samples/metrics
+/samples/service_checks_metrics
 /samples/find_blocked_choregraphies
 /samples/tools/*.txt
 /spec/consul/async/resources/templates/*.txt
@@ -30,7 +31,7 @@ samples/consul-ui/common/*.html
 # Mac OS
 .DS_Store
 
-# IntelliJ project files 
+# IntelliJ project files
 *.iml
 *.iws
 *.ipr
