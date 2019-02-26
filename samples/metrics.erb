@@ -25,28 +25,39 @@
         'warning'  => 0,
         'critical' => 0,
       }
-      service(service_name).each do |snode|
+      srv = service(service_name)
+      srv.each do |snode|
         state = snode.status
         res[state] += 1
       end
       backends[service_name] = {
         state: res,
-        stats: service(service_name).endpoint.stats,
+        stats: srv.endpoint.stats,
       }
     end
   end
 %>
 # HELP consul_datacenters_count A gauge of number of datacenters available
 # TYPE consul_nodes_count gauge
-consul_datacenters_count <%= datacenters().count %> <%= datacenters().endpoint.stats.last_success_or_error.to_i * 1000 %>
+consul_datacenters_count <%= datacenters().count %>
 
 # HELP consul_nodes_count A gauge of number of nodes in the cluster
 # TYPE consul_nodes_count gauge
-consul_nodes_count <%= nodes().count %> <%= nodes().endpoint.stats.last_success_or_error.to_i * 1000 %>
+consul_nodes_count <%= nodes().count %>
 
 # HELP consul_services_count A gauge of the number of services
 # TYPE consul_services_count gauge
-consul_services_count <%= service_count %> <%= services(tag: service_tag_filter).endpoint.stats.last_success_or_error.to_i * 1000 %>
+consul_services_count <%= service_count %>
+
+<%
+%i[success errors bytes_read changes network_bytes].each do |sym|
+%>
+# HELP consul_net_info_<%= sym.to_s %> consul-templaterb global stats for <%= sym.to_s %>
+# TYPE consul_net_info_<%= sym.to_s %> counter
+consul_net_info_<%= sym.to_s %> <%= @net_info[sym] %>
+<%
+end
+%>
 
 # HELP consul_service_count A gauge of number instances of service with their current state
 # TYPE consul_service_count gauge

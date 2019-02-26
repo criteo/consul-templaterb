@@ -6,6 +6,8 @@ IMPROVEMENTS:
 
  * new sample [samples/tools/find_all_failing_services.txt.erb](samples/tools/find_all_failing_services.txt.erb)
    to find all failing service instances on all DCs very easily.
+ * Do not report timestamps in metrics.erb as it is toxic for Prometheus
+ * in metrics.erb, add all net_info statistics to observe consul-templaterb itself
 
 ## 1.9.9 (January 18, 2019)
 
