@@ -4,6 +4,8 @@
 
 IMPROVEMENTS:
 
+## 1.10.0 (February 27, 2019)
+
  * new sample [samples/tools/find_all_failing_services.txt.erb](samples/tools/find_all_failing_services.txt.erb)
    to find all failing service instances on all DCs very easily.
  * Do not report timestamps in metrics.erb as it is toxic for Prometheus
