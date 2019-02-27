@@ -227,7 +227,7 @@ function servicesGenerator(instanceServices) {
   return services;
 }
 
-function checksStatusGenerator(instance) {
+function checksStatusGenerator(instance, prefix) {
   var instanceChecks = instance.checks;
   var checks = document.createElement('div');
   checks.className = 'checks';
@@ -236,7 +236,7 @@ function checksStatusGenerator(instance) {
 
   for (var checkKey in instanceChecks) {
     var checkInstance = instanceChecks[checkKey];
-    var checkId = instance.name + '::' + checkInstance.checkid;
+    var checkId = prefix + '::' + checkInstance.checkid;
     var btn = 'btn-' + toCSSClass(instanceChecks[checkKey]['status'])
     var check = document.createElement('div');
 

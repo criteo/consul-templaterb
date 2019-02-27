@@ -53,6 +53,8 @@
         node_data = {
           Node: node_node_data,
           Service: node_services_data,
+          # Only put Checks on a Node
+          checks: snode["Checks"].select{|c| c['ServiceID'].empty? }.map{|c| {output: c['Output'], notes: c['Notes'], name: c['Name'], checkid: c['CheckID'], status: c['Status']}},
         }
 
         service_per_node[snode['Node']['Node']] = node_data

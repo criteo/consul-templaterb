@@ -9,6 +9,7 @@ IMPROVEMENTS:
  * Do not report timestamps in metrics.erb as it is toxic for Prometheus
  * in metrics.erb, add all net_info statistics to observe consul-templaterb itself
  * new flag -l <error|info|debug> to control verbosity of messages
+ * Now diplays Checks of a Node in Consul-UI
 
 ## 1.9.9 (January 18, 2019)
 

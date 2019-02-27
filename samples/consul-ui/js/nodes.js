@@ -98,6 +98,11 @@ class ConsulNodes {
       contentHead.appendChild(nodeAddressGenator(instance['Node']['Address']));
       contentHead.appendChild(nodeMetaGenator(instance['Node']['Meta']));
       content.appendChild(contentHead);
+      var nodesChecks = document.createElement('div');
+      nodesChecks.setAttribute('class','nodes-checks');
+      nodesChecks.appendChild(checksStatusGenerator(instance, instance['Node']['Name']));
+      content.appendChild(nodesChecks);
+
       content.appendChild(servicesGenerator(instance['Service']));
       content.appendChild(tagsGenerator(getTagsNode(instance)));
 
