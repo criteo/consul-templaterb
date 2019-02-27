@@ -2,6 +2,7 @@
 # This script can be launched to get a uniq id for this instance
 require 'consul/async/consul_template_engine'
 require 'consul/async/process_handler'
+require 'consul/async/debug'
 require 'consul/async/version'
 require 'optparse'
 require 'optparse/uri'
@@ -97,6 +98,10 @@ optparse = OptionParser.new do |opts|
     options[:consul][:base_url] = consul_url
   end
 
+  opts.on('-l', '--log-level=<log_level>', String, "Log level, default=info, any of #{::Consul::Async::Debug.levels.join('|')}") do |log_level|
+    ::Consul::Async::Debug.level = log_level
+  end
+
   opts.on('--consul-token=<token>', String, 'Use a token to connect to Consul') do |consul_token|
     options[:consul][:token] = consul_token
   end
@@ -177,7 +182,7 @@ optparse = OptionParser.new do |opts|
           begin
             @programs[cmd].process_status
           rescue Consul::Async::ProcessDoesNotExist => e
-            STDERR.puts "[ERROR] The process is dead, aborting run: #{e.inspect}"
+            STDERR.puts "[FATAL] The process is dead, aborting run: #{e.inspect}"
             template_manager.terminate
             EventMachine.stop
           end
@@ -193,16 +198,16 @@ optparse = OptionParser.new do |opts|
         mod = false
         results = results.map do |res|
           mod ||= res.modified
-          STDERR.puts "[INFO] Hot reload of template #{res.template_file} with success" if res.hot_reloaded
+          ::Consul::Async::Debug.puts_info "Hot reload of template #{res.template_file} with success" if res.hot_reloaded
           "#{res.modified ? 'WRITTEN' : 'UNCHANGED'}[#{res.output_file}]"
         end.join(' ')
         if mod
-          STDERR.puts("[INFO] File written: #{results} #{template_manager.net_info.inspect}")
+          ::Consul::Async::Debug.puts_info "File written: #{results} #{template_manager.net_info.inspect}"
         else
-          STDERR.print "[DBUG] Files not changed #{results} #{template_manager.net_info.inspect}\r"
+          ::Consul::Async::Debug.print_debug "Files not changed #{results} #{template_manager.net_info.inspect}\r"
         end
       else
-        STDERR.print "[DBUG] Still waiting for data #{template_manager.net_info.inspect}...\r"
+        ::Consul::Async::Debug.print_debug "Still waiting for data #{template_manager.net_info.inspect}...\r"
       end
     end
   end
@@ -286,7 +291,7 @@ template_manager = Consul::Async::EndPointsManager.new(consul_conf, vault_conf, 
 
 ARGV.each do |tpl|
   dest = compute_default_output(tpl)
-  puts "Using #{dest} output for #{tpl}"
+  ::Consul::Async::Debug.puts_info "Using #{dest} output for #{tpl}"
   consul_engine.add_template(tpl, dest)
 end
 

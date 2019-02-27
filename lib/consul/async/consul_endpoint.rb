@@ -37,7 +37,7 @@ module Consul
       def ch(path, symbol)
         sub = @paths[path.to_sym]
         if sub && sub[symbol]
-          STDERR.puts "[INFO] Overriding #{symbol}:=#{sub[symbol]} for #{path}"
+          ::Consul::Async::Debug.puts_debug "Overriding #{symbol}:=#{sub[symbol]} for #{path}"
           sub[symbol]
         else
           method(symbol).call
@@ -196,7 +196,7 @@ module Consul
 
       def _handle_error(http, consul_index)
         retry_in = _compute_retry_in([600, conf.retry_duration + 2**@consecutive_errors].min)
-        STDERR.puts "[ERROR][#{path}] X-Consul-Index:#{consul_index} - #{http.error} - Retry in #{retry_in}s #{stats.body_bytes_human}"
+        ::Consul::Async::Debug.puts_error "[#{path}] X-Consul-Index:#{consul_index} - #{http.error} - Retry in #{retry_in}s #{stats.body_bytes_human}"
         @consecutive_errors += 1
         http_result = HttpResponse.new(http)
         EventMachine.add_timer(retry_in) do
@@ -257,7 +257,7 @@ module Consul
           http.errback do
             unless @stopping
               _handle_error(http, consul_index) do
-                STDERR.puts "[RETRY][#{path}] (#{@consecutive_errors} errors) due to #{http.error}" if (@consecutive_errors % 10) == 1
+                ::Consul::Async::Debug.puts_error "[RETRY][#{path}] (#{@consecutive_errors} errors) due to #{http.error}" if (@consecutive_errors % 10) == 1
               end
             end
           end

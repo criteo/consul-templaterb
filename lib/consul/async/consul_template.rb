@@ -215,21 +215,21 @@ module Consul
         if not_ready.count.positive?
           if @iteration - @last_debug_time > 1
             @last_debug_time = @iteration
-            STDERR.print "[INFO] #{@last_debug} Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}..."
+            ::Consul::Async::Debug.print_info "Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}...\r"
           end
           return [false, false, nil]
         end
         if to_cleanup.count > 1
-          STDERR.puts "[INFO] Cleaned up #{to_cleanup.count} endpoints: #{to_cleanup}"
+          ::Consul::Async::Debug.puts_info "Cleaned up #{to_cleanup.count} endpoints: #{to_cleanup}"
           to_cleanup.each do |to_remove|
             x = @endpoints.delete(to_remove)
             x.endpoint.terminate
           end
         end
         if last_result != data
-          STDERR.print "[INFO] Write #{Utilities.bytes_to_h data.bytesize} bytes to #{file}, "\
+          ::Consul::Async::Debug.print_info "Write #{Utilities.bytes_to_h data.bytesize} bytes to #{file}, "\
                        "netinfo=#{@net_info} aka "\
-                       "#{Utilities.bytes_to_h((net_info[:network_bytes] / (Time.now.utc - @start_time)).round(1))}/s ...\n"
+                       "#{Utilities.bytes_to_h((net_info[:network_bytes] / (Time.now.utc - @start_time)).round(1))}/s ...\r"
           tmp_file = "#{file}.tmp"
           File.open(tmp_file, 'w') do |f|
             f.write data
@@ -248,7 +248,7 @@ module Consul
 
       def vault_setup_token_renew
         path = 'v1/auth/token/renew-self'
-        STDERR.print '[INFO] Setting up vault token renewal'
+        ::Consul::Async::Debug.print_debug 'Setting up vault token renewal'
         VaultEndpoint.new(vault_conf, path, :POST, {}, {})
       end
 
@@ -260,7 +260,7 @@ module Consul
         tpl = @endpoints[fqdn]
         unless tpl
           tpl = yield
-          STDERR.print "[INFO] path #{path.ljust(64)} #{query_params.inspect}\r"
+          ::Consul::Async::Debug.print_debug "path #{path.ljust(64)} #{query_params.inspect}\r"
           @endpoints[fqdn] = tpl
           tpl.endpoint.on_response do |result|
             @net_info[:success] += 1

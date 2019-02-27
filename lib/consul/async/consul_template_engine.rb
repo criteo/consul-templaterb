@@ -20,6 +20,7 @@ module Consul
         @periodic_started = false
         @debug_memory = false
         @last_memory_state = build_memory_info
+        @start = Time.now
       end
 
       def build_memory_info
@@ -45,14 +46,15 @@ module Consul
         all_ready = results.reduce(true) { |a, e| a && e.ready? }
         if !@all_templates_rendered && all_ready
           @all_templates_rendered = true
-          STDERR.puts "[INFO] First rendering of #{results.count} templates completed"
+          cur_time = Time.now
+          ::Consul::Async::Debug.puts_info "First rendering of #{results.count} templates completed in #{cur_time - @start}s at #{cur_time}.  "
         end
         begin
           @template_callbacks.each do |c|
             c.call([all_ready, template_manager, results])
           end
         rescue StandardError => cbk_error
-          STDERR.puts "[ERROR] callback error: #{cbk_error.inspect}"
+          ::Consul::Async::Debug.puts_error "callback error: #{cbk_error.inspect}"
           raise cbk_error
         end
       rescue Consul::Async::InvalidTemplateException => e
@@ -60,7 +62,7 @@ module Consul
         template_manager.terminate
         EventMachine.stop
       rescue StandardError => e
-        STDERR.puts "[ERROR] Fatal error occured: #{e.inspect} - #{e.backtrace.join("\n\t")}"
+        STDERR.puts "[FATAL] Error occured: #{e.inspect} - #{e.backtrace.join("\n\t")}"
         template_manager.terminate
         EventMachine.stop
       end

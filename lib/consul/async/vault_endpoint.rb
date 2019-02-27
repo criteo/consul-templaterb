@@ -1,5 +1,6 @@
 require 'consul/async/utilities'
 require 'consul/async/stats'
+require 'consul/async/debug'
 require 'em-http'
 require 'net/http'
 require 'thread'
@@ -34,7 +35,7 @@ module Consul
       def ch(path, symbol)
         sub = @paths[path.to_sym]
         if sub && sub[symbol]
-          STDERR.puts "[INFO] Overriding #{symbol}:=#{sub[symbol]} for #{path}"
+          ::Consul::Async::Debug.puts_info "Overriding #{symbol}:=#{sub[symbol]} for #{path}"
           sub[symbol]
         else
           method(symbol).call
@@ -138,7 +139,7 @@ module Consul
           "[#{stats.body_bytes_human.ljust(8)}][#{stats.bytes_per_sec_human.ljust(9)}]"\
           " #{path.ljust(48)} idx:#{result.x_consul_index}, next in #{result.retry_in} s"
         end
-        on_error { |http| STDERR.puts "[ERROR]: #{path}: #{http.error}" }
+        on_error { |http| ::Consul::Async::Debug.puts_error "#{path}: #{http.error}" }
       end
 
       def on_response(&block)
@@ -193,7 +194,7 @@ module Consul
 
       def _handle_error(http)
         retry_in = [conf.max_retry_duration, conf.retry_duration + 2**@consecutive_errors].min
-        STDERR.puts "[ERROR][#{path}][#{http_method}] Code: #{http.response_header.status} #{_get_errors(http).join(' - ')} - Retry in #{retry_in}s #{stats.body_bytes_human}"
+        ::Consul::Async::Debug.puts_error "[#{path}][#{http_method}] Code: #{http.response_header.status} #{_get_errors(http).join(' - ')} - Retry in #{retry_in}s"
         @consecutive_errors += 1
         http_result = VaultHttpResponse.new(http, default_value)
         EventMachine.add_timer(retry_in) do

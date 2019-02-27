@@ -144,6 +144,7 @@ USAGE: consul-templaterb [[options]]
     -v, --version                    Show Version
     -g, --no-gzip-compression        Disable GZIP compression in HTTP requests
     -c, --consul-addr=<address>      Address of Consul, eg: http://localhost:8500
+    -l, --log-level=<log_level>      Log level, default=info, any of none|error|info|debug
         --consul-token=<token>       Use a token to connect to Consul
     -V, --vault-addr=<address>       Address of Vault, eg: http://localhost:8200
         --vault-token=<token>        Token used to authenticate against vault.
