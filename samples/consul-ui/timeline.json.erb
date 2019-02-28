@@ -95,6 +95,12 @@ end
 def compute_checks(old_state, cur_state, service_name, instance_name)
   old_checks = old_state.dig(service_name, instance_name, 'checks') || {}
   new_checks = cur_state.dig(service_name, instance_name, 'checks') || {}
+  old_index = old_state.dig(service_name, instance_name, 'idx')
+  # In case of removal of a check (eg: maintenance), Idx might be decreased, ensure it is not
+  if old_index
+    new_index = cur_state.dig(service_name, instance_name, 'idx')
+    cur_state[service_name][instance_name]['idx'] = @newest_index if new_index && new_index < old_index
+  end
   all_checks = Set.new(old_checks.keys + new_checks.keys)
   checks = []
   all_checks.each do |check_id|

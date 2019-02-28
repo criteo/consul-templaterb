@@ -2,9 +2,15 @@
 
 ## (UNRELEASED)
 
-IMPROVEMENTS:
+## 1.10.1 (February 28, 2019)
+
+BUGFIX:
+
+ * Ensure that timeline sort properly events when healthchecks are removed (eg: maintenance)
 
 ## 1.10.0 (February 27, 2019)
+
+IMPROVEMENTS:
 
  * new sample [samples/tools/find_all_failing_services.txt.erb](samples/tools/find_all_failing_services.txt.erb)
    to find all failing service instances on all DCs very easily.
