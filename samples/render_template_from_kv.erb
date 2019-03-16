@@ -1,0 +1,7 @@
+<%
+# This template render a template contained into Consul's KV
+# Usage: kv_path=my/path/to_template_in_kv consul-templaterb samples/render_template_from_kv.erb
+
+kv_path = param('kv_path') || ENV['kv_path']
+template_content = kv(kv_path).get_value_decoded if kv_path
+%><%= render_from_string(template_content) %>

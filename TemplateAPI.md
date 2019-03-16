@@ -295,6 +295,17 @@ Example:
 Will render header.html.erb with parameter title = 'My Title'. `title` can then be accessed within
 the template using `param('title', 'My default Value')` in the `header.html.erb` file.
 
+## render_from_string(template_to_render, [params={}])
+
+Similar to render_file but from a string.
+Allows to render a template from a string. Useful if you have your templates in KV for instance.
+
+Example:
+
+```erb
+render_from_string(kv('my/template/to_render').get_value_decoded)
+```
+
 ## param(parameter_name, [default_value: nil])
 
 Can be used within a template to access a parameter. Parameters can be specified with `render_file`

@@ -3,6 +3,8 @@ require 'em-http'
 require 'thread'
 require 'forwardable'
 require 'erb'
+require 'digest'
+
 module Consul
   module Async
     class InvalidTemplateException < StandardError
@@ -167,6 +169,14 @@ module Consul
         new_path = File.expand_path(path, File.dirname(@context[:current_erb_path]))
         raise "render_file ERROR: #{path} is resolved as #{new_path}, but the file does not exists" unless File.exist? new_path
         render(File.read(new_path), new_path, params, current_template_info: template_info)
+      end
+
+      # render a sub template from a string template
+      def render_from_string(template_content, params = {})
+        return unless template_content
+        sha1res = Digest::SHA1.hexdigest(template_content)
+        new_path = File.expand_path(":memory:sha1:#{sha1res}", File.dirname(@context[:current_erb_path]))
+        render(template_content, new_path, params, current_template_info: template_info)
       end
 
       def find_line(e)

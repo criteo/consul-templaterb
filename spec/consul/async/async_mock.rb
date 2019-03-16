@@ -55,6 +55,7 @@ module Consul
          v1/health/service/consul
          v1/kv/
          v1/kv/choregraphie
+         v1/kv/template-in-template/return-10
          v1/kv/services-data/web-preview/network-service].each do |path|
         results[path] = mock_consul_path path
       end
