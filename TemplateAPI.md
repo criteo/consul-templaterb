@@ -302,9 +302,16 @@ Allows to render a template from a string. Useful if you have your templates in 
 
 Example:
 
+Given the value in Consul's KV `my/template/to_render`: `from KV: <%= 5 * 2 %>`
+
 ```erb
-render_from_string(kv('my/template/to_render').get_value_decoded)
+<%= render_from_string(kv('my/template/to_render').get_value_decoded) %>
 ```
+
+Would render the value: `from KV: 10`.
+
+That's very usefull if you want to centralize your templates and being able to change the value
+with a simple PUT call in the KV.
 
 ## param(parameter_name, [default_value: nil])
 

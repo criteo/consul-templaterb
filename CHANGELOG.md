@@ -2,6 +2,8 @@
 
 ## (UNRELEASED)
 
+## 1.11.0 (March 16, 2019)
+
 NEW FEATURES:
 
 * Added new function render_from_string() to render a template from a string (useful with KV)
