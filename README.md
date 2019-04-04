@@ -106,6 +106,19 @@ sudo apt-get install ruby ruby-dev && sudo gem install consul-templaterb
 
 You can now use it directly using the binary `consul-templaterb` in your path.
 
+### Quick install on Windows
+
+On Windows, a bug exists with Ruby greater than 2.4.
+
+In order to make it work, use those commands as explained in
+https://github.com/oneclick/rubyinstaller2/issues/96#issuecomment-434619796
+
+```
+bundle install consul-templaterb
+gem uninstall eventmachine
+gem install eventmachine --platform ruby
+```
+
 ### Playing with the samples templates
 
 Samples are installed with the GEM, you can either

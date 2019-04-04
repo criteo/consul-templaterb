@@ -295,8 +295,9 @@ ARGV.each do |tpl|
   consul_engine.add_template(tpl, dest)
 end
 
+Signal.trap('USR1', 'IGNORE') unless Gem.win_platform?
 # Ensure to kill child process if any
-%w[INT PIPE TERM].each do |sig|
+["EXIT"].each do |sig|
   Signal.trap(sig) do
     STDERR.puts "[KILL] received #{sig}, stopping myself"
     template_manager.terminate

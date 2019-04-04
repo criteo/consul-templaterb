@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+NEW FEATURES:
+
+* Windows compatible
+
 ## 1.11.0 (March 16, 2019)
 
 NEW FEATURES:
