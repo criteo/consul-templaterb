@@ -2,9 +2,13 @@
 
 ## (UNRELEASED)
 
+## 1.12.0 (April 4, 2019)
+
 NEW FEATURES:
 
 * Windows compatible
+
+consul-templaterb now works on Windows.
 
 ## 1.11.0 (March 16, 2019)
 
