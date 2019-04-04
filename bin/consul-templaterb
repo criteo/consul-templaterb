@@ -297,7 +297,7 @@ end
 
 Signal.trap('USR1', 'IGNORE') unless Gem.win_platform?
 # Ensure to kill child process if any
-["EXIT"].each do |sig|
+['EXIT'].each do |sig|
   Signal.trap(sig) do
     STDERR.puts "[KILL] received #{sig}, stopping myself"
     template_manager.terminate
