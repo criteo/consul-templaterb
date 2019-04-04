@@ -8,7 +8,7 @@ require 'optparse'
 require 'optparse/uri'
 
 def usage_text
-  "USAGE: #{__FILE__} [[options]]"
+  "USAGE: #{$0} [[options]]"
 end
 
 def compute_default_output(source)
