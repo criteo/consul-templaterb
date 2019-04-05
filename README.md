@@ -302,6 +302,7 @@ push git commits and tags, and push the `.gem` file to [rubygems.org](https://ru
 Here are the known bugs of the application:
 
 * [ ] `render_file` might create an infinite recursion if a template includes itself indirectly.
+* [ ] On Windows, the consul-templaterb cannot work with more than 2048 endpoints watched (see https://github.com/oneclick/rubyinstaller/issues/104#issuecomment-7681074)
 
 Please consult [CHANGELOG.md](CHANGELOG.md) for fixed bugs.
 

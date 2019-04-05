@@ -257,7 +257,13 @@ module Consul
           http.errback do
             unless @stopping
               _handle_error(http, consul_index) do
-                ::Consul::Async::Debug.puts_error "[RETRY][#{path}] (#{@consecutive_errors} errors) due to #{http.error}" if (@consecutive_errors % 10) == 1
+                if (@consecutive_errors % 10) == 1
+                  add_msg = http.error
+                  if Gem.win_platform? && http.error.include?('unable to create new socket: Too many open files')
+                    add_msg += "\n *** Windows does not support more than 2048 watches, watch less endpoints ***"
+                  end
+                  ::Consul::Async::Debug.puts_error "[RETRY][#{path}] (#{@consecutive_errors} errors) due to #{add_msg}"
+                end
               end
             end
           end
