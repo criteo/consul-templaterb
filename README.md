@@ -110,13 +110,11 @@ You can now use it directly using the binary `consul-templaterb` in your path.
 
 On Windows, a bug exists with Ruby greater than 2.4.
 
-In order to make it work, use those commands as explained in
+In order to make it work, use this commands as explained in
 https://github.com/oneclick/rubyinstaller2/issues/96#issuecomment-434619796
 
 ```
-bundle install consul-templaterb
-gem uninstall eventmachine
-gem install eventmachine --platform ruby
+gem install eventmachine consul-templaterb --platform ruby
 ```
 
 ### Playing with the samples templates
