@@ -3,6 +3,18 @@
    box-shadow: none;
 }
 
+.btn-outline-danger::before, .btn-danger::before{
+  content: '✖ ';
+}
+
+.btn-outline-success::before, .btn-success::before{
+  content: '✔ ';
+}
+
+.btn-outline-warning::before, .btn-warning::before{
+  content: '⚠ ';
+}
+
 #service-wrapper, #instances-wrapper, #keys-wrapper {
   overflow: scroll;
   border-top-left-radius: 0px;
