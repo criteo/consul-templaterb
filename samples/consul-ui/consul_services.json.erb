@@ -14,20 +14,6 @@
   services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || 'lbl7.*,netsvc-probe.*,consul-probed.*').split(',')
   services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }
 
-  def compute_attributes(snode)
-    w = 100
-    snode['Service']['Tags'].each do |tag|
-      match = /^weight-([1-9][0-9])*$/.match(tag)
-      w = match[1].to_i if match
-    end
-    attributes = ""
-    node_status = snode.status
-    attributes = "#{attributes} disabled" if node_status == 'critical'
-    if node_status == 'warning'
-      w = w / 8
-    end
-    attributes = "#{attributes} weight #{w}" if w.positive?
-  end
   backends = {}
   tags_per_service = {}
   services(tag: service_tag_filter).each do |service_name, tags|
@@ -45,6 +31,7 @@
     end
   end
 %><%
+  all_nodes = {}
   json_backends = {}
   backends.each_pair do |service_name, nodes|
     service = {
@@ -66,9 +53,12 @@
         checks.push(check)
       end
       meta = snode['Service']['Meta']
+      node_meta = snode['Node']['Meta'] || {}
+      node_name = snode['Node']['Node']
+      all_nodes[node_name] = { meta: node_meta } if node_name
       server = { frontend_id: "backend_http__#{service_name}",
                  id:      snode['Service']['ID'],
-                 name:    snode['Node']['Node'],
+                 name:    node_name,
                  sMeta:   meta ? meta : {},
                  connect: snode['Service']['Connect'],
                  addr:    snode.service_address,
@@ -83,5 +73,5 @@
     end
   end
   json_datacenters = datacenters.to_a
-  json = { services: json_backends, datacenters: json_datacenters, generated_at: Time.now}
+  json = { nodes: all_nodes, services: json_backends, datacenters: json_datacenters, generated_at: Time.now}
 %><%= JSON.pretty_generate(json) %>

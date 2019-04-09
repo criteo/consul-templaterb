@@ -239,10 +239,10 @@ class ConsulService {
     this.selectedService = source.closest('li');
     $(this.selectedService).addClass('active');
 
-    this.displayService(this.data.services[serviceName]);
+    this.displayService(this.data.services[serviceName], this.data.nodes);
   }
 
-  displayService(service) {
+  displayService(service, nodes) {
     var titleText = service['name'] + ' <a href="consul-timeline-ui.html?service=' + service['name'] + '">timeline</a>';
     $("#service-title").html(titleText);
     $("#instances-list").html("");
@@ -252,13 +252,22 @@ class ConsulService {
     for (var key in service['instances']) {
       var instance = service['instances'][key];
       var serviceHtml = document.createElement('div');
-      serviceHtml.setAttribute('class','list-group-item');
+      serviceHtml.setAttribute('class','list-group-item service-instance');
       var state = nodeState(instance.checks);
       serviceHtml.appendChild(weightsGenerator(instance.weights, state));
       serviceHtml.appendChild(serviceTitleGenerator(instance));
-      serviceHtml.appendChild(tagsGenerator(instance.tags));
+      var node_info = nodes[instance.name];
+      if (node_info != null) {
+        node_info = node_info.meta;
+        serviceHtml.appendChild(nodeMetaGenerator(node_info));
+        serviceHtml.appendChild(document.createElement('hr'));
+      }
+      if (instance.tags && instance.tags.length > 0) {
+        serviceHtml.appendChild(tagsGenerator(instance.tags));
+        serviceHtml.appendChild(document.createElement('hr'));
+      }
       serviceHtml.appendChild(serviceMetaGenerator(instance.sMeta));
-      serviceHtml.appendChild(connectGenerator(instance))
+      serviceHtml.appendChild(connectGenerator(instance));
       serviceHtml.appendChild(checksStatusGenerator(instance, instance.name));
       serviceHtml.setAttribute('status', state);
       $("#instances-list").append(serviceHtml);

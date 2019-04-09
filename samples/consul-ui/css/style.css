@@ -214,10 +214,16 @@ html, body {
 .instance-content-header h5 {
   margin-right: 10px;
 }
-
+.service-instance dt, .service-instance dl {
+  line-height: 1em;
+}
 .meta-tags {
   text-align: right;
   flex: 2 0 0;
+}
+
+.service-instance .meta-tags {
+  text-align: left;
 }
 
 #data-wrapper {

@@ -98,8 +98,9 @@ function nodeAddressGenator(nodeaddr) {
   return htmlAddress;
 }
 
-function nodeMetaGenator(nodeMetaTags) {
+function nodeMetaGenerator(nodeMetaTags) {
   var metaTags = document.createElement('div');
+  metaTags.setAttribute('title', 'Node Meta')
   metaTags.className = 'meta-tags';
   for (var tagKey in nodeMetaTags) {
     if(!nodeMetaTags[tagKey]) {
@@ -117,8 +118,7 @@ function tagsGenerator(instanceTags) {
   var tags = document.createElement('div');
 
   tags.className = 'instance-tags';
-  tags.appendChild(document.createTextNode("Tags: "));
-  tags.appendChild(document.createElement('br'));
+  tags.setAttribute('title', 'Tags of Service');
   for (var tagKey in instanceTags) {
     var tag = document.createElement('span');
     tag.setAttribute('class', 'badge badge-secondary mx-1');
@@ -231,8 +231,7 @@ function checksStatusGenerator(instance, prefix) {
   var instanceChecks = instance.checks;
   var checks = document.createElement('div');
   checks.className = 'checks';
-  checks.appendChild(document.createTextNode("Checks: "));
-  checks.appendChild(document.createElement('br'));
+  checks.setAttribute('title', 'Checks of Node/Service')
 
   for (var checkKey in instanceChecks) {
     var checkInstance = instanceChecks[checkKey];

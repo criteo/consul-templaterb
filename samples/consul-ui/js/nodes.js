@@ -96,7 +96,7 @@ class ConsulNodes {
       contentHead.setAttribute('class','instance-content-header');
       contentHead.appendChild(nodeNameGenator(instance['Node']['Name'],instance['Node']['Address']));
       contentHead.appendChild(nodeAddressGenator(instance['Node']['Address']));
-      contentHead.appendChild(nodeMetaGenator(instance['Node']['Meta']));
+      contentHead.appendChild(nodeMetaGenerator(instance['Node']['Meta']));
       content.appendChild(contentHead);
       var nodesChecks = document.createElement('div');
       nodesChecks.setAttribute('class','nodes-checks');
