@@ -20,9 +20,9 @@ class ConsulService {
     }, 100);
   }
 
-  showTags(showTags) {
+  showTags(enableTags) {
     var stylesheet = document.getElementById('css-states');
-    stylesheet.textContent = '.service-tags { display: ' + (showTags? 'block':'none') + ';}';
+    stylesheet.textContent = '.service-tags { display: ' + (enableTags? 'block':'none') + '!important ;}';
   }
 
   showProxies(showProxies) {

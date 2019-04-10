@@ -2,6 +2,13 @@
 
 ## (UNRELEASED)
 
+## 1.13.0 (April 10, 2019)
+
+IMPROVEMENTS:
+
+ * On Windows, ensure a proper error message is displayed when watching more than 2048 endpoints
+ * consul-ui now allow better searches in instances, display node meta in service details, fixed display of tags on Ffx
+
 ## 1.12.0 (April 4, 2019)
 
 NEW FEATURES:

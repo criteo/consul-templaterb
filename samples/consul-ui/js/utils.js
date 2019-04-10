@@ -53,12 +53,12 @@ function serviceTitleGenerator(instance) {
 
   var htmlTitle = document.createElement('h5');
   htmlTitle.setAttribute('title', 'Node Name: ' + instance.name +
-                                  '\nAddress : ' + instance.addr +
+                                  '\nAddress: ' + instance.addr +
                                   '\nService ID: ' + instance.id +
-                                  '\nService Port : ' + instance.port);
+                                  '\nService Port: ' + instance.port);
 
+  htmlTitle.setAttribute('class',  'instance-name');
   var instanceLink = document.createElement('a');
-  instanceLink.setAttribute('class',  'instance-name');
   var appendPort = "";
   if (instance.port > 0) {
     appendPort = ':' + instance.port;
@@ -70,6 +70,8 @@ function serviceTitleGenerator(instance) {
 
   instanceLink.appendChild(document.createTextNode(instance.name + appendPort));
   htmlTitle.appendChild(instanceLink);
+  htmlTitle.appendChild(document.createTextNode(' '));
+  htmlTitle.appendChild(document.createTextNode(instance.addr));
 
   return htmlTitle;
 }
@@ -93,7 +95,7 @@ function nodeNameGenator(nodename, nodeaddr) {
 
 function nodeAddressGenator(nodeaddr) {
   var htmlAddress = document.createElement('h5');
-  htmlAddress.className = 'instance-addr';
+  htmlAddress.className = 'instance-addr lookup';
   htmlAddress.appendChild(document.createTextNode(nodeaddr));
   return htmlAddress;
 }
@@ -101,13 +103,13 @@ function nodeAddressGenator(nodeaddr) {
 function nodeMetaGenerator(nodeMetaTags) {
   var metaTags = document.createElement('div');
   metaTags.setAttribute('title', 'Node Meta')
-  metaTags.className = 'meta-tags';
+  metaTags.className = 'node-meta';
   for (var tagKey in nodeMetaTags) {
     if(!nodeMetaTags[tagKey]) {
       continue;
     }
     var metaTag = document.createElement('span');
-    metaTag.setAttribute('class', 'badge badge-primary mx-1');
+    metaTag.setAttribute('class', 'badge badge-primary mx-1 lookup');
     metaTag.appendChild(document.createTextNode(tagKey + ':' + nodeMetaTags[tagKey]));
     metaTags.appendChild(metaTag);
   }
@@ -121,7 +123,7 @@ function tagsGenerator(instanceTags) {
   tags.setAttribute('title', 'Tags of Service');
   for (var tagKey in instanceTags) {
     var tag = document.createElement('span');
-    tag.setAttribute('class', 'badge badge-secondary mx-1');
+    tag.setAttribute('class', 'badge badge-secondary mx-1 lookup');
     tag.appendChild(document.createTextNode(instanceTags[tagKey]));
     tags.appendChild(tag);
   }
@@ -160,11 +162,11 @@ function serviceMetaGenerator(instanceMeta) {
     container.className = 'row';
     for (var meta in instanceMeta) {
       var metaH = document.createElement('dt');
-      metaH.className = 'col-sm-4';
+      metaH.className = 'col-sm-4 lookup';
       metaH.appendChild(document.createTextNode(meta));
       container.appendChild(metaH);
       var metaVH = document.createElement('dd');
-      metaVH.className = 'col-sm-8';
+      metaVH.className = 'col-sm-8 lookup';
       metaVH.appendChild(document.createTextNode(instanceMeta[meta]));
       container.appendChild(metaVH);
     }
@@ -216,7 +218,7 @@ function servicesGenerator(instanceServices) {
     var service = document.createElement('a');
     var serviceName = instanceServices[serviceKey]['Service']['Service'];
     var servicePort = instanceServices[serviceKey]['Service']['Port'];
-    service.setAttribute('class', 'btn btn-sm m-1');
+    service.setAttribute('class', 'btn btn-sm m-1 lookup');
     service.setAttribute('target', '_blank');
     nodeAddr = instanceServices[serviceKey]['Service']['Address'];
     service.setAttribute('href', 'http://' + nodeAddr + ':' + servicePort);
@@ -353,19 +355,22 @@ function keyMatcher(service, regex) {
   }
 }
 
+function hasMatches(instance, regex) {
+  var toLookup = instance.getElementsByClassName('lookup');
+  for (var i = 0 ; i < toLookup.length; i++) {
+    if(toLookup[i].innerHTML.match(regex)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function instanceMatcher(instance, regex) {
   if(instance.getElementsByClassName('instance-name')[0].innerHTML.match(regex)) {
     return true;
   }
 
-  var tags = instance.getElementsByClassName('instance-tags')[0].getElementsByClassName('badge');
-
-  for (var i=0; i < tags.length; i++) {
-    if(tags[i].innerHTML.match(regex)) {
-      return true;
-    }
-  }
-  return false;
+  return hasMatches(instance, regex);
 }
 
 function nodeMatcher(instance, regex) {
@@ -374,23 +379,7 @@ function nodeMatcher(instance, regex) {
       return true;
     }
 
-    if(instance.getElementsByClassName('instance-addr')[0].innerHTML.match(regex)) {
-      return true;
-    }
-
-    var metaTags = instance.getElementsByClassName('meta-tags')[0].getElementsByClassName('badge');
-    for (var i=0; i < metaTags.length; i++) {
-      if(metaTags[i].innerHTML.match(regex)) {
-        return true;
-      }
-    }
-
-    var services = instance.getElementsByClassName('instance-services')[0].getElementsByClassName('btn');
-    for (var i=0; i < services.length; i++) {
-      if(services[i].innerHTML.match(regex)) {
-        return true;
-      }
-    }
+    return hasMatches(instance, regex);
 }
 
 function getTagsNode(node) {
