@@ -477,7 +477,7 @@ module Consul
         x = get_value_decoded(name)
         return nil unless x
         begin
-          YAML.load(x)
+          YAML.safe_load(x)
         rescue YAML::ParserError => e
           return nil if catch_errors
           raise StandardError.new(e), "get_value_yaml() cannot deserialize kv(#{name}) as YAML: #{e.message}", e.backtrace
