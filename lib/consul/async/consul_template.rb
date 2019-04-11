@@ -480,7 +480,7 @@ module Consul
           YAML.load(x)
         rescue YAML::ParserError => e
           return nil if catch_errors
-          raise StandardError.new(e), "get_value_yaml() cannot deserialize kv(#{name}) as JSON: #{e.message}", e.backtrace
+          raise StandardError.new(e), "get_value_yaml() cannot deserialize kv(#{name}) as YAML: #{e.message}", e.backtrace
         end
       end
     end
