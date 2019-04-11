@@ -471,6 +471,18 @@ module Consul
           raise StandardError.new(e), "get_value_json() cannot deserialize kv(#{name}) as JSON: #{e.message}", e.backtrace
         end
       end
+
+      # Helper to get the value decoded as YAML
+      def get_value_yaml(name = root, catch_errors: true)
+        x = get_value_decoded(name)
+        return nil unless x
+        begin
+          YAML.load(x)
+        rescue YAML::ParserError => e
+          return nil if catch_errors
+          raise StandardError.new(e), "get_value_yaml() cannot deserialize kv(#{name}) as JSON: #{e.message}", e.backtrace
+        end
+      end
     end
 
     class ConsulTemplateVaultSecret < ConsulTemplateAbstractMap

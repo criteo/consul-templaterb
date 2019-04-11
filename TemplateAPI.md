@@ -225,6 +225,7 @@ and the call is retrieving several keys, it allows to select a specific one.The 
   if will not throw an error during rendering of template and return nil. Otherwise
   an Error will be thrown and have to be catch if you are unsure if the value is valid
   JSON
+* `get_value_yaml( [path], [catch_errors: true] )` : same as above, but for yml
 
 #### Get the result of a single value
 
@@ -233,6 +234,8 @@ The easiest, use the helpers to retrieve the values in the following formats:
 * `kv('/my/path/to/value').get_value` : get the raw value of a single key in KV
 * `kv('/my/path/to/value').get_decoded` : get the decoded value of a single key in KV
 * `kv('/my/path/to/value').get_value_json` : get the base64 decoded value and try decoding it as JSON
+
+* `kv('/my/path/to/value').get_value_yaml` : get the base64 decoded value and try decoding it as YAML
 
 #### Iterate over values
 
