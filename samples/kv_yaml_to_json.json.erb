@@ -1,0 +1,14 @@
+<%
+  # This template read a YAML KV value and render it as JSON
+  kv_path = param('kv_path', ENV['KV_YAML_PATH'])
+  if kv_path
+    obj = kv(kv_path).get_value_yaml()
+    if obj
+%><%= JSON.pretty_generate(obj)%><%
+    else
+%><%= kv_path %> is not a valid YAML<%
+    end
+  else
+%>Please specify environment variable KV_YAML_PATH<%
+  end
+%>
