@@ -47,7 +47,9 @@
   # debug
   pidfile <%= ha_proxy_data_prefix %>haproxy.pid
   stats socket <%= ha_proxy_data_prefix %>haproxy.sock level admin
-  maxconn <%= kv("service/haproxy/maxconn").get_value_decoded() || 256 %>
+  # If you want to configure from KV, you might use:
+  # You might use instead: `kv("service/haproxy/maxconn").get_value_decoded() || 256`
+  maxconn 256 
   log 127.0.0.01:514 local0 info
   server-state-file <%= ha_proxy_data_prefix %>haproxy.serverstates
   description HAProxy / consul demo
