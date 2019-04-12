@@ -1,0 +1,103 @@
+# HaProxy template with consul-templaterb adapted from
+# https://github.com/haproxytech/haproxy/blob/master/blog/integration_with_consul/haproxy.conf.tmpl
+#
+# You might read this article:
+# https://www.haproxy.com/blog/haproxy-and-consul-with-dns-for-service-discovery/
+#
+# This template is more powerful than initial implementation:
+# * It discovers by itself the services (by default, all having http tag)
+# * It allows having white/blacklists of services
+# * It handles nicely services having http/non http tag
+#  
+# Here is how to configure it with environment variables:
+#
+# This template can be configure the following way with environment variables
+# Environment variables to filter services/instances
+#   SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
+#   EXCLUDE_SERVICES: comma-separated services regexps to exclude (default: lbl7.*,netsvc-probe.*,consul-probed.*)
+#   SERVICES_MATCHING: regexp to show only services matching the regexp, defaults to '.*'
+#
+# HaProxy specific:
+#   HAPROXY_DOMAIN_NAME the domain name to serve, eg: myservice => myservice.example.com
+#   CONSUL_DOMAIN_NAME_SUFFIX = suffix in consul configuration (default 'consul', so services are myservice.service.consul)
+#   HAPROXY_PREFIX_PATH = where you want HaProxy to reload config
+#   CONSUL_DNS_ADDR: Address of DNS resolver returning consul SRV records (defaults to 127.0.0.1:8600)
+#   PORT0: HaProxy port to use to serve (default: 8000)
+#   HAPROXY_STATS_BIND: bind stats on... (defaut: '127.0.0.1:1936', can use for instance '*:1936')
+#   HAPROXY_ADMIN_USER_PASSWORD: Password to access stats (defaults: none)
+#
+# USAGE examples:
+#
+#   Reverse HTTP Proxy for services with tag http and starting with 'web'
+# SERVICES_MATCHING='web.*' consul-templaterb samples/haproxy_dns.cfg.erb --sig-reload=HUP --exec 'haproxy -W -f samples/haproxy_dns.cfg'
+
+<%
+  consul_domain_name = ENV['CONSUL_DOMAIN_NAME_SUFFIX'] || 'consul'
+  ha_proxy_data_prefix = ENV['HAPROXY_PREFIX_PATH'] || File.absolute_path('.')
+  ha_proxy_data_prefix += '/' unless ha_proxy_data_prefix.end_with? '/'
+  services_tag_filter = ENV['SERVICES_TAG_FILTER'] || 'http'
+  services_matching = Regexp.new(ENV['SERVICES_MATCHING'] || '.*')
+
+  # Services to hide
+  services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || 'lbl7.*,netsvc-probe.*,consul-probed.*').split(',')
+  services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }
+%>
+  global
+  # daemon
+  # debug
+  pidfile <%= ha_proxy_data_prefix %>haproxy.pid
+  stats socket <%= ha_proxy_data_prefix %>haproxy.sock level admin
+  maxconn <%= kv("service/haproxy/maxconn").get_value_decoded() || 256 %>
+  log 127.0.0.01:514 local0 info
+  server-state-file <%= ha_proxy_data_prefix %>haproxy.serverstates
+  description HAProxy / consul demo
+
+resolvers consul
+  nameserver <%= consul_domain_name %> <%= ENV['CONSUL_DNS_ADDR'] || '127.0.0.1:8600' %>
+  accepted_payload_size 8192
+
+defaults
+  log global
+  option httplog
+  option socket-stats
+  load-server-state-from-file global
+  default-server init-addr none inter 1s rise 2 fall 2
+  mode http
+  timeout client 30s
+  timeout connect 4s
+  timeout http-keep-alive 10s
+  timeout http-request 5s
+  timeout server 30s
+
+frontend http-in
+  bind *:<%= ENV['PORT0'] || 8000 %>
+  maxconn 256
+  use_backend b_%[req.hdr(Host),lower,word(1,:)]
+
+<%
+services(tag: services_tag_filter).each do |service_name, tags|
+  if services_matching.match(service_name) && !services_blacklist.any? {|r| r.match(service_name)}
+%>
+backend b_<%= service_name %>.<%= ENV['HAPROXY_DOMAIN_NAME'] || 'example.com' %>
+  server-template <%= service_name %> 10 <%= services_tag_filter %>.<%= service_name %>.service.<%= consul_domain_name %> resolvers consul resolve-prefer ipv4 #check
+<%
+  end
+end
+%>
+
+frontend stats
+  bind <%= ENV['HAPROXY_STATS_BIND'] || '127.0.0.1:1936' %>
+  mode http
+  option forceclose
+  stats enable
+  stats uri /
+  stats show-legends
+  stats show-desc
+  stats show-node
+  stats refresh 60
+<%
+   user_password = ENV['HAPROXY_ADMIN_USER_PASSWORD']
+   if user_password
+%>
+  stats auth <%= user_password %>
+<% end %>
