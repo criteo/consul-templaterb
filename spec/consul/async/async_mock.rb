@@ -57,6 +57,7 @@ module Consul
          v1/kv/choregraphie
          v1/kv/template-in-template/return-10
          v1/kv/yaml/test.yml
+         v1/kv/json/test.json
          v1/kv/services-data/web-preview/network-service].each do |path|
         results[path] = mock_consul_path path
       end
