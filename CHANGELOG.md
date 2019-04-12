@@ -2,6 +2,8 @@
 
 ## (UNRELEASED)
 
+## 1.13.1 (April 12, 2019)
+
 IMPROVEMENTS:
 
  * Added support for loading KV with YAML using `get_value_yaml()`
