@@ -1,0 +1,20 @@
+KV Parse results
+JSON
+It should display: {"toto":{"tata":"titi"}}
+{"toto":{"tata":"titi"}}
+
+YAML
+It should display:
+---
+this:
+  is:
+    only:
+      a:
+        test: true
+
+---
+this:
+  is:
+    only:
+      a:
+        test: true

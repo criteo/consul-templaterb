@@ -1,0 +1,15 @@
+KV Parse results
+JSON
+It should display: {"toto":{"tata":"titi"}}
+<%=JSON.generate(kv('json/test.json').get_value_json)%>
+
+YAML
+It should display:
+---
+this:
+  is:
+    only:
+      a:
+        test: true
+
+<%=YAML.dump(kv('yaml/test.yml').get_value_yaml)%>
