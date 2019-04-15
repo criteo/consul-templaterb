@@ -41,8 +41,8 @@
     </div>
   <%
     else
-      json = JSON.parse(Base64.decode64(tuple['Value']))
       begin
+        json = JSON.parse(Base64.decode64(tuple['Value']))
         holders = json['holders']
       rescue StandardError => e
 %>
