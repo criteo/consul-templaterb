@@ -222,10 +222,14 @@ module Consul
           end
           to_cleanup << endpoint_key if (@iteration - endpt.seen_at) > 60
         end
-        if not_ready.count.positive?
+        if not_ready.count.positive? || data.nil?
           if @iteration - @last_debug_time > 1
             @last_debug_time = @iteration
-            ::Consul::Async::Debug.print_info "Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}...\r"
+            if data.nil?
+              ::Consul::Async::Debug.print_info "Waiting for Template #{tpl_file_path} to not return nil, consider it not ready...\r"
+            else
+              ::Consul::Async::Debug.print_info "Waiting for data from #{not_ready.count}/#{not_ready.count + ready} endpoints: #{not_ready[0..2]}...\r"
+            end
           end
           return [false, false, nil]
         end

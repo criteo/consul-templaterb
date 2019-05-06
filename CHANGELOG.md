@@ -2,6 +2,14 @@
 
 ## (UNRELEASED)
 
+## 1.14.0 (May 6, 2019)
+
+NEW FEATURES:
+
+When `return nil` is performed in a template, consul-templaterb now considers the template is
+not ready and thus do not start any process. It is useful if you want to start a process ONLY
+when some conditions are met.
+
 ## 1.13.1 (April 12, 2019)
 
 IMPROVEMENTS:

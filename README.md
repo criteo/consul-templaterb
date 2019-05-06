@@ -216,6 +216,10 @@ meaning that if 2 results of templates are modified at the same time, the signal
 sent only once (it is helpful for instance if your app is using several configurations
 files that must be consistent all together).
 
+If any template does return nothing (aka use `return nil` in the code of a template),
+consul-templaterb does consider that the template is not ready and will not launch the executable
+nor write the file.
+
 Signals can be customized per process. Two signals are supported with options `--sig-reload` and
 `--sig-term`. When the option is added, the next `--exec` options to start a process will use the
 given signal. By default, HUP will be sent to reload events (you can use NONE to avoid sending any
