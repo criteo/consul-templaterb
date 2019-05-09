@@ -61,15 +61,18 @@ module Consul
         STDERR.puts "[FATAL]#{e}"
         template_manager.terminate
         EventMachine.stop
+        return 1
       rescue StandardError => e
         STDERR.puts "[FATAL] Error occured: #{e.inspect} - #{e.backtrace.join("\n\t")}"
         template_manager.terminate
         EventMachine.stop
+        return 2
       end
 
       # Run template engine as fast as possible until first rendering occurs
       def do_run_fast(template_manager, template_renders)
-        do_run(template_manager, template_renders)
+        s = do_run(template_manager, template_renders)
+        return s unless s.zero?
 
         return if @all_templates_rendered || @periodic_started
         # We continue if rendering not done and periodic not started
@@ -79,6 +82,7 @@ module Consul
       end
 
       def run(template_manager)
+        result = 0
         @template_manager = template_manager
         EventMachine.run do
           template_renders = []
@@ -89,11 +93,11 @@ module Consul
           end
           # Initiate first run immediately to speed up rendering
           EventMachine.next_tick do
-            do_run_fast(template_manager, template_renders)
+            result = do_run_fast(template_manager, template_renders)
           end
           EventMachine.add_periodic_timer(template_frequency) do
             @periodic_started = true
-            do_run(template_manager, template_renders)
+            result = do_run(template_manager, template_renders)
             if debug_memory
               GC.start
               new_memory_state = build_memory_info
@@ -111,6 +115,7 @@ module Consul
             end
           end
         end
+        result
       end
     end
   end

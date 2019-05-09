@@ -254,7 +254,6 @@ def kill_program
     v.kill
   end
   @programs = {}
-  exit 0
 end
 
 optparse.parse!
@@ -305,9 +304,5 @@ Signal.trap('USR1', 'IGNORE') unless Gem.win_platform?
   end
 end
 
-consul_engine.run(template_manager)
+exit consul_engine.run(template_manager)
 
-# Kill possible child process if consul_engine.run did stop
-kill_program
-
-exit 0
