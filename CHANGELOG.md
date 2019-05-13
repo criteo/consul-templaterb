@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.14.1 (May 13, 2019)
+
+NEW FEATURES
+
+`endpoint.stats.last_modified` allow to display the date at which the data was last_modified.
+
 ## 1.14.0 (May 6, 2019)
 
 NEW FEATURES:

@@ -8,7 +8,9 @@
 <div>
 <h1>Show all keys <%= path == '' ? '' : "under hierarchy #{path}" %></h1>
 <div id="accordion">
-<% kv(path, recurse:true).each do |tuple|
+<!-- LastModified: <%= kv(path, recurse:true).endpoint.stats.last_modified %> -->
+<%
+  kv(path, recurse:true).each do |tuple|
      key = tuple['Key']
      val = "NO_VALUE"
      if !tuple['Value'].nil?
