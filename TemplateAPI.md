@@ -30,7 +30,7 @@ On each object, you can access the `.endpoint` object that includes several info
 
 * `myresult.endpoint.x_consul_index` return the current index on blocking query
 * `myresult.endpoint.stats` a object with interresting fields: `bytes_per_sec`,
-  `bytes_per_sec_human`, `successes`, `errors`, `body_bytes`. All stats details
+  `bytes_per_sec_human`, `successes`, `errors`, `body_bytes`, `last_modified`. All stats details
   are available in the file [lib/consul/async/stats.rb](lib/consul/async/stats.rb).
 
 Using those statistics might be useful to trigger alerts very easily when something
