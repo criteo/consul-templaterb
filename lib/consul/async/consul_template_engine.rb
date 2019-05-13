@@ -9,7 +9,7 @@ require 'erb'
 module Consul
   module Async
     class ConsulTemplateEngine
-      attr_reader :template_manager, :hot_reload_failure, :template_frequency, :debug_memory
+      attr_reader :template_manager, :hot_reload_failure, :template_frequency, :debug_memory, :result
       attr_writer :hot_reload_failure, :template_frequency, :debug_memory
       def initialize
         @templates = []
@@ -19,6 +19,7 @@ module Consul
         @template_frequency = 1
         @periodic_started = false
         @debug_memory = false
+        @result = 0
         @last_memory_state = build_memory_info
         @start = Time.now
       end
@@ -60,19 +61,18 @@ module Consul
       rescue Consul::Async::InvalidTemplateException => e
         STDERR.puts "[FATAL]#{e}"
         template_manager.terminate
+        @result = 1
         EventMachine.stop
-        return 1
       rescue StandardError => e
         STDERR.puts "[FATAL] Error occured: #{e.inspect} - #{e.backtrace.join("\n\t")}"
         template_manager.terminate
+        @result = 2
         EventMachine.stop
-        return 2
       end
 
       # Run template engine as fast as possible until first rendering occurs
       def do_run_fast(template_manager, template_renders)
-        s = do_run(template_manager, template_renders)
-        return s unless s.zero?
+        do_run(template_manager, template_renders)
 
         return if @all_templates_rendered || @periodic_started
         # We continue if rendering not done and periodic not started
@@ -82,7 +82,6 @@ module Consul
       end
 
       def run(template_manager)
-        result = 0
         @template_manager = template_manager
         EventMachine.run do
           template_renders = []
@@ -93,11 +92,11 @@ module Consul
           end
           # Initiate first run immediately to speed up rendering
           EventMachine.next_tick do
-            result = do_run_fast(template_manager, template_renders)
+            do_run_fast(template_manager, template_renders)
           end
           EventMachine.add_periodic_timer(template_frequency) do
             @periodic_started = true
-            result = do_run(template_manager, template_renders)
+            do_run(template_manager, template_renders)
             if debug_memory
               GC.start
               new_memory_state = build_memory_info
@@ -115,7 +114,7 @@ module Consul
             end
           end
         end
-        result
+        @result
       end
     end
   end

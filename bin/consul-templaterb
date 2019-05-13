@@ -304,4 +304,6 @@ Signal.trap('USR1', 'IGNORE') unless Gem.win_platform?
   end
 end
 
-exit consul_engine.run(template_manager)
+consul_engine.run(template_manager)
+
+exit consul_engine.result
