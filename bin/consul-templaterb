@@ -254,7 +254,6 @@ def kill_program
     v.kill
   end
   @programs = {}
-  exit 0
 end
 
 optparse.parse!
@@ -307,7 +306,4 @@ end
 
 consul_engine.run(template_manager)
 
-# Kill possible child process if consul_engine.run did stop
-kill_program
-
-exit 0
+exit consul_engine.result

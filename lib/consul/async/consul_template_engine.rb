@@ -9,7 +9,7 @@ require 'erb'
 module Consul
   module Async
     class ConsulTemplateEngine
-      attr_reader :template_manager, :hot_reload_failure, :template_frequency, :debug_memory
+      attr_reader :template_manager, :hot_reload_failure, :template_frequency, :debug_memory, :result
       attr_writer :hot_reload_failure, :template_frequency, :debug_memory
       def initialize
         @templates = []
@@ -19,6 +19,7 @@ module Consul
         @template_frequency = 1
         @periodic_started = false
         @debug_memory = false
+        @result = 0
         @last_memory_state = build_memory_info
         @start = Time.now
       end
@@ -60,10 +61,12 @@ module Consul
       rescue Consul::Async::InvalidTemplateException => e
         STDERR.puts "[FATAL]#{e}"
         template_manager.terminate
+        @result = 1
         EventMachine.stop
       rescue StandardError => e
         STDERR.puts "[FATAL] Error occured: #{e.inspect} - #{e.backtrace.join("\n\t")}"
         template_manager.terminate
+        @result = 2
         EventMachine.stop
       end
 
@@ -111,6 +114,7 @@ module Consul
             end
           end
         end
+        @result
       end
     end
   end
