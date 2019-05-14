@@ -2,11 +2,22 @@
 
 ## (UNRELEASED)
 
+## 1.15.0 (May 14, 2019)
+
+NEW FEATURES
+
+consul-templaterb now returns an error code whether template is malformed.
+This allows to use return code to validate templates when called with `--once`.
+
+IMPROVEMENTS
+
+Do not display ugly stack trace when interrupting program with CRTL-C.
+
 ## 1.14.1 (May 13, 2019)
 
 NEW FEATURES
 
-`endpoint.stats.last_modified` allow to display the date at which the data was last_modified.
+`endpoint.stats.last_modified` allow to display the date at which the data was last modified.
 
 ## 1.14.0 (May 6, 2019)
 

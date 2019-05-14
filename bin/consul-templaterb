@@ -297,13 +297,17 @@ end
 Signal.trap('USR1', 'IGNORE') unless Gem.win_platform?
 # Ensure to kill child process if any
 ['EXIT'].each do |sig|
-  Signal.trap(sig) do
-    STDERR.puts "[KILL] received #{sig}, stopping myself"
+  Signal.trap(sig) do |signo|
+    STDERR.puts "[KILL] received #{Signal.signame(signo)}, stopping myself"
     template_manager.terminate
     kill_program
   end
 end
 
-consul_engine.run(template_manager)
+begin
+  consul_engine.run(template_manager)
+rescue Interrupt => e
+  STDERR.puts "[WARN] consul-templaterb has been interrupted #{e}"
+end
 
 exit consul_engine.result
