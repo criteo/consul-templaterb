@@ -209,16 +209,17 @@ module Consul
       end
 
       def write(file, tpl, last_result, tpl_file_path, params = {}, current_template_info: {})
+        @iteration = Time.now.utc - @start_time
         data = render(tpl, tpl_file_path, params, current_template_info: current_template_info)
         not_ready = []
         ready = 0
-        @iteration = Time.now.utc - @start_time
         to_cleanup = []
         @endpoints.each_pair do |endpoint_key, endpt|
           if endpt.ready?
             ready += 1
           else
-            not_ready << endpt.endpoint.path
+            # We consider only the endpoints usefull with current iteration
+            not_ready << endpoint_key unless endpt.seen_at < @iteration
           end
           to_cleanup << endpoint_key if (@iteration - endpt.seen_at) > 60
         end

@@ -2,6 +2,15 @@
 
 ## (UNRELEASED)
 
+## 1.15.1 (May 14, 2019)
+
+IMPROVEMENTS
+
+Will converge faster if some templates are not always requesting the same paths.
+Intead of relying on key being garbage collected, we now rely whether the key is
+available within the current rendering only.
+It avoid templates never rendering fully when keys appear/disappear.
+
 ## 1.15.0 (May 14, 2019)
 
 NEW FEATURES
