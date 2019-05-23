@@ -2,7 +2,7 @@
 
 ## (UNRELEASED)
 
-## 1.15.1 (May 14, 2019)
+## 1.15.1 (May 23, 2019)
 
 IMPROVEMENTS
 
