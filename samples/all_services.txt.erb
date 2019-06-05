@@ -7,6 +7,11 @@
   # And aggregates a list of Services, Services Instances/status
   # And nodes.
   require 'set'
+
+  # Services to hide
+  services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || '.*netsvc-probe.*,.*consul-probed.*').split(',')
+  services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }
+
   num_services={}
   num_instances={}
   all_states = ['passing', 'warning', 'critical', 'total']
@@ -20,6 +25,7 @@
       'total'    => 0
     }
     services(dc:dc).each do |service_name, tags|
+      next if services_blacklist.any? {|r| r.match(service_name)}
       distinct_services.add(service_name)
       num_services[dc]+=1
       service(service_name, dc:dc).each do |snode|
