@@ -5,7 +5,9 @@
 #   INSTANCE_MUST_TAG: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
 #   INSTANCE_EXCLUDE_TAG: Exclude instances having the given tag
 #   EXCLUDE_SERVICES: comma-separated services regexps to exclude (example: lbl7.*,netsvc-probe.*,consul-probed.*)
+#   PROMETHEUS_EXPORTED_SERVICE_META: comma-separated list of meta to export into metrics of service
 <%
+  service_metas_to_export = (ENV['PROMETHEUS_EXPORTED_SERVICE_META'] || 'version,os,criteo_flavor').split(',')
 
   service_tag_filter = ENV['SERVICES_TAG_FILTER'] || nil
   instance_must_tag = ENV['INSTANCE_MUST_TAG'] || service_tag_filter
@@ -16,24 +18,42 @@
   services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }
 
   backends = {}
+  all_stats = {}
   service_count = 0
+
   services(tag: service_tag_filter).each do |service_name, tags|
     if !services_blacklist.any? {|r| r.match(service_name)} && (instance_must_tag.nil? || tags.include?(instance_must_tag))
       service_count += 1
-      res = {
-        'passing'  => 0,
-        'warning'  => 0,
-        'critical' => 0,
-      }
       srv = service(service_name)
+      all_stats[service_name] = srv.endpoint.stats
       srv.each do |snode|
+        key = "#{snode['Service']['Service']}"
+        metas = {}
+        service_metas_to_export.each do |k|
+          meta = nil
+          meta = snode['Service']['Meta'][k] if snode['Service']['Meta']
+          meta = snode['Node']['Meta'][k] if !meta && snode['Node']['Meta']
+          if meta
+            key += "::#{k}=#{meta}"
+            metas[k] = meta
+          end
+        end
+        back = backends[key]
+        if back.nil?
+          back = {
+            metas: metas,
+            service_name: service_name,
+            state: {
+              'passing'  => 0,
+              'warning'  => 0,
+              'critical' => 0,
+            }
+          }
+          backends[key] = back
+        end
         state = snode.status
-        res[state] += 1
+        back[:state][state] += 1
       end
-      backends[service_name] = {
-        state: res,
-        stats: srv.endpoint.stats,
-      }
     end
   end
 %>
@@ -73,21 +93,29 @@ end
 <%
   json_backends = {}
   now = Time.now.utc
-  backends.each_pair do |service_name, service_info|
+  backends.each_pair do |k, service_info|
+    service_name = service_info[:service_name]
+    meta_string = ""
+    service_info[:metas].each_pair do |k,v|
+      meta_string+=",#{k}=\"#{v}\""
+    end
     service_info[:state].each_pair do |state_name, state_count|
-%>consul_service_count{service="<%= service_name %>",state="<%= state_name %>"} <%= state_count %>
+%>consul_service_count{service="<%= service_name %>",state="<%= state_name %>"<%= meta_string %>} <%= state_count %>
 <%
     end
-    current_stats = service_info[:stats]
+  end
+
+  # Global statistics
+  all_stats.each_pair do |service_name, current_stats|
 %>consul_service_stats_requests_total{service="<%= service_name %>",type="success"} <%= current_stats.successes %>
 <%
     if current_stats.errors > 0
 %>consul_service_stats_requests_total{service="<%= service_name %>",type="errors"} <%= current_stats.errors %>
 <%
     end
-%>consul_service_stats_requests_bytes{service="<%= service_name %>"} <%= service_info[:stats].body_bytes %>
-consul_service_stats_requests_bytes_per_sec{service="<%= service_name %>"} <%= service_info[:stats].bytes_per_sec(now) %>
-consul_service_changes_total{service="<%= service_name %>"} <%= service_info[:stats].changes %>
+%>consul_service_stats_requests_bytes{service="<%= service_name %>"} <%= current_stats.body_bytes %>
+consul_service_stats_requests_bytes_per_sec{service="<%= service_name %>"} <%= current_stats.bytes_per_sec(now) %>
+consul_service_changes_total{service="<%= service_name %>"} <%= current_stats.changes %>
 
 <%
   end

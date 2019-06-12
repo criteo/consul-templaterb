@@ -2,6 +2,19 @@
 
 ## (UNRELEASED)
 
+## 1.15.2 (June 12, 2019)
+
+IMPROVEMENTS
+
+`samples/metrics.erb` can now output metrics with labels for services with any kind of
+service/node meta. You can tune output of prometheus labels with the environment
+variable `PROMETHEUS_EXPORTED_SERVICE_META` which contains the keys separated by
+commas to extract from Service.Meta or Node.Meta.
+
+Using `PROMETHEUS_EXPORTED_SERVICE_META='version,os'` would add prometheus labels
+version="xx",os="linux" on instances having those metadata on service or nodes when
+meta is available.
+
 ## 1.15.1 (May 23, 2019)
 
 IMPROVEMENTS
