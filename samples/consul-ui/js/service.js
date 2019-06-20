@@ -33,10 +33,10 @@ class ConsulService {
     }
   }
 
-  fetchRessource() {
-    $.ajax({url: this.ressourceURL, cache: false, dataType: "json", sourceObject: this, success: function(result){
-      consulService.initRessource(result);
-    }});
+  async fetchRessource() {
+    const response = await fetch(this.ressourceURL);
+    const result = await response.json();
+    await this.initRessource(result);
   }
 
   initRessource(data) {
