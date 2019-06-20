@@ -4,9 +4,9 @@ class ConsulService {
     this.fetchRessource();
     this.serviceList = $("#service-list");
     this.serviceFilter = $("#service-filter");
-    this.serviceFilter.keyup(this.filterService);
+    this.serviceFilter.keyup(debounce(this.filterService, 250));
     this.instanceFilter = $("#instance-filter");
-    this.instanceFilter.keyup(this.filterInstances);
+    this.instanceFilter.keyup(debounce(this.filterInstances, 250));
     this.refresh = parseInt(refresh);
     this.filterStatus = null;
     this.serviceFilterCounter = $("#service-counter");

@@ -4,7 +4,7 @@ class ConsulKeys {
     this.fetchRessource();
     this.keysList = $("#keys-list");
     this.keysFilter = $("#keys-filter");
-    this.keysFilter.keyup(this.filterService);
+    this.keysFilter.keyup(debounce(this.filterService, 250));
     this.refresh = parseInt(refresh);
     this.keysFilterCounter = $("#keys-counter");
     this.keysFilterCount = 0;
