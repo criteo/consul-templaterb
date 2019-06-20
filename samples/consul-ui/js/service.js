@@ -39,9 +39,9 @@ class ConsulService {
     await this.initRessource(result);
   }
 
-  initRessource(data) {
+  async initRessource(data) {
     this.data = data;
-    this.reloadServiceList();
+    await this.reloadServiceList();
     console.log('Data generated at: ' + data['generated_at']);
 
     var urlParam = new URL(location.href).searchParams.get('service');
@@ -71,7 +71,7 @@ class ConsulService {
     }
   }
 
-  reloadServiceList() {
+  async reloadServiceList() {
     this.serviceList.html('');
     this.serviceFilterCount = 0;
 
@@ -82,9 +82,15 @@ class ConsulService {
       const favorites = services.filter(({ service }) => this.favorites[service.name]);
       const others = services.filter(({ service }) => !this.favorites[service.name]);
 
-      for (const { service, index } of [...favorites, ...others]) {
-        this.appendService(service, index);
-      }
+      const appendServiceAsync = ({ service, index }) =>
+        new Promise(resolve =>
+          setTimeout(() => {
+            this.appendService(service, index);
+            resolve();
+          }, 0)
+        );
+
+      await Promise.all([...favorites, ...others].map(appendServiceAsync));
     }
 
     this.serviceFilterCounter.html(this.serviceFilterCount);
