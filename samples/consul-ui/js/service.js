@@ -1,6 +1,6 @@
 class ConsulService {
-  constructor(ressourceURL, refresh) {
-    this.ressourceURL = ressourceURL;
+  constructor(resourceURL, refresh) {
+    this.resourceURL = resourceURL;
     this.fetchRessource();
     this.serviceList = $("#service-list");
     this.serviceFilter = $("#service-filter");
@@ -34,7 +34,7 @@ class ConsulService {
   }
 
   async fetchRessource() {
-    const response = await fetch(this.ressourceURL);
+    const response = await fetch(this.resourceURL);
     const result = await response.json();
     await this.initRessource(result);
   }
