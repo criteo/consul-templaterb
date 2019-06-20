@@ -45,12 +45,7 @@ class ConsulService {
     console.log('Data generated at: ' + data['generated_at']);
 
     var urlParam = new URL(location.href).searchParams.get('service');
-    if (urlParam === null) {
-      var servicePrefix = '#service_'
-      if (location.hash.startsWith(servicePrefix)) {
-        urlParam = location.hash.substr(servicePrefix.length)
-      }
-    }
+
     if (urlParam) {
       var nodes = document.getElementById('service-list').childNodes;
       for(var i in nodes) {
@@ -61,19 +56,18 @@ class ConsulService {
           break;
         }
       }
-    } else {
+      this.serviceFilter.val(urlParam);
+      this.filterService()
+  } else {
+      var servicePrefix = '#service_'
+      if (location.hash.startsWith(servicePrefix)) {
+        urlParam = location.hash.substr(servicePrefix.length)
+      }
       this.selectService(document.getElementById('service-list').firstElementChild);
     }
 
     if(this.refresh > 0) {
       setTimeout(this.fetchRessource, this.refresh * 1000);
-    }
-
-    if (urlParam === null) {
-      return
-    } else if (urlParam) {
-      this.serviceFilter.val(urlParam);
-      this.filterService()
     }
   }
 
@@ -145,11 +139,12 @@ class ConsulService {
         listItem.appendChild(serviceTagsItem);
         this.serviceFilterCount += 1;
 
-        if (this.favorites[serviceName] && lastFav) {
-          lastFav.after(listItem);
-          lastFav = listItem;
-        } else if (this.favorites[serviceName] && !lastFav) {
-          this.serviceList.prepend(listItem);
+        if (this.favorites[serviceName]) {
+          if (lastFav) {
+            lastFav.after(listItem);
+          } else {
+            this.serviceList.prepend(listItem);
+          }
           lastFav = listItem;
         } else {
           this.serviceList.append(listItem);
