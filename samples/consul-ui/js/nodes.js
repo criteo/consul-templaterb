@@ -3,10 +3,7 @@ class ConsulNodes {
     this.ressourceURL = ressourceURL;
     this.fetchRessource();
     this.instanceFilter = $("#instance-filter");
-    this.instanceFilter.keyup(function (e) {
-      clearTimeout(consulNodes.timeout);
-      consulNodes.timeout = setTimeout(consulNodes.filterInstances, 400);
-    });
+    this.instanceFilter.keyup(debounce(this.filterInstances, 400));
     this.refresh = parseInt(refresh);
     this.filterStatus = null;
     this.maxDisplayed = 100;

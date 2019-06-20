@@ -1,12 +1,12 @@
 class ConsulService {
-  constructor(ressourceURL, refresh) {
-    this.ressourceURL = ressourceURL;
+  constructor(resourceURL, refresh) {
+    this.resourceURL = resourceURL;
     this.fetchRessource();
     this.serviceList = $("#service-list");
     this.serviceFilter = $("#service-filter");
-    this.serviceFilter.keyup(this.filterService);
+    this.serviceFilter.keyup(debounce(this.filterService, 250));
     this.instanceFilter = $("#instance-filter");
-    this.instanceFilter.keyup(this.filterInstances);
+    this.instanceFilter.keyup(debounce(this.filterInstances, 250));
     this.refresh = parseInt(refresh);
     this.filterStatus = null;
     this.serviceFilterCounter = $("#service-counter");
@@ -33,135 +33,132 @@ class ConsulService {
     }
   }
 
-  fetchRessource() {
-    $.ajax({url: this.ressourceURL, cache: false, dataType: "json", sourceObject: this, success: function(result){
-      consulService.initRessource(result);
-    }});
+  async fetchRessource() {
+    const response = await fetch(this.resourceURL);
+    const result = await response.json();
+    await this.initRessource(result);
   }
 
-  initRessource(data) {
+  async initRessource(data) {
     this.data = data;
-    this.reloadServiceList();
+    await this.reloadServiceList();
     console.log('Data generated at: ' + data['generated_at']);
 
     var urlParam = new URL(location.href).searchParams.get('service');
-    if (urlParam === null) {
-      var servicePrefix = '#service_'
-      if (location.hash.startsWith(servicePrefix)) {
-        urlParam = location.hash.substr(servicePrefix.length)
-      }
-    }
+
     if (urlParam) {
       var nodes = document.getElementById('service-list').childNodes;
-      for(var i in nodes) {
-        if($(nodes[i]).find(".service-name").html() == urlParam) {
-          var selectedElement = $(nodes[i])
+      for (const node of nodes) {
+        if($(node).find(".service-name").html() == urlParam) {
+          var selectedElement = $(node)
           this.selectService(selectedElement);
           selectedElement.focus()
           break;
         }
       }
-    } else {
+      this.serviceFilter.val(urlParam);
+      this.filterService()
+  } else {
+      var servicePrefix = '#service_'
+      if (location.hash.startsWith(servicePrefix)) {
+        urlParam = location.hash.substr(servicePrefix.length)
+      }
       this.selectService(document.getElementById('service-list').firstElementChild);
     }
 
     if(this.refresh > 0) {
       setTimeout(this.fetchRessource, this.refresh * 1000);
     }
-
-    let urlServiceParam = new URL(location.href).searchParams.get('filter');
-    if (urlServiceParam === null) {
-      return
-    } else if (urlServiceParam) {
-      this.serviceFilter.val(urlServiceParam);
-      this.filterService()
-    }
   }
 
-  reloadServiceList() {
+  async reloadServiceList() {
     this.serviceList.html('');
     this.serviceFilterCount = 0;
 
-    let idx = 0;
-    let lastFav = null;
     if (!this.data || !this.data.services) {
       console.log("No data to display");
     } else {
-      for (var serviceName in this.data.services) {
-        var service = this.data.services[serviceName];
-        var serviceStatus = buildServiceStatus(service);
+      const services = Object.values(this.data.services).map((service, index) => ({ service, index }));
+      const favorites = services.filter(({ service }) => this.favorites[service.name]);
+      const others = services.filter(({ service }) => !this.favorites[service.name]);
 
-        var listItem = document.createElement('li');
-        listItem.setAttribute('onfocus','consulService.onClickServiceName(this)');
-        listItem.setAttribute('onclick','consulService.onClickServiceName(this)');
-        listItem.setAttribute('value',serviceName);
-        listItem.setAttribute('data-fav', this.favorites[serviceName] ? 1 : 0);
-        listItem.setAttribute('data-index', idx);
-        var listItemClass = 'serviceListItem list-group-item list-group-item-action';
+      const appendServiceAsync = ({ service, index }) =>
+        new Promise(resolve =>
+          setTimeout(() => {
+            this.appendService(service, index);
+            resolve();
+          }, 0)
+        );
 
-        var statuses = document.createElement('div');
-        statuses.setAttribute('class','statuses float-right');
-
-        if (!!serviceStatus['passing']) {
-          statuses.appendChild(createBadge('badge-success passing', serviceStatus['passing']));
-          listItem.setAttribute('status', 'passing');
-        }
-
-        if (!!serviceStatus['warning']) {
-          statuses.appendChild(createBadge('badge-warning warning', serviceStatus['warning']));
-          listItem.setAttribute('status', 'warning');
-        }
-
-        if (!!serviceStatus['critical']) {
-          statuses.appendChild(createBadge('badge-danger critical', serviceStatus['critical']));
-          listItem.setAttribute('status', 'critical');
-        }
-
-        statuses.appendChild(createBadge('badge-dark', (serviceStatus['total'] || 0)));
-
-        statuses.append(this.buildFavButton(serviceName));
-
-        listItem.appendChild(statuses);
-        if (!!service['kind']) {
-          var kind = document.createElement('div');
-          kind.setAttribute('class','kind float-right');
-          kind.appendChild(createBadge('badge-info kind', service['kind']));
-          listItem.appendChild(kind);
-          listItemClass+= " kind-" + service['kind'];
-        }
-        listItem.setAttribute('class', listItemClass);
-
-        var serviceNameItem = document.createElement('div');
-        serviceNameItem.setAttribute('class', 'service-name');
-        serviceNameItem.appendChild(document.createTextNode(serviceName));
-        listItem.appendChild(serviceNameItem);
-
-        var serviceTagsItem = document.createElement('div');
-        serviceTagsItem.setAttribute('class', 'service-tags');
-
-        for (var i = 0; i < service.tags.length; i++) {
-          serviceTagsItem.appendChild(createBadge('float-right badge-' + (i%2?'secondary':'info') , service.tags[i]));
-        }
-
-        listItem.appendChild(serviceTagsItem);
-        this.serviceFilterCount += 1;
-
-        if (this.favorites[serviceName] && lastFav) {
-          lastFav.after(listItem);
-          lastFav = listItem;
-        } else if (this.favorites[serviceName] && !lastFav) {
-          this.serviceList.prepend(listItem);
-          lastFav = listItem;
-        } else {
-          this.serviceList.append(listItem);
-        }
-
-        idx++;
-      }
+      await Promise.all([...favorites, ...others].map(appendServiceAsync));
     }
+
     this.serviceFilterCounter.html(this.serviceFilterCount);
     resizeWrapper('service-wrapper', 'service-list');
     this.filterService();
+  }
+
+  appendService(service, index) {
+    var serviceName = service.name;
+    var serviceStatus = buildServiceStatus(service);
+
+    var listItem = document.createElement('li');
+    listItem.setAttribute('onfocus','consulService.onClickServiceName(this)');
+    listItem.setAttribute('onclick','consulService.onClickServiceName(this)');
+    listItem.setAttribute('value', serviceName);
+    listItem.setAttribute('data-fav', this.favorites[serviceName] ? 1 : 0);
+    listItem.setAttribute('data-index', index);
+    var listItemClass = 'serviceListItem list-group-item list-group-item-action';
+
+    var statuses = document.createElement('div');
+    statuses.setAttribute('class','statuses float-right');
+
+    if (!!serviceStatus['passing']) {
+      statuses.appendChild(createBadge('badge-success passing', serviceStatus['passing']));
+      listItem.setAttribute('status', 'passing');
+    }
+
+    if (!!serviceStatus['warning']) {
+      statuses.appendChild(createBadge('badge-warning warning', serviceStatus['warning']));
+      listItem.setAttribute('status', 'warning');
+    }
+
+    if (!!serviceStatus['critical']) {
+      statuses.appendChild(createBadge('badge-danger critical', serviceStatus['critical']));
+      listItem.setAttribute('status', 'critical');
+    }
+
+    statuses.appendChild(createBadge('badge-dark', (serviceStatus['total'] || 0)));
+
+    statuses.append(this.buildFavButton(serviceName));
+
+    listItem.appendChild(statuses);
+    if (!!service['kind']) {
+      var kind = document.createElement('div');
+      kind.setAttribute('class','kind float-right');
+      kind.appendChild(createBadge('badge-info kind', service['kind']));
+      listItem.appendChild(kind);
+      listItemClass+= " kind-" + service['kind'];
+    }
+    listItem.setAttribute('class', listItemClass);
+
+    var serviceNameItem = document.createElement('div');
+    serviceNameItem.setAttribute('class', 'service-name');
+    serviceNameItem.appendChild(document.createTextNode(serviceName));
+    listItem.appendChild(serviceNameItem);
+
+    var serviceTagsItem = document.createElement('div');
+    serviceTagsItem.setAttribute('class', 'service-tags');
+
+    for (var i = 0; i < service.tags.length; i++) {
+      serviceTagsItem.appendChild(createBadge('float-right badge-' + (i%2?'secondary':'info') , service.tags[i]));
+    }
+
+    listItem.appendChild(serviceTagsItem);
+
+    this.serviceList.append(listItem);
+
+    this.serviceFilterCount += 1;
   }
 
   filterService() {
