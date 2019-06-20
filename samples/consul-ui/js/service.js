@@ -75,87 +75,84 @@ class ConsulService {
     this.serviceList.html('');
     this.serviceFilterCount = 0;
 
-    let idx = 0;
-    let lastFav = null;
     if (!this.data || !this.data.services) {
       console.log("No data to display");
     } else {
-      for (var serviceName in this.data.services) {
-        var service = this.data.services[serviceName];
-        var serviceStatus = buildServiceStatus(service);
+      const services = Object.values(this.data.services).map((service, index) => ({ service, index }));
+      const favorites = services.filter(({ service }) => this.favorites[service.name]);
+      const others = services.filter(({ service }) => !this.favorites[service.name]);
 
-        var listItem = document.createElement('li');
-        listItem.setAttribute('onfocus','consulService.onClickServiceName(this)');
-        listItem.setAttribute('onclick','consulService.onClickServiceName(this)');
-        listItem.setAttribute('value',serviceName);
-        listItem.setAttribute('data-fav', this.favorites[serviceName] ? 1 : 0);
-        listItem.setAttribute('data-index', idx);
-        var listItemClass = 'serviceListItem list-group-item list-group-item-action';
-
-        var statuses = document.createElement('div');
-        statuses.setAttribute('class','statuses float-right');
-
-        if (!!serviceStatus['passing']) {
-          statuses.appendChild(createBadge('badge-success passing', serviceStatus['passing']));
-          listItem.setAttribute('status', 'passing');
-        }
-
-        if (!!serviceStatus['warning']) {
-          statuses.appendChild(createBadge('badge-warning warning', serviceStatus['warning']));
-          listItem.setAttribute('status', 'warning');
-        }
-
-        if (!!serviceStatus['critical']) {
-          statuses.appendChild(createBadge('badge-danger critical', serviceStatus['critical']));
-          listItem.setAttribute('status', 'critical');
-        }
-
-        statuses.appendChild(createBadge('badge-dark', (serviceStatus['total'] || 0)));
-
-        statuses.append(this.buildFavButton(serviceName));
-
-        listItem.appendChild(statuses);
-        if (!!service['kind']) {
-          var kind = document.createElement('div');
-          kind.setAttribute('class','kind float-right');
-          kind.appendChild(createBadge('badge-info kind', service['kind']));
-          listItem.appendChild(kind);
-          listItemClass+= " kind-" + service['kind'];
-        }
-        listItem.setAttribute('class', listItemClass);
-
-        var serviceNameItem = document.createElement('div');
-        serviceNameItem.setAttribute('class', 'service-name');
-        serviceNameItem.appendChild(document.createTextNode(serviceName));
-        listItem.appendChild(serviceNameItem);
-
-        var serviceTagsItem = document.createElement('div');
-        serviceTagsItem.setAttribute('class', 'service-tags');
-
-        for (var i = 0; i < service.tags.length; i++) {
-          serviceTagsItem.appendChild(createBadge('float-right badge-' + (i%2?'secondary':'info') , service.tags[i]));
-        }
-
-        listItem.appendChild(serviceTagsItem);
-        this.serviceFilterCount += 1;
-
-        if (this.favorites[serviceName]) {
-          if (lastFav) {
-            lastFav.after(listItem);
-          } else {
-            this.serviceList.prepend(listItem);
-          }
-          lastFav = listItem;
-        } else {
-          this.serviceList.append(listItem);
-        }
-
-        idx++;
+      for (const { service, index } of [...favorites, ...others]) {
+        this.appendService(service, index);
       }
     }
+
     this.serviceFilterCounter.html(this.serviceFilterCount);
     resizeWrapper('service-wrapper', 'service-list');
     this.filterService();
+  }
+
+  appendService(service, index) {
+    var serviceName = service.name;
+    var serviceStatus = buildServiceStatus(service);
+
+    var listItem = document.createElement('li');
+    listItem.setAttribute('onfocus','consulService.onClickServiceName(this)');
+    listItem.setAttribute('onclick','consulService.onClickServiceName(this)');
+    listItem.setAttribute('value', serviceName);
+    listItem.setAttribute('data-fav', this.favorites[serviceName] ? 1 : 0);
+    listItem.setAttribute('data-index', index);
+    var listItemClass = 'serviceListItem list-group-item list-group-item-action';
+
+    var statuses = document.createElement('div');
+    statuses.setAttribute('class','statuses float-right');
+
+    if (!!serviceStatus['passing']) {
+      statuses.appendChild(createBadge('badge-success passing', serviceStatus['passing']));
+      listItem.setAttribute('status', 'passing');
+    }
+
+    if (!!serviceStatus['warning']) {
+      statuses.appendChild(createBadge('badge-warning warning', serviceStatus['warning']));
+      listItem.setAttribute('status', 'warning');
+    }
+
+    if (!!serviceStatus['critical']) {
+      statuses.appendChild(createBadge('badge-danger critical', serviceStatus['critical']));
+      listItem.setAttribute('status', 'critical');
+    }
+
+    statuses.appendChild(createBadge('badge-dark', (serviceStatus['total'] || 0)));
+
+    statuses.append(this.buildFavButton(serviceName));
+
+    listItem.appendChild(statuses);
+    if (!!service['kind']) {
+      var kind = document.createElement('div');
+      kind.setAttribute('class','kind float-right');
+      kind.appendChild(createBadge('badge-info kind', service['kind']));
+      listItem.appendChild(kind);
+      listItemClass+= " kind-" + service['kind'];
+    }
+    listItem.setAttribute('class', listItemClass);
+
+    var serviceNameItem = document.createElement('div');
+    serviceNameItem.setAttribute('class', 'service-name');
+    serviceNameItem.appendChild(document.createTextNode(serviceName));
+    listItem.appendChild(serviceNameItem);
+
+    var serviceTagsItem = document.createElement('div');
+    serviceTagsItem.setAttribute('class', 'service-tags');
+
+    for (var i = 0; i < service.tags.length; i++) {
+      serviceTagsItem.appendChild(createBadge('float-right badge-' + (i%2?'secondary':'info') , service.tags[i]));
+    }
+
+    listItem.appendChild(serviceTagsItem);
+
+    this.serviceList.append(listItem);
+
+    this.serviceFilterCount += 1;
   }
 
   filterService() {
