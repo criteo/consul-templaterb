@@ -69,11 +69,10 @@ class ConsulService {
       setTimeout(this.fetchRessource, this.refresh * 1000);
     }
 
-    let urlServiceParam = new URL(location.href).searchParams.get('filter');
-    if (urlServiceParam === null) {
+    if (urlParam === null) {
       return
-    } else if (urlServiceParam) {
-      this.serviceFilter.val(urlServiceParam);
+    } else if (urlParam) {
+      this.serviceFilter.val(urlParam);
       this.filterService()
     }
   }
