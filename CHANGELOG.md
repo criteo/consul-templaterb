@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+## 1.15.3 (June 20, 2019)
+
+Improved consul-ui Javascript #37 thanks to [@warrenseine](https://github.com/warrenseine)
+
 ## 1.15.2 (June 12, 2019)
 
 IMPROVEMENTS
