@@ -48,9 +48,9 @@ class ConsulService {
 
     if (urlParam) {
       var nodes = document.getElementById('service-list').childNodes;
-      for(var i in nodes) {
-        if($(nodes[i]).find(".service-name").html() == urlParam) {
-          var selectedElement = $(nodes[i])
+      for (const node of nodes) {
+        if($(node).find(".service-name").html() == urlParam) {
+          var selectedElement = $(node)
           this.selectService(selectedElement);
           selectedElement.focus()
           break;
