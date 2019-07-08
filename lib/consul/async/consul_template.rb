@@ -340,11 +340,27 @@ module Consul
         merge!(obj)
       end
 
+      # Return ['Node']['Meta']
+      def node_meta
+        self['Node']['Meta'] || {}
+      end
+
       # Return ['Service']['Address'] if defined, the address of node otherwise
       def service_address
         val = self['Service']['Address']
         val = self['Node']['Address'] unless !val.nil? && val != ''
         val
+      end
+
+      # Return a defined hash of string valued Service.Meta
+      def service_meta
+        self['Service']['Meta'] || {}
+      end
+
+      # If given key exists in Service.Meta returns it, otherwise the same key from
+      # return Node.Meta, otherwise return nil
+      def service_or_node_meta_value(key)
+        service_meta[key] || node_meta[key]
       end
 
       # Return the global state of a Service, will return passing|warning|critical

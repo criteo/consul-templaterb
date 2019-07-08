@@ -116,10 +116,25 @@ services that are passing or not. An optional argument passing might be used to 
 
 ### Helpers
 
+#### node_meta
+
+This function returns a Hash of object `['Node']['Meta']` (will return empty hash if very old version of Consul not
+supporting it)
+
 #### service_address
 
 This object also contains a Helper to get easily the correct Address by using `service_address` which returns
 the optional `['Service']['Address']` if found or `['Node']['Address']` otherwise.
+
+#### service_meta
+
+This helper function will return a Hash or `['Service']['Meta']` and will return empty hash if not supported
+by old versions of Consul (< 1.1.0)
+
+#### service_or_node_meta_value(key)
+
+This function will return a string of `['Service']['Meta']` if key is found in service meta, or
+`['Node']['Meta']` or nil if key does not exists in both Service.Meta and Node.Meta.
 
 #### status
 

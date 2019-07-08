@@ -23,7 +23,7 @@
         node_node_data = {
           Name: snode['Node']['Node'],
           Address: snode['Node']['Address'],
-          Meta: snode['Node']['Meta'],
+          Meta: snode.node_meta,
         }
 
         node_services_data = node_info[:Service] || []

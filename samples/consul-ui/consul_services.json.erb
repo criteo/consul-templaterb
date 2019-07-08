@@ -52,8 +52,8 @@
         check['notes'] = ncheck['Notes']
         checks.push(check)
       end
-      meta = snode['Service']['Meta']
-      node_meta = snode['Node']['Meta'] || {}
+      meta = snode.service_meta
+      node_meta = snode.node_meta
       node_name = snode['Node']['Node']
       all_nodes[node_name] = { meta: node_meta } if node_name
       server = { frontend_id: "backend_http__#{service_name}",

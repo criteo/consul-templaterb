@@ -2,6 +2,15 @@
 
 ## (UNRELEASED)
 
+## 1.16.0 (July 8, 2019)
+
+Added new helpers for `service()`
+
+ * `node_meta` return `['Node']['Meta'] or empty hash
+ * `service_meta` return `['Service']['Meta'] or empty hash for old consul versions
+ * `service_or_node_meta_value(key)` return a the value associated with key in meta from
+   service if in service, from node if in node, or nil if meta found nowhere.
+
 ## 1.15.3 (June 20, 2019)
 
 Improved consul-ui Javascript #37 thanks to [@warrenseine](https://github.com/warrenseine)

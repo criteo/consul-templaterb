@@ -30,9 +30,7 @@
         key = "#{snode['Service']['Service']}"
         metas = {}
         service_metas_to_export.each do |k|
-          meta = nil
-          meta = snode['Service']['Meta'][k] if snode['Service']['Meta']
-          meta = snode['Node']['Meta'][k] if !meta && snode['Node']['Meta']
+          meta = snode.service_or_node_meta_value(k)
           if meta
             key += "::#{k}=#{meta}"
             metas[k] = meta
