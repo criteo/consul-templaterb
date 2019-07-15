@@ -51,6 +51,26 @@ See [lib/consul/async/consul_template.rb:230](lib/consul/async/consul_template.r
 [lib/consul/async/consul_template.rb:260](lib/consul/async/consul_template.rb#L260) for up to date list of
 all those methods.
 
+## coordinate
+
+The coordinate object allow to interact with the coordinates of DCs and nodes as explained in
+[Network Coordinates](https://www.consul.io/docs/internals/coordinates.html).
+
+### coordinate.datacenters([dc: datacenter])
+
+[List the Wan Coordinates](https://www.consul.io/api/coordinate.html#read-wan-coordinates) from local DC to
+other DCs. If dc is set, it will perform the same operation but from another DC.
+
+### coordinate.nodes([dc: datacenter])
+
+[Read all LAN nodes coordinates](https://www.consul.io/api/coordinate.html#read-lan-coordinates-for-all-nodes).
+If If dc is set, it will perform the same operation but for another DC.
+
+### coordinate.rtt(nodeA, nodeB)
+
+Computes the rtt between 2 nodes returned by `coordinate.nodes` or `coordinate.datacenters`. A re-implementation of Golang sample code
+[Working with Coordinates](https://www.consul.io/docs/internals/coordinates.html#working-with-coordinates).
+
 ## datacenters()
 
 [Get the list of datacenters as string array](https://www.consul.io/api/catalog.html#list-datacenters).

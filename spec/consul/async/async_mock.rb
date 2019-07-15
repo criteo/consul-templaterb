@@ -51,6 +51,8 @@ module Consul
          v1/catalog/node/consul02.prod
          v1/catalog/node/7a985997-3925-4f18-8613-637c81bd750b
          v1/catalog/services
+         v1/coordinate/datacenters
+         v1/coordinate/nodes
          v1/health/checks/consul
          v1/health/service/consul
          v1/kv/

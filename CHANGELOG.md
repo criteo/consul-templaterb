@@ -2,6 +2,18 @@
 
 ## (UNRELEASED)
 
+## 1.17.0 (July 15, 2019)
+
+IMPROVEMENTS:
+
+ * when failing to write a file, describe the error with more context (file size...)
+
+NEW FEATURES:
+
+Added new coordinates endpoints:
+ * `coordinate.datacenters` list coordinates of datacenters (WAN)
+ * `coodinate.nodes` list coordinates of nodes (LAN)
+
 ## 1.16.0 (July 8, 2019)
 
 Added new helpers for `service()`

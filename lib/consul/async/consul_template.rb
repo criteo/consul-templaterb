@@ -21,8 +21,48 @@ module Consul
       end
     end
 
+    # Encapsulation of endpoints to get coordinates
+    class Coordinate
+      def initialize(endpoints_manager)
+        @endp_manager = endpoints_manager
+      end
+
+      # Return the coordinates of datacenters
+      def datacenters(dc: nil)
+        path = '/v1/coordinate/datacenters'
+        query_params = {}
+        query_params[:dc] = dc if dc
+        @endp_manager.create_if_missing(path, query_params) { ConsulTemplateNodes.new(ConsulEndpoint.new(@endp_manager.consul_conf, path, true, query_params, '[]')) }
+      end
+
+      # Returns the coordinates for all nodes of DC
+      def nodes(dc: nil)
+        path = '/v1/coordinate/nodes'
+        query_params = {}
+        query_params[:dc] = dc if dc
+        @endp_manager.create_if_missing(path, query_params) { ConsulTemplateNodes.new(ConsulEndpoint.new(@endp_manager.consul_conf, path, true, query_params, '[]')) }
+      end
+
+      # Computes the RTT between 2 nodes
+      def rtt(a, b)
+        # Calculate the Euclidean distance plus the heights.
+        a_vec = a['Vec']
+        b_vec = b['Vec']
+        sumsq = 0.0
+        a_vec.count.times do |i|
+          diff = a_vec[i] - b_vec[i]
+          sumsq += diff * diff
+        end
+        rtt = Math.sqrt(sumsq) + a['Height'] + b['Height']
+
+        adjusted = rtt + a['Adjustment'] + b['Adjustment']
+        rtt = adjusted if adjusted.positive?
+        rtt
+      end
+    end
+
     class EndPointsManager
-      attr_reader :consul_conf, :vault_conf, :net_info, :start_time
+      attr_reader :consul_conf, :vault_conf, :net_info, :start_time, :coordinate
       def initialize(consul_configuration, vault_configuration, trim_mode = nil)
         @consul_conf = consul_configuration
         @vault_conf = vault_configuration
@@ -48,6 +88,7 @@ module Consul
           },
           params: {}
         }
+        @coordinate = Coordinate.new(self)
 
         # Setup token renewal
         vault_setup_token_renew unless @vault_conf.token.nil? || !@vault_conf.token_renew
@@ -246,10 +287,14 @@ module Consul
                        "netinfo=#{@net_info} aka "\
                        "#{Utilities.bytes_to_h((net_info[:network_bytes] / (Time.now.utc - @start_time)).round(1))}/s ...\r"
           tmp_file = "#{file}.tmp"
-          File.open(tmp_file, 'w') do |f|
-            f.write data
+          begin
+            File.open(tmp_file, 'w') do |f|
+              f.write data
+            end
+            File.rename(tmp_file, file)
+          rescue StandardError => e
+            ::Consul::Async::Debug.puts_error "Failed  writting #{Utilities.bytes_to_h data.bytesize} bytes to #{file}: #{e.class}, message: #{e.inspect}"
           end
-          File.rename(tmp_file, file)
         end
         [true, data != last_result, data]
       end

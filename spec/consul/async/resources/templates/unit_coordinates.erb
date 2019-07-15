@@ -1,0 +1,7 @@
+<%
+  nodeName1 = 'consul-relay02-par.central.criteo.preprod'
+  nodeName2 = 'consul06-par.central.criteo.preprod'
+  node1 = coordinate.nodes.select { |c| c['Node'] == nodeName1}.first
+  node2 = coordinate.nodes.select { |c| c['Node'] == nodeName2}.first
+%><%= nodeName1 %> to <%= nodeName1 %>: <%= coordinate.rtt(node1['Coord'], node1['Coord']).round(8) if node1 %>s
+<%= nodeName1 %> to <%= nodeName2 %>: <%= coordinate.rtt(node1['Coord'], node2['Coord']).round(8) if node1 && node2 %>s
