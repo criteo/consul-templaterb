@@ -60,6 +60,9 @@ options = {
       '/v1/catalog/nodes': {
         min_duration: 15,    # Do not wake up before 15 seconds when node appear/disappear
       },
+      '/v1/coordinate/nodes': {
+        min_duration: 60,    # Since coordinates change a lot, refresh coordinates every 30 seconds
+      },
       '/v1/catalog/datacenters': {
         min_duration: 60,    # Datacenters are not added every minute, right?
       },

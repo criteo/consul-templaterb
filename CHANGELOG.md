@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.17.1 (July 15, 2019)
+
+NEW FEATURES:
+
+ * consul-ui now supports displaying coordinates and evaluating RTT for any node
+
 ## 1.17.0 (July 15, 2019)
 
 IMPROVEMENTS:

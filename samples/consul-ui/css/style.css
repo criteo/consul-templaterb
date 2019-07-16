@@ -211,6 +211,10 @@ html, body {
   display: flex;
 }
 
+.distancesButton {
+  float: right;
+}
+
 .instance-content-header h5 {
   margin-right: 10px;
 }

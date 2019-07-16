@@ -15,6 +15,7 @@
   services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }  # Compute the health of a Service
 
   service_per_node = {}
+  all_coordinates = coordinate.nodes.map { |c| [c['Node'], c['Coord']] }.to_h
   services.each do |service_name, tags|
     if ! services_blacklist.any? {|r| r.match(service_name)}
       service(service_name, tag: service_tag_filter).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
@@ -55,6 +56,7 @@
           Service: node_services_data,
           # Only put Checks on a Node
           checks: snode["Checks"].select{|c| c['ServiceID'].empty? }.map{|c| {output: c['Output'], notes: c['Notes'], name: c['Name'], checkid: c['CheckID'], status: c['Status']}},
+          Coord: all_coordinates[node_node_data[:Name]],
         }
 
         service_per_node[snode['Node']['Node']] = node_data

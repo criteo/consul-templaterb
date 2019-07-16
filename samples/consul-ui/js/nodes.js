@@ -60,12 +60,99 @@ class ConsulNodes {
     })
   }
 
+  // taken from https://www.consul.io/docs/internals/coordinates.html#working-with-coordinates
+  compute_dist(a, b) {
+    var sumsq = 0.0
+    for (var i = 0; i < a.Vec.length; i++) {
+        var diff = a.Vec[i] - b.Vec[i]
+        sumsq += diff * diff
+    }
+    var rtt = Math.sqrt(sumsq) + a.Height + b.Height
+
+    // Apply the adjustment components, guarding against negatives.
+    var adjusted = rtt + a.Adjustment + b.Adjustment
+    if (adjusted > 0.0) {
+        rtt = adjusted
+    }
+
+    // Go's times are natively nanoseconds, so we convert from seconds.
+    const secondsToNanoseconds = 1.0e9
+    return rtt
+  }
+
+  compute_all_distances(instances, node) {
+    const asc = function(arr) { return arr.sort((a, b) => a - b); }
+    // sample standard deviation
+    const std = function (arr) {
+      const mu = mean(arr);
+      const diffArr = arr.map(a => (a - mu) ** 2);
+      return Math.sqrt(sum(diffArr) / (arr.length - 1));
+    };
+
+    const quantile = function(sorted, q) {
+      //const sorted = asc(arr);
+      const pos = ((sorted.length) - 1) * q;
+      //console.log("pos", pos, "for", q);
+      const base = Math.floor(pos);
+      const rest = pos - base;
+      if ((sorted[base + 1] !== undefined)) {
+          return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+      } else {
+          return sorted[base];
+      }
+    };
+
+    var sum = 0;
+    var count = 0;
+    var ret = {
+      min: 3600,
+      min_node: null,
+      max: 0,
+      max_node: null,
+    };
+    var all_values = [];
+    var myCoords = instances[node]['Coord']
+    if (myCoords == null) {
+      console.log("Coords are not defined for ", node)
+      return null;
+    } else {
+      for (var key in instances) {
+        var instance = instances[key];
+        if (key != node && instance != null && instance['Coord'] != null) {
+          count++
+          var coord = instance['Coord'];
+          if (coord != null) {
+            const rtt = this.compute_dist(myCoords, coord);
+            all_values.push(rtt);
+            if (rtt < ret.min) {
+              ret.min = rtt;
+              ret.min_node = key
+            }
+            if (rtt > ret.max) {
+              ret.max = rtt;
+              ret.max_node = key;
+            }
+            sum += rtt;
+          }
+        }
+      }
+    }
+    all_values = all_values.sort();
+    ret.avg = sum / count;
+    ret.q50 = quantile(all_values, .50);
+    ret.q90 = quantile(all_values, .90);
+    ret.q99 = quantile(all_values, .99);
+    ret.q999 = quantile(all_values, .999);
+    ret.q9999 = quantile(all_values, .9999);
+    return ret;
+  }
+
   displayInstances(instances) {
     $("#instances-list").html("");
 
     // var serviceStatus = buildServiceStatus(service);
     this.displayedCount = 0;
-
+    var nodesInfo = this;
     for (var key in instances) {
       var instance = instances[key];
 
@@ -95,6 +182,40 @@ class ConsulNodes {
       contentHead.appendChild(nodeAddressGenator(instance['Node']['Address']));
       contentHead.appendChild(nodeMetaGenerator(instance['Node']['Meta']));
       content.appendChild(contentHead);
+      var distances = document.createElement('div');
+      var distancesRefresh = document.createElement("button");
+      distancesRefresh.appendChild(document.createTextNode("Show/Hide Node Latency"));
+      distancesRefresh.setAttribute("class", "distancesButton");
+      distances.appendChild(distancesRefresh);
+      var distancesContent = document.createElement("div");
+      distances.appendChild(distancesContent);
+      (function() {
+        var nodeName = instance['Node']['Name'];
+        var distancesContentToUpdate = distancesContent;
+        var buttonToHide = $(distancesRefresh);
+        $(distancesRefresh).click(function(){
+          if (distancesContentToUpdate.children.length == 0){
+            var x = nodesInfo.compute_all_distances(instances, nodeName);
+            var dl = document.createElement(dl);
+            dl.className = 'row';
+            for (var i in x) {
+              var dt = document.createElement("dt");
+              dt.appendChild(document.createTextNode(i));
+              dt.className = 'col-sm-4';
+              dl.appendChild(dt);
+              var dd = document.createElement("dd");
+              dd.appendChild(document.createTextNode(x[i]));
+              dd.className = 'col-sm-8';
+              dl.appendChild(dd);
+            }
+            distancesContentToUpdate.appendChild(dl);
+          } else {
+            distancesContentToUpdate.innerHTML = '';
+          }
+        });
+      })();
+      content.appendChild(distances);
+      //distances.appendChild()
       var nodesChecks = document.createElement('div');
       nodesChecks.setAttribute('class','nodes-checks');
       nodesChecks.appendChild(checksStatusGenerator(instance, instance['Node']['Name']));
