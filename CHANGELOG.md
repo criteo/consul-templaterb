@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.17.2 (July 17, 2019)
+
+IMPROVEMENTS:
+
+ * if template uses fork, do not kill child processes launched by exec
+
 ## 1.17.1 (July 15, 2019)
 
 NEW FEATURES:

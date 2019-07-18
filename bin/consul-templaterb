@@ -75,6 +75,7 @@ options = {
     }
   }
 }
+my_pid = Process.pid
 consul_engine = Consul::Async::ConsulTemplateEngine.new
 @programs = {}
 cur_sig_reload = 'HUP'.freeze
@@ -301,9 +302,11 @@ Signal.trap('USR1', 'IGNORE') unless Gem.win_platform?
 # Ensure to kill child process if any
 ['EXIT'].each do |sig|
   Signal.trap(sig) do |signo|
-    STDERR.puts "[KILL] received #{Signal.signame(signo)}, stopping myself"
+    # handle nicely forks
+    m_p = my_pid == Process.pid
+    STDERR.puts "[KILL] received #{Signal.signame(signo)}, stopping myself" if m_p
     template_manager.terminate
-    kill_program
+    kill_program if m_p
   end
 end
 
