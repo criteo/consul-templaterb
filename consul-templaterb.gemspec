@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.add_runtime_dependency 'em-http-request', '>= 1.1.5'
   spec.add_runtime_dependency 'eventmachine', '>= 1.2.7'
+  spec.add_runtime_dependency 'parallel', '>= 1.2.7'
 
   spec.add_development_dependency 'bundler', '>= 1.14'
   spec.add_development_dependency 'rake', '~> 10.0'
