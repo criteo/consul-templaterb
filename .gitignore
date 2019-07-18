@@ -12,6 +12,7 @@
 /samples/**/*.html
 /samples/**/*.txt
 /samples/**/*.cfg
+/samples/prometheus_consul_coordinates
 /samples/ready
 /samples/render_template_from_kv
 /samples/consul_template
