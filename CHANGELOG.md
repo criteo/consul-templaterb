@@ -2,6 +2,13 @@
 
 ## (UNRELEASED)
 
+## 1.17.3 (July 18, 2019)
+
+NEW FEATURES:
+
+ * new template `samples/prometheus_consul_coordinates.erb` that computes
+   rtt for each node.
+
 ## 1.17.2 (July 17, 2019)
 
 IMPROVEMENTS:

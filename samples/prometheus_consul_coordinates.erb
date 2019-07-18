@@ -1,0 +1,138 @@
+# HELP consul_node_rtt_min_seconds Min Round trip with other servers of DC
+# TYPE consul_node_rtt_min_seconds gauge
+
+# HELP consul_node_rtt_max_seconds Max Round trip with other servers of DC
+# TYPE consul_node_rtt_max_seconds gauge
+
+# HELP consul_node_rtt_sum_seconds Sum in seconds of all RTTs with all other servers
+# TYPE consul_node_rtt_sum_seconds gauge
+
+# HELP consul_node_rtt_count Number of nodes
+# TYPE consul_node_rtt_count gauge
+<%
+unless @consul_node_settings
+  @consul_node_settings = {
+      :compute_duration => 0,
+      :initialized      => false,
+      :last_results     => {},
+      :last_update      => Time.parse('2019-01-01 00:00:00 +0100'),
+      :num_cpus         => (ENV['CONSUL_COORDINATES_CPUS'] || ENV['MARATHON_APP_RESOURCE_CPUS'] || '-1').to_f.floor,
+      :percentiles      => (ENV['CONSUL_COORDINATES_PERCENTILES'] || '.5,.9,.99,.999').split(',').map {|s| s.to_f},
+  }
+  if @consul_node_settings[:num_cpus] < 0
+    require 'etc'
+    @consul_node_settings[:num_cpus] = Etc.nprocessors - 1
+    STDERR.puts "Autodetected #{@consul_node_settings[:num_cpus]} CPUs"
+  end
+end
+
+@consul_node_settings[:percentiles].each do |pctl|
+  fname = "consul_rtt_nodes_q#{pctl.to_s.sub('.', '_')}_seconds"
+%># HELP <%= fname %> Get the percentile <%= pctl %>
+# TYPE <%= fname %> gauge
+
+<%
+end
+nodes_meta = nodes.map{ |n| [n['Node'], n['Meta']]}.to_h
+nodes_coordinates = coordinate.nodes.map { |n| [n['Node'], n] }.to_h
+
+unless @consul_node_settings[:initialized]
+  @consul_node_settings[:initialized] = true
+  # compute percentile on sorted values
+  def percentile(values_sorted, percentile)
+      k = (percentile*(values_sorted.length-1)+1).floor - 1
+      f = (percentile*(values_sorted.length-1)+1).modulo(1)
+      return values_sorted[k] + (f * (values_sorted[k+1] - values_sorted[k]))
+  end
+
+  # build default statistics
+  def build_stats
+    {
+       '_values'      => [],
+       'min_seconds' => 3600,
+       'max_seconds' => 0,
+       'sum_seconds' => 0,
+       'count'       => 0,
+    }
+  end
+
+  # Add node RTT
+  def add_node_rtt(node_info, rtt_val)
+    vals = node_info['_values']
+    idx = vals.bsearch_index { |x| x > rtt_val }
+    if idx.nil?
+    vals << rtt_val
+    else
+    vals = vals.insert(idx, rtt_val)
+    end
+    node_info['_values'] = vals
+    node_info['min_seconds'] = rtt_val if node_info['min_seconds'] > rtt_val
+    node_info['max_seconds'] = rtt_val if node_info['max_seconds'] < rtt_val
+    node_info['sum_seconds'] += rtt_val
+    node_info['count'] += 1
+    node_info
+  end
+
+  def compute_node_data(src, nodes_meta, nodes_coordinates)
+    node_info = {
+        'results' => build_stats,
+    }
+    metas = nodes_meta[src] || {}
+    metas['src'] = src
+    node_info['metas'] = metas.select {|k,v| !v.empty?}.map{|k,v| "#{k}=\"#{v}\""}.join(',')
+    results = node_info['results']
+    n1 = nodes_coordinates[src]
+    # Handle coordinates not there yet
+    return node_info unless n1
+    nodes_coordinates.each do |c2n, n2|
+      rtt_val = coordinate.rtt(n1['Coord'], n2['Coord'])
+      results = add_node_rtt(results, rtt_val)
+    end
+    @consul_node_settings[:percentiles].each do |pctl|
+        results["q#{pctl.to_s.sub('.', '_')}_seconds"] = percentile(results["_values"], pctl)
+    end unless results["_values"].empty?
+    node_info
+  end
+
+  def compute_map_keys(nodeCoords, nodes_meta, nodes_coordinates)
+    node_name = nodeCoords['Node']
+    [node_name, compute_node_data(node_name, nodes_meta, nodes_coordinates)]
+  end
+
+  def compute_all_results(nodes_meta, nodes_coordinates)
+    start_now = Time.now.utc
+    last_updated = @consul_node_settings[:last_update]
+    # We compute every 30 seconds max
+    if (start_now - last_updated).round > 30 && !nodes_meta.empty? && !nodes_coordinates.empty?
+      if @consul_node_settings[:num_cpus] > 1
+        require 'parallel'
+        all_nodes = Parallel.map(nodes_coordinates, in_processes: @consul_node_settings[:num_cpus] - 1) {|_, c| compute_map_keys(c, nodes_meta, nodes_coordinates)}
+      else
+        all_nodes = nodes_coordinates.map {|_, c| compute_map_keys(c, nodes_meta, nodes_coordinates)}
+      end
+      @consul_node_settings[:last_results] = all_nodes
+      @consul_node_settings[:last_update] = Time.now.utc
+      @consul_node_settings[:compute_duration] = @consul_node_settings[:last_update] - start_now
+    end
+    @consul_node_settings[:last_results]
+  end
+end
+
+all_nodes = compute_all_results(nodes_meta, nodes_coordinates)
+%>
+# HELP consul_node_rtt_compute_duration Time needed to compute all results in seconds
+# TYPE consul_node_rtt_compute_duration gauge
+consul_node_rtt_compute_duration <%= @consul_node_settings[:compute_duration] %>
+consul_node_rtt_compute_cpus <%= @consul_node_settings[:num_cpus] %>
+consul_node_rtt_compute_nodes_meta_count <%= nodes_meta.count %>
+consul_node_rtt_compute_nodes_coordinates_count <%= nodes_coordinates.count %>
+
+<% 
+all_nodes.each do |node, node_info|
+  node_info['results'].each do |k, v|
+    next if k.start_with? '_'
+%>consul_node_rtt_<%= k %>{<%= node_info['metas'] %>} <%= v.round(5) %>
+<%
+  end
+end
+%>
