@@ -4,6 +4,13 @@
 
 ## 1.17.3 (July 18, 2019)
 
+BUGFIX:
+
+ * Added gem parallel as a dependency to allow `samples/prometheus_consul_coordinates.erb`
+   to work properly
+
+## 1.17.3 (July 18, 2019)
+
 NEW FEATURES:
 
  * new template `samples/prometheus_consul_coordinates.erb` that computes
