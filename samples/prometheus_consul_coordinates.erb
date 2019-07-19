@@ -22,7 +22,6 @@ unless @consul_node_settings
   if @consul_node_settings[:num_cpus] < 0
     require 'etc'
     @consul_node_settings[:num_cpus] = Etc.nprocessors - 1
-    STDERR.puts "Autodetected #{@consul_node_settings[:num_cpus]} CPUs"
   end
 end
 
