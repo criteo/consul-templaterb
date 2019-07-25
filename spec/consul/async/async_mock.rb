@@ -65,5 +65,10 @@ module Consul
       end
       results
     end
+
+    def mock_json
+      stub_request(:get, 'https://rubygems.org/api/v1/versions/consul-templaterb.json')
+        .to_return(body: read_json('rubygems_org_consul_templaterb.json').to_json, status: 200)
+    end
   end
 end

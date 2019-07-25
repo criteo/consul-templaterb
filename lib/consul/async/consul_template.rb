@@ -21,6 +21,17 @@ module Consul
       end
     end
 
+    class RemoteResource
+      def initialize(endpoints_manager)
+        @endp_manager = endpoints_manager
+      end
+
+      def as_json(url, default_value, refresh_delay_secs: 10)
+        conf = JSONConfiguration.new(url: url, min_duration: refresh_delay_secs, retry_on_non_diff: refresh_delay_secs)
+        @endp_manager.create_if_missing(url, {}) { ConsulTemplateJSON.new(JSONEndpoint.new(conf, url, default_value)) }
+      end
+    end
+
     # Encapsulation of endpoints to get coordinates
     class Coordinate
       def initialize(endpoints_manager)
@@ -62,7 +73,7 @@ module Consul
     end
 
     class EndPointsManager
-      attr_reader :consul_conf, :vault_conf, :net_info, :start_time, :coordinate
+      attr_reader :consul_conf, :vault_conf, :net_info, :start_time, :coordinate, :remote_resource
       def initialize(consul_configuration, vault_configuration, trim_mode = nil)
         @consul_conf = consul_configuration
         @vault_conf = vault_configuration
@@ -89,6 +100,7 @@ module Consul
           params: {}
         }
         @coordinate = Coordinate.new(self)
+        @remote_resource = RemoteResource.new(self)
 
         # Setup token renewal
         vault_setup_token_renew unless @vault_conf.token.nil? || !@vault_conf.token_renew
@@ -380,6 +392,9 @@ module Consul
       end
     end
 
+    # technically this class could be also an array, a simple string or any simple json object other than a hash.
+    class ConsulTemplateAbstractJSONObject < ConsulTemplateAbstractMap; end
+
     class ServiceInstance < Hash
       def initialize(obj)
         merge!(obj)
@@ -477,6 +492,8 @@ module Consul
         res
       end
     end
+
+    class ConsulTemplateJSON < ConsulTemplateAbstractJSONObject; end
 
     class ConsulAgentSelf < ConsulTemplateAbstractMap
       def initialize(consul_endpoint)

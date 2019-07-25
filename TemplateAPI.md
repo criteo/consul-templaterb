@@ -434,6 +434,19 @@ secret('secret/foo', [force_ttl: intInSecond])
 </div>
 </details>
 
+## remote_resource
+
+### as_json(url, default_value, [refresh_delay_secs: intInSecond])
+
+Fetch json data from any url. This allows to create templates with consul/vault data mixed in with data coming from other services/api.
+Polling interval can be controlled with refresh_delay_secs.
+
+```erb
+remote_resource.as_json('http://my-api.dev/fridge/list.json', [])
+```
+
+Full example: [samples/as_json.erb](samples/as_json.erb)
+
 ## template_info()
 
 It returns information about current template being rendered.

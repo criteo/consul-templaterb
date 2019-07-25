@@ -20,6 +20,7 @@ RSpec.describe Consul::Async::ConsulTemplateRender do
     it "Checks that #{erb} renders #{expected}" do
       mock_consul
       mock_vault
+      mock_json
       EM.run_block do
         template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf)
         template_file = erb
