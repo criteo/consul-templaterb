@@ -1,0 +1,7 @@
+All sorted consul-templaterb versions
+<%
+  remote_resource
+    .as_json('https://rubygems.org/api/v1/versions/consul-templaterb.json', [], refresh_delay_secs: 1800)
+    .sort { |a, b| Gem::Version.create(a['number']) <=> Gem::Version.create(b['number']) }.each do |gem_version|
+%> * Version: <%= gem_version['number'] %> (<%= gem_version['created_at'] %>) with <%= gem_version['downloads_count'] %> downloads
+<% end %>

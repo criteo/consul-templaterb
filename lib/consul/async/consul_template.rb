@@ -28,7 +28,12 @@ module Consul
 
       def as_json(url, default_value, refresh_delay_secs: 10)
         conf = JSONConfiguration.new(url: url, min_duration: refresh_delay_secs, retry_on_non_diff: refresh_delay_secs)
-        @endp_manager.create_if_missing(url, {}) { ConsulTemplateJSON.new(JSONEndpoint.new(conf, url, default_value)) }
+        ret = if default_value.is_a?(Array)
+                ConsulTemplateJSONArray.new(JSONEndpoint.new(conf, url, default_value))
+              else
+                ConsulTemplateJSONObject.new(JSONEndpoint.new(conf, url, default_value))
+              end
+        @endp_manager.create_if_missing(url, {}) { ret }
       end
     end
 
@@ -395,6 +400,8 @@ module Consul
     # technically this class could be also an array, a simple string or any simple json object other than a hash.
     class ConsulTemplateAbstractJSONObject < ConsulTemplateAbstractMap; end
 
+    class ConsulTemplateAbstractJSONArray < ConsulTemplateAbstractArray; end
+
     class ServiceInstance < Hash
       def initialize(obj)
         merge!(obj)
@@ -493,7 +500,8 @@ module Consul
       end
     end
 
-    class ConsulTemplateJSON < ConsulTemplateAbstractJSONObject; end
+    class ConsulTemplateJSONObject < ConsulTemplateAbstractJSONObject; end
+    class ConsulTemplateJSONArray < ConsulTemplateAbstractJSONArray; end
 
     class ConsulAgentSelf < ConsulTemplateAbstractMap
       def initialize(consul_endpoint)
