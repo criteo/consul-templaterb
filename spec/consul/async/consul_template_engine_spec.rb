@@ -34,6 +34,7 @@ RSpec.describe Consul::Async::ConsulTemplateEngine do
     it "Checks that #{erb} do work" do
       mock_consul
       mock_vault
+      mock_json
       EM.run_block do
         template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf)
         template_file = erb

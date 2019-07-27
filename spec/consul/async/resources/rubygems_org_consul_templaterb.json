@@ -1,0 +1,1667 @@
+[
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-07-18T00:00:00.000Z",
+    "created_at": "2019-07-18T21:01:53.064Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 167,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.17.4",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "86f81b2fa8986681582eb26e3760953874977ec5151fac3eed24309160ce1863"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-07-18T00:00:00.000Z",
+    "created_at": "2019-07-18T20:27:49.450Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 90,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.17.3",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "6ac5cb9c4facb89097ab8a2bb2acd2436625bf9e93af333d458242e5540ec1c1"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-07-18T00:00:00.000Z",
+    "created_at": "2019-07-18T00:14:35.380Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 128,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.17.2",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "dc2f016f32df2c642fb825c1aa96764e9ab18ff832f76ef7cdbbe0f86d5fd68b"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-07-16T00:00:00.000Z",
+    "created_at": "2019-07-16T00:39:03.649Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 155,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.17.1",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "8970f6ce53da206a0894fb7f1b7b6daf8a9055dfb4815607efcad0ab8069cfe2"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-07-15T00:00:00.000Z",
+    "created_at": "2019-07-15T21:03:24.384Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 108,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.17.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "f6d0cb27d801ffe7967c32e96149a798042e224a25105a32e6426c7ef7cf5ea2"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-07-08T00:00:00.000Z",
+    "created_at": "2019-07-08T08:28:40.002Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 273,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.16.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "5fff5acbb3d0bb4c1c3dee454d138c78436b28a69e63ae6f811b7a0760f60dfa"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-06-20T00:00:00.000Z",
+    "created_at": "2019-06-20T16:06:10.362Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 227,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.15.3",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "f54682da2c94017e8f19d91346cc7bf702a741b7d1498b65aefdd9099e2c4575"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-06-12T00:00:00.000Z",
+    "created_at": "2019-06-12T21:39:17.386Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 225,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.15.2",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "b6bdc46b5ee9678522079352ea6495c3f70befc8a1f3398c8c084ebe515ea655"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-05-23T00:00:00.000Z",
+    "created_at": "2019-05-23T11:04:21.098Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 272,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.15.1",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "8d16cbe658cc8f7447c6a508fa1da1bce7cba3e692eca8d1df1c432f52593e8e"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-05-14T00:00:00.000Z",
+    "created_at": "2019-05-14T09:58:53.464Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 273,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.15.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "16d4bd35b0d41a580944f5b832837cd9beb61c8c88272044635dbfe38c9334ff"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-05-13T00:00:00.000Z",
+    "created_at": "2019-05-13T15:46:03.433Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 233,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.14.1",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "afeff85c76ff0d576d774e0f4b8742c710f4d47c325ed28f169a897cc97b2f44"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-05-06T00:00:00.000Z",
+    "created_at": "2019-05-06T10:50:47.473Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 266,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.14.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "99dc12e4bba4bf1f6c0fa662ab65bd0bc257ef44ec3d0c0fc680156ead3be2be"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-04-12T00:00:00.000Z",
+    "created_at": "2019-04-12T09:21:31.085Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 224,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.13.1",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "f2b32bba5f9a730a5937925ae3dd4347b74bf3dfa7c5752d16d323cedf4b56ff"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-04-10T00:00:00.000Z",
+    "created_at": "2019-04-10T08:21:09.865Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 182,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.13.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "60aa0cc422a916efd084493f89b78050ad0d6020f356324578873b1bcfc06460"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-04-04T00:00:00.000Z",
+    "created_at": "2019-04-04T16:01:55.300Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 192,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.12.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "55b745573d94d6702e0fe7ce575fb05cb96667784c46b141fc5bea59e6067413"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-03-16T00:00:00.000Z",
+    "created_at": "2019-03-16T15:06:04.752Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 221,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.11.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "632de75d80b347cc6804e53d63b42265feaa5acbaf688cf04a6aa508268d0eca"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-02-28T00:00:00.000Z",
+    "created_at": "2019-02-28T17:08:04.119Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 209,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.10.1",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "61ce13c645382cc4d349a650251f6eb5f95480db6aa1055c7e0db513073a1de2"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-02-27T00:00:00.000Z",
+    "created_at": "2019-02-27T08:56:11.207Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 205,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.10.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "0a908f0440e9a9b85cf575ad186bd61329b88c1b6b875361f86da6e2ae1ec7f3"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-01-18T00:00:00.000Z",
+    "created_at": "2019-01-18T16:31:54.327Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 255,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.9.9",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "2f4bcf60e649df62785b8bb64612cf6b2af459d647bc9cf6fbefcafe7ff80380"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-01-16T00:00:00.000Z",
+    "created_at": "2019-01-16T10:20:33.749Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 225,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.9.8",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "de0f6d4d19e4497d6de2351e10e2a9c72ce14139882109ecd9d0e15bb282099e"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-01-15T00:00:00.000Z",
+    "created_at": "2019-01-15T10:53:04.261Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 217,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.9.7",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "27756e635cc7d47fbe36625eb39a31fafee140ce166fc37bc9938bd887d6826d"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-01-15T00:00:00.000Z",
+    "created_at": "2019-01-15T10:28:32.015Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 177,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.9.6",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "0d91d4d836ccf718d19c4200e4a1021ab3ac57da8de6ca1c605718ebaf2a90f9"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-01-14T00:00:00.000Z",
+    "created_at": "2019-01-14T11:47:25.818Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 220,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.9.5",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "53eb3cd9993b83565d12ad8572367d2922f3c0401fc8542327ec111bbb4f08bb"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-01-11T00:00:00.000Z",
+    "created_at": "2019-01-11T08:53:29.886Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 240,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.9.4",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "55d04f841a94b41a85f94697f5727c916cc32ce3c8ada8a6786983656fc27107"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-01-09T00:00:00.000Z",
+    "created_at": "2019-01-09T23:06:11.774Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 229,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.9.3",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "7c2d1d256b821afbfca262f2c9630548f8cd73dbc9906f335038444844c4dce7"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-01-04T00:00:00.000Z",
+    "created_at": "2019-01-04T01:35:59.663Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 256,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.9.2",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "90971610e7e73a748b9c227416a54dfe84f5786c0ce68869a6db808d4c435b34"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-01-03T00:00:00.000Z",
+    "created_at": "2019-01-03T08:00:56.699Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 216,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.9.1",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "405d411c561877e335b12287631b9459ad989ed4dd69034271eac86020fcec22"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2019-01-02T00:00:00.000Z",
+    "created_at": "2019-01-02T09:41:14.303Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 252,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.9.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "5ba0e7ceca712a83e4f6b1616d1deab0b0873e134138a0d1f3051fa285954d88"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-20T00:00:00.000Z",
+    "created_at": "2018-12-20T09:29:20.418Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 594,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.8.8",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "6a3bdce647ae2125ef1c31486e9b738cb84488969c3f208922712e9b108a4226"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-20T00:00:00.000Z",
+    "created_at": "2018-12-20T08:33:22.700Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 367,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.8.7",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "16cc13f6c288393395847b603aaaf47040693c4063a500e7e6d7ada29179ae69"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-19T00:00:00.000Z",
+    "created_at": "2018-12-19T22:56:30.959Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 398,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.8.6",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "e451425f0759515f30b7fbc845eb39ce1080643a24f44baede52c08e1a8a8e88"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-19T00:00:00.000Z",
+    "created_at": "2018-12-19T15:58:38.643Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 213,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.8.5",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "19d7f72a08f046a494dbf1a50e524d4dc88b14f388defba67381c480c8596712"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-18T00:00:00.000Z",
+    "created_at": "2018-12-18T15:48:02.114Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 242,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.8.4",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "1cc54d22e58ce7921cd89bad20a1502720e8117547d5f46a6e6b8d7dab274d46"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-18T00:00:00.000Z",
+    "created_at": "2018-12-18T15:29:10.814Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 196,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.8.3",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "6f3aeed70dbc1aa3adbef1f58ffa9ad39e7f1caacba89f7f9ed90a0d251eebdb"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-18T00:00:00.000Z",
+    "created_at": "2018-12-18T08:28:00.483Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 216,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.8.2",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "35f7216f15985c39f4734d504f78ab5d653d54b33c86e2d5a16095e05c7af532"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-12T00:00:00.000Z",
+    "created_at": "2018-12-12T10:42:24.758Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 272,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.8.1",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "bc07208bc173a26ae5e92eb38dcdc1ba60b40fa1937b9470b26619bbd1ad02d9"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-11T00:00:00.000Z",
+    "created_at": "2018-12-11T22:43:49.937Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 242,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.8.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "221c9efbce9ea753a433076fb03653a8a2c39a17304e201a272ff31f1330fbb8"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-07T00:00:00.000Z",
+    "created_at": "2018-12-07T00:50:36.769Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 285,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.7.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "1bbe95b72ebc7906e6728488b525a5c7d20261f3547989b194c7c2d888306192"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-04T00:00:00.000Z",
+    "created_at": "2018-12-04T14:00:27.935Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 259,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.6.3",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "28395105b3bc5907965983bcfc08780fc410034f17cf92030ad8b01ed7ac18dc"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-04T00:00:00.000Z",
+    "created_at": "2018-12-04T11:20:13.763Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 219,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.6.2",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "615257024be9735d1a0ad87af4296c66e90abdd2378852d85cceb5cf63beeb85"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-12-04T00:00:00.000Z",
+    "created_at": "2018-12-04T08:39:13.843Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 226,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.6.1",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "a5dbfee2dbf01d33fb82b4f2a3965a857519673bf6966ca02827f028608b0337"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-11-23T00:00:00.000Z",
+    "created_at": "2018-11-23T21:23:27.495Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 267,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.6.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "f8a068ee7845cffd89e6bb00cccac2986ae25bceafdf3a3628870b2f5b8d6393"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-11-16T00:00:00.000Z",
+    "created_at": "2018-11-16T23:18:35.640Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 279,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.5.9",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "b7543dfaad5850ad42ba5a2144747cd02d67a7b120fc29b35eaf458d42e26635"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-11-14T00:00:00.000Z",
+    "created_at": "2018-11-14T13:08:41.768Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 269,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.5.8",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "bf3e0a10c54033baef98376037a9c99e5f6faa051a631b6ac0fded609079e3a0"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-11-12T00:00:00.000Z",
+    "created_at": "2018-11-12T11:07:37.182Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 269,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.5.7",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "39d9c09057c49ad0c71282d68e4208c8399db096eb782b9d9c9f0f92c46cdacc"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-09-30T00:00:00.000Z",
+    "created_at": "2018-09-30T17:24:53.014Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 312,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.5.6",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "efda90d19d8a4b08be28f3e0734a22bf5a6c5a0af5aaeeb35aa66b4961833cb4"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-09-27T00:00:00.000Z",
+    "created_at": "2018-09-27T10:09:06.900Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 307,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.5.5",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "3fe6c4bca9896bce634d491066ab01d3fb3af5fde24e5c1b3e9d60f6a13b247b"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-09-26T00:00:00.000Z",
+    "created_at": "2018-09-26T22:02:39.517Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 293,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.5.4",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "5c2955b6100ef0e3aa54cef5046b259ccd37fd48c2be2aa05c810919fe9caddf"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-09-24T00:00:00.000Z",
+    "created_at": "2018-09-24T15:29:01.796Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 299,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.5.3",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "c59fc4569f7f515f59a386034ccb145dc0b802eb5df4fc6960bb2be71cf93919"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-09-12T00:00:00.000Z",
+    "created_at": "2018-09-12T10:29:51.977Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 314,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.5.2",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "fee8232ea7603f8e3fc576619432bd1eb849b411d438a3e5b6dad8f9fb1acf6c"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-09-04T00:00:00.000Z",
+    "created_at": "2018-09-04T11:11:14.975Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 307,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.5.1",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "ee9cd1b72404bbf86bdb1a9d2bd00bcc431b5a7a641ccc2d5892a93cadaa93b0"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-08-17T00:00:00.000Z",
+    "created_at": "2018-08-17T16:09:39.666Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 323,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.5.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "d09fb1a5d4f1c6aa4212911b449273e2194df165929d710d32d949e1a3d8792f"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-07-23T00:00:00.000Z",
+    "created_at": "2018-07-23T14:26:52.542Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 1247,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.4.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "34b5503c02f9b254825de2b7092631b49ba2c624eed68bd199822a27f0589d6f"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-06-19T00:00:00.000Z",
+    "created_at": "2018-06-19T16:53:38.240Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 366,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.3.1",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "c7d006a1a129e67660e8878a5e4e2301e92d7e0268c7f68651a164f367d5fee1"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-06-07T00:00:00.000Z",
+    "created_at": "2018-06-07T13:23:48.719Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 340,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.3.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "c7dd8d185850573ec8b0a37f57c8886533ccbff611d982009cf9de8314baa15b"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-05-28T00:00:00.000Z",
+    "created_at": "2018-05-28T18:23:45.627Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 339,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.2.1",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "4e3caf01060917cf0af6c49ea0fee65b9828551ff983bcd1dacd5930da31e3da"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-05-25T00:00:00.000Z",
+    "created_at": "2018-05-25T14:27:42.429Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 333,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.2.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "8aa53816e570f8782a239876dc192c854fbdb75d4033d088ba05bce1529a878d"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-05-17T00:00:00.000Z",
+    "created_at": "2018-05-17T15:30:40.981Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 354,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.1.3",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "607cf23a2ecd94097512f5b2f36f854f6e8e8d8fd70ccdc6821520da0c48395d"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-05-17T00:00:00.000Z",
+    "created_at": "2018-05-17T10:54:14.632Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 303,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.1.2",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "a6a7f5bfe4122bc1ff7334e2fab101f2cacb8193ef4cae016b83f78b0d10246c"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-05-15T00:00:00.000Z",
+    "created_at": "2018-05-15T11:29:52.007Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 333,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.1.1",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "597afac2bb6fc67be3f59b7f1cc7fb68a4f0ea151aab41be699caea4ead5e555"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-05-12T00:00:00.000Z",
+    "created_at": "2018-05-12T14:34:05.982Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 340,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.1.0",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "89937b31f31efd1221e302d7a8c27abcf548c37fb94f9bdaf041d3dbb8df8e42"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-05-11T00:00:00.000Z",
+    "created_at": "2018-05-11T11:32:30.685Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 331,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.0.11",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "35f2ec3742974e46d98c34aeb527cc5714b3351bb16c0678f65e212de8b71a3f"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-05-04T00:00:00.000Z",
+    "created_at": "2018-05-04T12:29:41.434Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 357,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.0.10",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "84537d38d3d7cd2bfe112faa29afaaa9a30cdc81c871730df39268c534a57e4d"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-03-20T00:00:00.000Z",
+    "created_at": "2018-03-20T09:29:07.394Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 405,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.0.9",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "3af3e038405852c75de5cff51f92166033057761691e0e5f0936ffa65b7f7b1e"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-03-18T00:00:00.000Z",
+    "created_at": "2018-03-18T09:54:07.140Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 368,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.0.8",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "6d002dc7d44ab720c5a0fa1385222140c32ea5af6bf8db191b01083feb132818"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-03-16T00:00:00.000Z",
+    "created_at": "2018-03-16T19:24:15.305Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 367,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.0.7",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "11725942c376c0366f4a80c8252f346d050c5b4da5ea5bf4081002fb895526d5"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-03-16T00:00:00.000Z",
+    "created_at": "2018-03-16T09:15:04.053Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating with hi-performance on large clusters and advanced process management features.",
+    "downloads_count": 343,
+    "metadata": {
+      "homepage_uri": "https://github.com/criteo/consul-templaterb",
+      "changelog_uri": "https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md",
+      "bug_tracker_uri": "https://github.com/criteo/consul-templaterb/issues",
+      "source_code_uri": "https://github.com/criteo/consul-templaterb"
+    },
+    "number": "1.0.6",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "5c7a1008dfd43ef653063b04823c09b307744873a0a51efadd96297ac9ef8391"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-03-12T00:00:00.000Z",
+    "created_at": "2018-03-12T17:52:36.543Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating",
+    "downloads_count": 366,
+    "metadata": {},
+    "number": "1.0.5",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "312d308487f26644b781f44e7d9d551825e3441f0a14e0e7a260236b260659b1"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-03-12T00:00:00.000Z",
+    "created_at": "2018-03-12T14:58:31.949Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating",
+    "downloads_count": 329,
+    "metadata": {},
+    "number": "1.0.4",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "596ce7192884a3736541c27b660cc5df1041e03306a46abe9c56be25bf3763e0"
+  },
+  {
+    "authors": "SRE Core Services",
+    "built_at": "2018-03-12T00:00:00.000Z",
+    "created_at": "2018-03-12T14:56:09.186Z",
+    "description": "A ruby implementation of Consul Template with support of erb templating",
+    "downloads_count": 307,
+    "metadata": {},
+    "number": "1.0.3",
+    "summary": "Implementation of Consul template using Ruby and .erb templating language",
+    "platform": "ruby",
+    "rubygems_version": ">= 0",
+    "ruby_version": ">= 0",
+    "prerelease": false,
+    "licenses": [
+      "Apache v2"
+    ],
+    "requirements": [],
+    "sha": "f6dc37bcd39888a201efb057acb97717d043d6871239c22c485c4911027aa505"
+  }
+]
