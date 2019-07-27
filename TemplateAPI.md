@@ -445,7 +445,7 @@ Polling interval can be controlled with refresh_delay_secs.
 remote_resource.as_json('http://my-api.dev/fridge/list.json', [])
 ```
 
-Full example: [samples/as_json.erb](samples/as_json.erb)
+Full example: [samples/list_ruby_versions_from_rubygems.txt.erb](samples/list_ruby_versions_from_rubygems.txt.erb)
 
 ## template_info()
 

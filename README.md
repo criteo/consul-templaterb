@@ -256,6 +256,7 @@ examples:
    datacenters and nodes and export it to prometheus easily to trigger alerts.
 10. [List all services/Nodes with their statuses for all datacenters](samples/all_services.txt.erb)
 11. [Show all services/instances not passing on all DCs](samples/tools/find_all_failing_services.txt.erb)
+12. [List all rubygems consul versions from remote server JSON](samples/list_ruby_versions_from_rubygems.txt.erb)
 
 If you want to test it quickly, you might try with (assuming your consul agent is listening on
 `http://localhost:8500`):

@@ -2,6 +2,14 @@
 
 ## (UNRELEASED)
 
+## 1.18.0 (July 27, 2019)
+
+NEW FEATURES:
+
+ * Support for `remote_resource` provided by @kamaradclimber
+ * Added support for `remote_resource.as_json` to fetch JSON remote resource from a web server
+ * Added `samples/list_ruby_versions_from_rubygems.txt.erb` to demonstrate usage
+
 ## 1.17.3 (July 18, 2019)
 
 BUGFIX:
