@@ -2,6 +2,13 @@
 
 ## (UNRELEASED)
 
+## 1.18.1 (July 27, 2019)
+
+BUFIX:
+
+Fixed wrong lazy initialization in `remote_resource.as_json` that
+cause too many connections to be opened.
+
 ## 1.18.0 (July 27, 2019)
 
 NEW FEATURES:
