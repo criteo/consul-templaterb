@@ -117,6 +117,13 @@ https://github.com/oneclick/rubyinstaller2/issues/96#issuecomment-434619796
 gem install eventmachine consul-templaterb --platform ruby
 ```
 
+### Run it with Docker
+
+An Docker image is also available https://hub.docker.com/r/discoverycriteo/consul-templaterb
+and allows to quickly have a working
+[Consul-UI](https://github.com/criteo/consul-templaterb/blob/master/samples/consul-ui/README.md)
+that will server the UI to explore your Consul Cluster.
+
 ### Playing with the samples templates
 
 Samples are installed with the GEM, you can either

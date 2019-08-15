@@ -12,6 +12,13 @@ meaning that it can be scaled horizontally without any troubles with Consul.
 * List all nodes
 * List datacenters
 
+## Quick install with Docker
+
+An Docker image is also available https://hub.docker.com/r/discoverycriteo/consul-templaterb
+and allows to quickly have a working
+[Consul-UI](https://github.com/criteo/consul-templaterb/blob/master/samples/consul-ui/README.md)
+that will server the UI to explore your Consul Cluster.
+
 ## Is it prod ready?
 
 This application is used for several months within Criteo to replace Consul native interface and
