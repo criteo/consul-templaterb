@@ -7,12 +7,14 @@ module Consul
   module Async
     class JSONConfiguration
       attr_reader :url, :retry_duration, :min_duration, :retry_on_non_diff,
-                  :debug, :enable_gzip_compression
+                  :debug, :enable_gzip_compression, :request_method, :json_body
       def initialize(url:,
                      debug: { network: false },
                      retry_duration: 10,
                      min_duration: 10,
                      retry_on_non_diff: 10,
+                     request_method: :get,
+                     json_body: nil,
                      enable_gzip_compression: true)
         @url = url
         @debug = debug
@@ -20,6 +22,8 @@ module Consul
         @retry_duration = retry_duration
         @min_duration = min_duration
         @retry_on_non_diff = retry_on_non_diff
+        @request_method = request_method
+        @json_body = json_body
       end
 
       def create(_url)
@@ -135,6 +139,10 @@ module Consul
           keepalive: true,
           callback: method(:on_response)
         }
+        if conf.json_body
+          res[:body] = conf.json_body.to_json
+          res[:head]['Content-Type'] = 'application/json'
+        end
         res[:head]['accept-encoding'] = 'identity' unless conf.enable_gzip_compression
         @query_params.each_pair do |k, v|
           res[:query][k] = v
@@ -167,9 +175,10 @@ module Consul
           conn: EventMachine::HttpRequest.new(conf.url, options)
         }
         cb = proc do
-          http = connection[:conn].get(build_request)
+          request_method = conf.request_method.to_sym
+          http = connection[:conn].send(request_method, build_request)
           http.callback do
-            if enforce_json_200 && http.response_header.status != 200 && http.response_header['Content-Type'] != 'application/json'
+            if enforce_json_200 && !(200..299).cover?(http.response_header.status) && http.response_header['Content-Type'] != 'application/json'
               _handle_error(http) do
                 warn "[RETRY][#{url}] (#{@consecutive_errors} errors)" if (@consecutive_errors % 10) == 1
               end

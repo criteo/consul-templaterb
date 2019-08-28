@@ -439,10 +439,16 @@ secret('secret/foo', [force_ttl: intInSecond])
 ### as_json(url, default_value, [refresh_delay_secs: intInSecond])
 
 Fetch json data from any url. This allows to create templates with consul/vault data mixed in with data coming from other services/api.
-Polling interval can be controlled with refresh_delay_secs.
+Polling interval can be controlled with `refresh_delay_secs` option.
+Request method (`GET`, `POST`, ...) can be controlled with `request_method` option.
 
 ```erb
 remote_resource.as_json('http://my-api.dev/fridge/list.json', [])
+```
+
+Example with post (json_body will be applied `to_json` automatically):
+```erb
+remote_resource.as_json('http://my-api.dev/fridge', [], request_method: :post, json_body: {brand: 'any'})
 ```
 
 Full example: [samples/list_ruby_versions_from_rubygems.txt.erb](samples/list_ruby_versions_from_rubygems.txt.erb)
