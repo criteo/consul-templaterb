@@ -7,7 +7,8 @@ module Consul
   module Async
     class JSONConfiguration
       attr_reader :url, :retry_duration, :min_duration, :retry_on_non_diff,
-                  :debug, :enable_gzip_compression, :request_method, :json_body
+                  :debug, :enable_gzip_compression, :request_method, :json_body,
+                  :headers
       def initialize(url:,
                      debug: { network: false },
                      retry_duration: 10,
@@ -15,6 +16,7 @@ module Consul
                      retry_on_non_diff: 10,
                      request_method: :get,
                      json_body: nil,
+                     headers: {},
                      enable_gzip_compression: true)
         @url = url
         @debug = debug
@@ -24,6 +26,7 @@ module Consul
         @retry_on_non_diff = retry_on_non_diff
         @request_method = request_method
         @json_body = json_body
+        @headers = headers
       end
 
       def create(_url)
@@ -144,6 +147,9 @@ module Consul
           res[:head]['Content-Type'] = 'application/json'
         end
         res[:head]['accept-encoding'] = 'identity' unless conf.enable_gzip_compression
+        conf.headers.map do |k, v|
+          res[:head][k] = v
+        end
         @query_params.each_pair do |k, v|
           res[:query][k] = v
         end

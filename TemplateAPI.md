@@ -451,6 +451,11 @@ Example with post (json_body will be applied `to_json` automatically):
 remote_resource.as_json('http://my-api.dev/fridge', [], request_method: :post, json_body: {brand: 'any'})
 ```
 
+Basic authentication can be done passing `headers` option.
+```erb
+remote_resource.as_json('http://my-api.dev/fridge/list.json', [], headers: { Authorization: [user, password]})
+```
+
 Full example: [samples/list_ruby_versions_from_rubygems.txt.erb](samples/list_ruby_versions_from_rubygems.txt.erb)
 
 ## template_info()
