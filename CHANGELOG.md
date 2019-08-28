@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+BUGFIX:
+
+* In Consul UI, showing data from KV with markup was not properly handled
+
 NEW FEATURES:
 
 Support any request method for remote_resource.as_json (#41)

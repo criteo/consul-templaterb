@@ -115,7 +115,7 @@ class ConsulKeys {
       var dataToDisplay = 'NO DATA';
     }
 
-    $("#kv-data").html(dataToDisplay);
+    $("#kv-data").text(dataToDisplay);
     $("#kv-data").removeClass();
 
     $('pre code').each(function(i, block) {
