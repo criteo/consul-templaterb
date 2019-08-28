@@ -2,6 +2,8 @@
 
 ## (UNRELEASED)
 
+## 1.18.2 (August 28,  2019)
+
 BUGFIX:
 
 * In Consul UI, showing data from KV with markup was not properly handled
@@ -14,6 +16,7 @@ Support any request method for remote_resource.as_json (#41)
  - accept any 2xx result (instead of just 200). This is a semi-breaking
    change.
  - accept body passed for non GET requests
+ - allow to add headers (such as Authorization)
 
 ## 1.18.1 (July 27, 2019)
 
