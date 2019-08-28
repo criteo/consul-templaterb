@@ -2,9 +2,18 @@
 
 ## (UNRELEASED)
 
+NEW FEATURES:
+
+Support any request method for remote_resource.as_json (#41)
+
+ - support post and other request methods
+ - accept any 2xx result (instead of just 200). This is a semi-breaking
+   change.
+ - accept body passed for non GET requests
+
 ## 1.18.1 (July 27, 2019)
 
-BUFIX:
+BUGFIX:
 
 Fixed wrong lazy initialization in `remote_resource.as_json` that
 cause too many connections to be opened.
