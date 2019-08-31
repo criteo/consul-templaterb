@@ -217,11 +217,11 @@ $ consul-templaterb \\
 ### Process management and signalisation of configuration files
 
 With the `--exec` argument (can be specified multiple times), consul-templaterb will launch
-the process specified when all templates have been generated and will send a reload signal
-if the content of any of the files do change (the signal will be sent atomically however,
-meaning that if 2 results of templates are modified at the same time, the signal will be
-sent only once (it is helpful for instance if your app is using several configurations
-files that must be consistent all together).
+the process specified when all templates have been generated. When generated file(s) do change,
+a POSIX signal (HUP by default) is sent to the spawned process. If you generate several files
+at the same time, the signal will be sent only once the rendering of all templates is completed,
+so if your process is using several configuration files, all files will be modified and
+consistent before the signal is sent to process.
 
 If any template does return nothing (aka use `return nil` in the code of a template),
 consul-templaterb does consider that the template is not ready and will not launch the executable
