@@ -199,7 +199,7 @@ module Consul
         http_result = VaultHttpResponse.new(http, default_value)
         EventMachine.add_timer(retry_in) do
           yield
-          queue.push
+          queue.push(0)
         end
         @e_callbacks.each { |c| c.call(http_result) }
       end
