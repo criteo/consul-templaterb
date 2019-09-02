@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.18.3 (September 2, 2019)
+
+BUGFIX:
+
+* When vault receives at timeout, correctly reschedule it
+
 ## 1.18.2 (August 28,  2019)
 
 BUGFIX:
