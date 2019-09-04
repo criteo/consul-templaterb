@@ -1,0 +1,28 @@
+# If you export HOSTS_FOR_ALL_DCS, then your /etc/hosts will contain
+# all consul registered nodes for all DCs, otherwise, only local
+# nodes will be dumped
+# This file is auto-generated and generates a suitable /etc/hosts
+127.0.0.1       localhost localhost.localdomain
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+
+<%
+dcs = if ENV['HOSTS_FOR_ALL_DCS']
+        datacenters
+      else
+        # Only for local DC
+        [nil]
+      end
+dcs.each do |current_dc|
+  nodes(dc: current_dc).each do |snode|
+%><%= snode['Address'] %>	<%= snode['Node'] %>
+<%
+  end
+end
+%>
