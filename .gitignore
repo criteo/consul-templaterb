@@ -12,6 +12,8 @@
 /samples/**/*.html
 /samples/**/*.txt
 /samples/**/*.cfg
+/samples/hosts
+/samples/hosts_per_services
 /samples/prometheus_consul_coordinates
 /samples/ready
 /samples/render_template_from_kv

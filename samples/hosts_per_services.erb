@@ -1,0 +1,49 @@
+<%
+# This template generate a file suitable to use as an /etc/hosts file
+# by populating it with all the service address of nodes
+#
+# This template can be configure the following way with environment variables
+# Environment variables to filter services/instances
+#   SERVICES_MATCH_FILTER: regexp to filter services (default: .*)
+#   SERVICES_TAG_FILTER: basic tag filter for service (default: all services)
+#   INSTANCE_MUST_TAG: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
+#   INSTANCE_EXCLUDE_TAG: Exclude instances having the given tag (default: canary)
+#   EXCLUDE_SERVICES: comma-separated services regexps to exclude (default: lbl7.*,netsvc-probe.*,consul-probed.*)
+
+  services_match_filter = Regexp.new(ENV['SERVICES_MATCH_FILTER'] || '.*')
+  service_tag_filter = ENV['SERVICES_TAG_FILTER'] || nil
+  instance_must_tag = ENV['INSTANCE_MUST_TAG'] || service_tag_filter
+  instance_exclude_tag = ENV['INSTANCE_EXCLUDE_TAG']
+
+  # Services to hide
+  services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || 'lbl7.*,netsvc-probe.*,consul-probed.*').split(',')
+  services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }
+%>
+# This file is auto-generated and generates a suitable /etc/hosts
+127.0.0.1       localhost localhost.localdomain
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+
+<%
+  all_nodes = {}
+  services(tag: service_tag_filter).each do |service_name, tags|
+    if services_match_filter.match(service_name) && !services_blacklist.any? {|r| r.match(service_name)} && (instance_must_tag.nil? || tags.include?(instance_must_tag))
+      service(service_name).each do |snode|
+        tags_of_instance = snode['Service']['Tags']
+        if (instance_must_tag.nil? || tags_of_instance.include?(instance_must_tag)) && !tags_of_instance.include?(instance_exclude_tag)
+          # This is gonna exclude sync tools such as consul-k8s setting external-source
+          all_nodes[snode['Node']['Node']] = snode['Node']['Address'] unless snode.service_or_node_meta_value('external-source')
+        end
+      end
+    end
+  end
+%><%
+  all_nodes.keys.sort.each do |node_name|
+%><%= node_name %>  <%= all_nodes[node_name] %>
+<% end %>
