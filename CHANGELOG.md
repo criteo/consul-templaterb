@@ -2,10 +2,14 @@
 
 ## (UNRELEASED)
 
+## 1.18.4
+
 IMPROVEMENTS:
 
 * `samples/metrics.erb` now export prometheus tag containing service.kind, can
   be used to group/ignore services with connect enabled
+* Better support for filtering Connect proxies in service list in consul-ui
+* Added new samples `samples/hosts*` samples to generate /etc/hosts files
 
 ## 1.18.3 (September 2, 2019)
 

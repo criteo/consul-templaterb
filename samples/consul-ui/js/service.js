@@ -172,7 +172,7 @@ class ConsulService {
       filter = new RegExp(safeReg);
     }
     consulService.serviceFilterCount = 0;
-    var showProxiesInList = this.showProxiesInList;
+    var showProxiesInList = consulService.showProxiesInList;
     consulService.serviceList.children('.serviceListItem').each(function (){
       var ui = $(this);
       if(serviceMatcher(this, filter, showProxiesInList)) {

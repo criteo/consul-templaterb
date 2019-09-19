@@ -282,7 +282,7 @@ class ServiceTimeline {
           console.log("Failed to compile regexp for '" + serviceVal + "', using strict lookup due to: " + e);
           filter = new RegExp(safeReg);
         }
-        var showProxiesInList = this.showProxiesInList;
+        var showProxiesInList = serviceTimeline.showProxiesInList;
         serviceTimeline.serviceList.children('.serviceListItem').each(function (){
           var ui = $(this);
           if(this.getElementsByClassName('service-name')[0].innerHTML == 'All' || this.getElementsByClassName('service-name')[0].innerHTML.match(filter)) {
