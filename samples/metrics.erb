@@ -29,6 +29,8 @@
       srv.each do |snode|
         key = "#{snode['Service']['Service']}"
         metas = {}
+        service_kind = snode['Service']['Kind']
+        metas['__service_kind'] = service_kind if service_kind
         service_metas_to_export.each do |k|
           meta = snode.service_or_node_meta_value(k)
           if meta
