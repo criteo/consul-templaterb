@@ -2,7 +2,11 @@
 
 ## (UNRELEASED)
 
-## 1.18.4
+IMPROVEMENTS:
+
+* build on travis with latest ruby versions
+
+## 1.18.4 (September 19, 2019)
 
 IMPROVEMENTS:
 
