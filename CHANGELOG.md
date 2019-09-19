@@ -2,6 +2,11 @@
 
 ## (UNRELEASED)
 
+IMPROVEMENTS:
+
+* `samples/metrics.erb` now export prometheus tag containing service.kind, can
+  be used to group/ignore services with connect enabled
+
 ## 1.18.3 (September 2, 2019)
 
 BUGFIX:
