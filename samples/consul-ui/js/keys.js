@@ -86,15 +86,18 @@ class ConsulKeys {
 
   onClickServiceName(source) {
     this.selectKey(source);
-    this.updateURL($(source).find(".key-name").html());
+    this.selectedKeyName = $(source).find(".key-name").html()
+    this.updateURL();
   }
 
-  updateURL(link) {
-    var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-    if (link) {
-      newUrl += '?key=' + link
+  updateURL() {
+    var newUrl = new URL(location.href);
+    if (this.selectedKeyName) {
+      newUrl.searchParams.set('key', this.selectedKeyName);
+    } else {
+      newUrl.searchParams.delete('key')
     }
-    window.history.pushState({},"",newUrl);
+    window.history.pushState({},"",newUrl.href);
   }
 
   selectKey(source) {
