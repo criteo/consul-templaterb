@@ -12,12 +12,22 @@ class ConsulService {
     this.serviceFilterCounter = $("#service-counter");
     this.serviceFilterCount = 0;
     this.showProxiesInList = false;
+    this.selectedServiceName = new URL(location.href).searchParams.get('service');
+    this.serviceFilterValue = new URL(location.href).searchParams.get('filter');
     var cs = this
     this.loadFavorites();
     window.setTimeout(function(){
       cs.showTags($('#showTagsInList:checked').length > 0);
       cs.showProxies($('#showProxiesInList:checked').length > 0);
     }, 100);
+    
+  }
+
+  initFilterValue() {
+    if (this.serviceFilterValue) {
+      this.serviceFilter.val(this.serviceFilterValue);
+      this.filterService()
+    }
   }
 
   showTags(enableTags) {
@@ -44,31 +54,28 @@ class ConsulService {
     await this.reloadServiceList();
     console.log('Data generated at: ' + data['generated_at']);
 
-    var urlParam = new URL(location.href).searchParams.get('service');
-
+    var urlParam = this.selectedServiceName
     if (urlParam) {
       var nodes = document.getElementById('service-list').childNodes;
       for (const node of nodes) {
         if($(node).find(".service-name").html() == urlParam) {
-          var selectedElement = $(node)
+          var selectedElement = $(node);
           this.selectService(selectedElement);
-          selectedElement.focus()
+          selectedElement.focus();
           break;
         }
       }
-      this.serviceFilter.val(urlParam);
-      this.filterService()
-  } else {
-      var servicePrefix = '#service_'
+    } else {
+      var servicePrefix = '#service_';
       if (location.hash.startsWith(servicePrefix)) {
-        urlParam = location.hash.substr(servicePrefix.length)
+        urlParam = location.hash.substr(servicePrefix.length);
       }
       this.selectService(document.getElementById('service-list').firstElementChild);
     }
-
     if(this.refresh > 0) {
       setTimeout(this.fetchRessource, this.refresh * 1000);
     }
+    this.initFilterValue();
   }
 
   async reloadServiceList() {
@@ -95,7 +102,6 @@ class ConsulService {
 
     this.serviceFilterCounter.html(this.serviceFilterCount);
     resizeWrapper('service-wrapper', 'service-list');
-    this.filterService();
   }
 
   appendService(service, index) {
@@ -163,14 +169,16 @@ class ConsulService {
 
   filterService() {
     var filter;
-    var serviceVal = consulService.serviceFilter.val();
+    var filterValue = consulService.serviceFilter.val();
     try {
-      filter = new RegExp(serviceVal);
+      filter = new RegExp(filterValue);
     } catch (e) {
-      var safeReg = serviceVal.replace(/[-[\]{}()*+?.,\\^$|]/g, "\\$&")
-      console.log("Failed to compile regexp for '" + serviceVal + "', using strict lookup due to: " + e);
+      var safeReg = filterValue.replace(/[-[\]{}()*+?.,\\^$|]/g, "\\$&")
+      console.log("Failed to compile regexp for '" + filterValue + "', using strict lookup due to: " + e);
       filter = new RegExp(safeReg);
     }
+    consulService.serviceFilterValue = filterValue
+    consulService.updateURL()
     consulService.serviceFilterCount = 0;
     var showProxiesInList = consulService.showProxiesInList;
     consulService.serviceList.children('.serviceListItem').each(function (){
@@ -189,7 +197,8 @@ class ConsulService {
 
   onClickServiceName(source) {
     this.selectService(source);
-    this.updateURL($(source).find(".service-name").html());
+    this.selectedServiceName = $(source).find(".service-name").html()
+    this.updateURL();
   }
 
   onClickFilter(source) {
@@ -221,11 +230,18 @@ class ConsulService {
     })
   }
 
-  updateURL(link) {
-    var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-    if (link) {
-      newUrl += '?service=' + link
+  updateURL() {
+    var newUrl = new URL(location.href);
+    if (this.selectedServiceName) {
+      newUrl.searchParams.set('service', this.selectedServiceName);
+    } else {
+      newUrl.searchParams.delete('service')
     }
+    if (this.serviceFilterValue) {
+      newUrl.searchParams.set('filter', this.serviceFilterValue);
+    } else {
+      newUrl.searchParams.delete('filter')
+    }  
     window.history.pushState({},"",newUrl);
   }
 
