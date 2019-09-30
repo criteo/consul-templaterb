@@ -5,6 +5,7 @@
 IMPROVEMENTS:
 
 * build on travis with latest ruby versions
+* consul-ui: allow filtering from URL to create shortcuts easily
 
 ## 1.18.4 (September 19, 2019)
 

@@ -3,12 +3,23 @@ class ConsulNodes {
     this.ressourceURL = ressourceURL;
     this.fetchRessource();
     this.instanceFilter = $("#instance-filter");
+    var filter = new URL(location.href).searchParams.get('filter');
+    if (filter!=null && filter!='') {
+      this.instanceFilter.val(filter);
+    };
     this.instanceFilter.keyup(debounce(this.filterInstances, 400));
     this.refresh = parseInt(refresh);
     this.filterStatus = null;
     this.maxDisplayed = 100;
     this.displayedCount = 0;
     this.servicesStatus = {};
+    window.setTimeout(function(){
+      if (filter!=null && filter!='') {
+        consulNodes.instanceFilter.val(filter);
+        console.log(this.instanceFilter.value)
+        consulNodes.filterInstances();
+      }
+    }, 100);
   }
 
   fetchRessource() {
@@ -29,8 +40,19 @@ class ConsulNodes {
     this.filterInstances();
   }
 
+  updateURL() {
+    var newUrl = new URL(location.href);
+    if (consulNodes.instanceFilter.val()!='') {
+      newUrl.searchParams.set('filter', consulNodes.instanceFilter.val());
+    } else {
+      newUrl.searchParams.delete('filter')
+    }
+    window.history.pushState({},"",newUrl);
+  }
+
   filterInstances() {
     updateFilterDisplay(consulNodes.filterStatus);
+    consulNodes.updateURL();
     consulNodes.displayedCount = 0;
     consulNodes.servicesStatus = {};
     var filter = new RegExp(consulNodes.instanceFilter.val());
