@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+BUGFIXs:
+
+* Avoid try publishing several times Gem on rubygems.org
+
 ## 1.18.5 (September 30, 2019)
 
 IMPROVEMENTS:
