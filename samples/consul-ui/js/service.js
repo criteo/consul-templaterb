@@ -1,385 +1,322 @@
-class ConsulService {
-  constructor(resourceURL, refresh) {
-    this.resourceURL = resourceURL;
-    this.fetchRessource();
-    this.serviceList = $("#service-list");
-    this.serviceFilter = $("#service-filter");
-    this.serviceFilter.keyup(debounce(this.filterService, 250));
-    this.instanceFilter = $("#instance-filter");
-    this.instanceFilter.keyup(debounce(this.filterInstances, 250));
-    this.refresh = parseInt(refresh);
-    this.filterStatus = null;
-    this.serviceFilterCounter = $("#service-counter");
-    this.serviceFilterCount = 0;
-    this.showProxiesInList = false;
-    this.selectedServiceName = new URL(location.href).searchParams.get('service');
-    this.serviceFilterValue = new URL(location.href).searchParams.get('filter');
-    var cs = this
-    this.loadFavorites();
-    window.setTimeout(function(){
-      cs.showTags($('#showTagsInList:checked').length > 0);
-      cs.showProxies($('#showProxiesInList:checked').length > 0);
-    }, 100);
-    
-  }
-
-  initFilterValue() {
-    if (this.serviceFilterValue) {
-      this.serviceFilter.val(this.serviceFilterValue);
-      this.filterService()
-    }
-  }
-
-  showTags(enableTags) {
-    var stylesheet = document.getElementById('css-states');
-    stylesheet.textContent = '.service-tags { display: ' + (enableTags? 'block':'none') + '!important ;}';
-  }
-
-  showProxies(showProxies) {
-    if (showProxies != this.showProxiesInList) {
-      this.showProxiesInList = showProxies;
-      console.log("showProxies:= "+this.showProxiesInList+", reloading list")
-      this.reloadServiceList();
-    }
-  }
-
-  async fetchRessource() {
-    const response = await fetch(this.resourceURL);
-    const result = await response.json();
-    await this.initRessource(result);
-  }
-
-  async initRessource(data) {
-    this.data = data;
-    await this.reloadServiceList();
-    console.log('Data generated at: ' + data['generated_at']);
-
-    var urlParam = this.selectedServiceName
-    if (urlParam) {
-      var nodes = document.getElementById('service-list').childNodes;
-      for (const node of nodes) {
-        if($(node).find(".service-name").html() == urlParam) {
-          var selectedElement = $(node);
-          this.selectService(selectedElement);
-          selectedElement.focus();
-          break;
-        }
+class ConsulServiceManager extends ConsulUIManager {
+  constructor(resourceURL) {
+    super(resourceURL);
+    var flags = {};
+    this.mainSelector = new ServiceMainSelector(
+      $("#service-title"),
+      $("#instances-list"),
+      $("#instances-filter")
+    );
+    this.sideSelector = new ServiceSideSelector(
+      this.mainSelector,
+      flags,
+      $("#service-filter"),
+      $("#service-list"),
+      $("#service-counter"),
+      "filter",
+      "service"
+    );
+    var obj = this;
+    flags["showTags"] = new DisplayFlag(
+      $("#showTagsInList").get(0),
+      function() {
+        obj.sideSelector.prepareData();
+        obj.sideSelector.refreshList();
       }
-    } else {
-      var servicePrefix = '#service_';
-      if (location.hash.startsWith(servicePrefix)) {
-        urlParam = location.hash.substr(servicePrefix.length);
+    );
+    flags["showConnectProxies"] = new DisplayFlag(
+      $("#showProxiesInList").get(0),
+      function() {
+        obj.sideSelector.refreshList();
       }
-      this.selectService(document.getElementById('service-list').firstElementChild);
-    }
-    if(this.refresh > 0) {
-      setTimeout(this.fetchRessource, this.refresh * 1000);
-    }
-    this.initFilterValue();
+    );
+    this.fetchResource();
   }
 
-  async reloadServiceList() {
-    this.serviceList.html('');
-    this.serviceFilterCount = 0;
+  async initResource(data) {
+    this.mainSelector.nodes = data["nodes"];
+    this.sideSelector.data = data["services"];
+    this.sideSelector.prepareData();
+    this.sideSelector.refreshList();
+  }
+}
 
-    if (!this.data || !this.data.services) {
-      console.log("No data to display");
-    } else {
-      const services = Object.values(this.data.services).map((service, index) => ({ service, index }));
-      const favorites = services.filter(({ service }) => this.favorites[service.name]);
-      const others = services.filter(({ service }) => !this.favorites[service.name]);
-
-      const appendServiceAsync = ({ service, index }) =>
-        new Promise(resolve =>
-          setTimeout(() => {
-            this.appendService(service, index);
-            resolve();
-          }, 0)
-        );
-
-      await Promise.all([...favorites, ...others].map(appendServiceAsync));
-    }
-
-    this.serviceFilterCounter.html(this.serviceFilterCount);
-    resizeWrapper('service-wrapper', 'service-list');
+class ServiceSideSelector extends SideSelector {
+  constructor(
+    mainSelector,
+    flags,
+    filterElement,
+    listElement,
+    counterElement,
+    URLLabelFilter,
+    URLLabelSelected
+  ) {
+    super(
+      filterElement,
+      listElement,
+      counterElement,
+      URLLabelFilter,
+      URLLabelSelected,
+      true
+    );
+    this.mainSelector = mainSelector;
+    this.flags = flags;
   }
 
-  appendService(service, index) {
+  matchElement(service, filter) {
+    if (
+      service["kind"] != undefined &&
+      !this.flags["showConnectProxies"].state
+    ) {
+      return false;
+    }
+
+    if (service.name.match(filter)) {
+      return true;
+    }
+
+    for (var i in service.tags) {
+      if (service.tags[i].match(filter)) {
+        return true;
+      }
+    }
+
+    for (var status in service.status) {
+      if (status.match(filter)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  elementGenerator(service) {
     var serviceName = service.name;
-    var serviceStatus = buildServiceStatus(service);
+    var element = document.createElement("li");
+    var CSSClass = "service-list-item list-group-item list-group-item-action";
 
-    var listItem = document.createElement('li');
-    listItem.setAttribute('onfocus','consulService.onClickServiceName(this)');
-    listItem.setAttribute('onclick','consulService.onClickServiceName(this)');
-    listItem.setAttribute('value', serviceName);
-    listItem.setAttribute('data-fav', this.favorites[serviceName] ? 1 : 0);
-    listItem.setAttribute('data-index', index);
-    var listItemClass = 'serviceListItem list-group-item list-group-item-action';
+    var obj = this;
+    element.addEventListener("focus", function() {
+      obj.onClickElement(this, serviceName);
+    });
+    element.addEventListener("click", function() {
+      obj.onClickElement(this, serviceName);
+    });
 
-    var statuses = document.createElement('div');
-    statuses.setAttribute('class','statuses float-right');
+    element.setAttribute("value", serviceName);
 
-    if (!!serviceStatus['passing']) {
-      statuses.appendChild(createBadge('badge-success passing', serviceStatus['passing']));
-      listItem.setAttribute('status', 'passing');
+    element.appendChild(this.generateStatuses(service));
+
+    if (!!service["kind"]) {
+      var kind = document.createElement("div");
+      kind.setAttribute("class", "kind float-right");
+      kind.appendChild(createBadge("badge-info kind", service["kind"]));
+      element.appendChild(kind);
+      CSSClass += " kind-" + service["kind"];
     }
+    element.setAttribute("class", CSSClass);
 
-    if (!!serviceStatus['warning']) {
-      statuses.appendChild(createBadge('badge-warning warning', serviceStatus['warning']));
-      listItem.setAttribute('status', 'warning');
-    }
-
-    if (!!serviceStatus['critical']) {
-      statuses.appendChild(createBadge('badge-danger critical', serviceStatus['critical']));
-      listItem.setAttribute('status', 'critical');
-    }
-
-    statuses.appendChild(createBadge('badge-dark', (serviceStatus['total'] || 0)));
-
-    statuses.append(this.buildFavButton(serviceName));
-
-    listItem.appendChild(statuses);
-    if (!!service['kind']) {
-      var kind = document.createElement('div');
-      kind.setAttribute('class','kind float-right');
-      kind.appendChild(createBadge('badge-info kind', service['kind']));
-      listItem.appendChild(kind);
-      listItemClass+= " kind-" + service['kind'];
-    }
-    listItem.setAttribute('class', listItemClass);
-
-    var serviceNameItem = document.createElement('div');
-    serviceNameItem.setAttribute('class', 'service-name');
+    var serviceNameItem = document.createElement("div");
+    serviceNameItem.setAttribute("class", "service-name");
     serviceNameItem.appendChild(document.createTextNode(serviceName));
-    listItem.appendChild(serviceNameItem);
+    element.appendChild(serviceNameItem);
 
-    var serviceTagsItem = document.createElement('div');
-    serviceTagsItem.setAttribute('class', 'service-tags');
+    if (this.flags["showTags"].state) {
+      element.appendChild(this.generateServiceTags(service));
+    }
+
+    return element;
+  }
+
+  generateStatuses(service) {
+    var serviceStatus = buildServiceStatus(service);
+    var statuses = document.createElement("div");
+    statuses.setAttribute("class", "statuses float-right");
+
+    if (!!serviceStatus["passing"]) {
+      statuses.appendChild(
+        createBadge("badge-success passing", serviceStatus["passing"])
+      );
+    }
+
+    if (!!serviceStatus["warning"]) {
+      statuses.appendChild(
+        createBadge("badge-warning warning", serviceStatus["warning"])
+      );
+    }
+
+    if (!!serviceStatus["critical"]) {
+      statuses.appendChild(
+        createBadge("badge-danger critical", serviceStatus["critical"])
+      );
+    }
+
+    statuses.appendChild(
+      createBadge("badge-dark", serviceStatus["total"] || 0)
+    );
+
+    if (this.activateFavorite) {
+      statuses.append(this.favorites.buildButton(service.name));
+    }
+
+    return statuses;
+  }
+
+  generateServiceTags(service) {
+    var serviceTagsItem = document.createElement("div");
+    serviceTagsItem.setAttribute("class", "service-tags");
 
     for (var i = 0; i < service.tags.length; i++) {
-      serviceTagsItem.appendChild(createBadge('float-right badge-' + (i%2?'secondary':'info') , service.tags[i]));
+      serviceTagsItem.appendChild(
+        createBadge(
+          "float-right badge-" + (i % 2 ? "secondary" : "info"),
+          service.tags[i]
+        )
+      );
     }
-
-    listItem.appendChild(serviceTagsItem);
-
-    this.serviceList.append(listItem);
-
-    this.serviceFilterCount += 1;
+    return serviceTagsItem;
   }
 
-  filterService() {
-    var filter;
-    var filterValue = consulService.serviceFilter.val();
-    try {
-      filter = new RegExp(filterValue);
-    } catch (e) {
-      var safeReg = filterValue.replace(/[-[\]{}()*+?.,\\^$|]/g, "\\$&")
-      console.log("Failed to compile regexp for '" + filterValue + "', using strict lookup due to: " + e);
-      filter = new RegExp(safeReg);
-    }
-    consulService.serviceFilterValue = filterValue
-    consulService.updateURL()
-    consulService.serviceFilterCount = 0;
-    var showProxiesInList = consulService.showProxiesInList;
-    consulService.serviceList.children('.serviceListItem').each(function (){
-      var ui = $(this);
-      if(serviceMatcher(this, filter, showProxiesInList)) {
-        ui.removeClass('d-none');
-        ui.addClass('d-block');
-        consulService.serviceFilterCount += 1;
-        consulService.serviceFilterCounter.html(consulService.serviceFilterCount);
-      } else {
-        ui.removeClass('d-block');
-        ui.addClass('d-none');
-      }
-    })
+  selectItem(element, service) {
+    super.selectItem(element, service);
+    this.mainSelector.initSelector(this.data[service]);
+  }
+}
+
+class ServiceMainSelector extends MainSelector {
+  constructor(titleElement, listElement, filterElement) {
+    super(listElement, filterElement);
+    this.titleElement = titleElement;
+    this.passingStatusBarElement = $("#service-progress-passing");
+    this.warningStatusBarElement = $("#service-progress-warning");
+    this.criticalStatusBarElement = $("#service-progress-critical");
+    this.initStatusBar();
+    this.statusFilter = null;
   }
 
-  onClickServiceName(source) {
-    this.selectService(source);
-    this.selectedServiceName = $(source).find(".service-name").html()
-    this.updateURL();
+  initSelector(service) {
+    super.initSelector(service.instances);
+    this.generateTitle(service.name);
+    this.updateStatusBar(service.status);
   }
 
-  onClickFilter(source) {
-    var status = $(source).attr('status');
-    this.filterStatus = (this.filterStatus == status) ? null : status;
-    this.filterInstances();
-  }
-
-  filterInstances() {
-    updateFilterDisplay(consulService.filterStatus);
-    var filter = new RegExp(consulService.instanceFilter.val());
-    $('#instances-list').children('div').each(function() {
-      var status = $(this).attr('status');
-      if(instanceMatcher(this, filter)) {
-        if (consulService.filterStatus == null) {
-          $(this).removeClass('d-none');
-          $(this).addClass('d-block');
-        } else if (consulService.filterStatus == status) {
-          $(this).removeClass('d-none');
-          $(this).addClass('d-block');
-        } else {
-          $(this).removeClass('d-block');
-          $(this).addClass('d-none');
-        }
-      } else {
-        $(this).removeClass('d-block');
-        $(this).addClass('d-none');
-      }
-    })
-  }
-
-  updateURL() {
-    var newUrl = new URL(location.href);
-    if (this.selectedServiceName) {
-      newUrl.searchParams.set('service', this.selectedServiceName);
-    } else {
-      newUrl.searchParams.delete('service')
-    }
-    if (this.serviceFilterValue) {
-      newUrl.searchParams.set('filter', this.serviceFilterValue);
-    } else {
-      newUrl.searchParams.delete('filter')
-    }  
-    window.history.pushState({},"",newUrl);
-  }
-
-  selectService(source) {
-    if (this.selectedService) {
-      $(this.selectedService).removeClass('active');
-    }
-    var serviceName = $(source).find(".service-name").html()
-    this.selectedService = source.closest('li');
-    $(this.selectedService).addClass('active');
-
-    this.displayService(this.data.services[serviceName], this.data.nodes);
-  }
-
-  displayService(service, nodes) {
-    var titleText = service['name'] + ' <a href="consul-timeline-ui.html?service=' + service['name'] + '">timeline</a>';
-    $("#service-title").html(titleText);
-    $("#instances-list").html("");
-
-    var serviceStatus = buildServiceStatus(service);
-
-    for (var key in service['instances']) {
-      var instance = service['instances'][key];
-      var serviceHtml = document.createElement('div');
-      serviceHtml.setAttribute('class','list-group-item service-instance');
-      var state = nodeState(instance.checks);
-      serviceHtml.appendChild(weightsGenerator(instance.weights, state));
-      serviceHtml.appendChild(serviceTitleGenerator(instance));
-      var node_info = nodes[instance.name];
-      if (node_info != null) {
-        node_info = node_info.meta;
-        serviceHtml.appendChild(nodeMetaGenerator(node_info));
-        serviceHtml.appendChild(document.createElement('hr'));
-      }
-      if (instance.tags && instance.tags.length > 0) {
-        serviceHtml.appendChild(tagsGenerator(instance.tags));
-        serviceHtml.appendChild(document.createElement('hr'));
-      }
-      serviceHtml.appendChild(serviceMetaGenerator(instance.sMeta));
-      serviceHtml.appendChild(connectGenerator(instance));
-      serviceHtml.appendChild(checksStatusGenerator(instance, instance.name));
-      serviceHtml.setAttribute('status', state);
-      $("#instances-list").append(serviceHtml);
-    }
-
-    $('#service-progress-passing').css('width', (serviceStatus['passing'] || 0) / serviceStatus['total'] * 100 + '%')
-    $('#service-progress-passing').html("passing (" + (serviceStatus['passing'] || 0) + ")")
-    $('#service-progress-warning').css('width', (serviceStatus['warning'] || 0) / serviceStatus['total'] * 100 + '%')
-    $('#service-progress-warning').html("warning (" + (serviceStatus['warning'] || 0) +")")
-    $('#service-progress-critical').css('width', (serviceStatus['critical'] || 0) / serviceStatus['total'] * 100 + '%')
-    $('#service-progress-critical').html("critical (" + (serviceStatus['critical'] || 0) + ")")
-
-    resizeWrapper('instances-wrapper', 'instances-list');
-    $('#instances-list .list-group-item').resize(resizeAll);
-    this.filterInstances();
-    $('pre code').each(function(i, block) {
-      hljs.highlightBlock(block);
+  initStatusBar() {
+    var obj = this;
+    this.passingStatusBarElement.get(0).addEventListener("click", function() {
+      obj.onClickFilter(this, "passing");
+    });
+    this.warningStatusBarElement.get(0).addEventListener("click", function() {
+      obj.onClickFilter(this, "warning");
+    });
+    this.criticalStatusBarElement.get(0).addEventListener("click", function() {
+      obj.onClickFilter(this, "critical");
     });
   }
 
-  loadFavorites() {
-    const all = (localStorage.getItem('favorite_services') || '').split(',').filter(e => e != '');
-    this.favorites = {}
-    for (var i in all) {
-      this.favorites[all[i]] = true;
-    }
-  }
-
-  saveFavorites() {
-    let str = "";
-    for (var i in this.favorites) {
-      if (!this.favorites[i]) {
-        continue;
-      }
-      str == "" || (str += ",");
-      str += i;
-    }
-    localStorage.setItem('favorite_services', str);
-  }
-
-  buildFavButton(serviceName) {
-    const btn = document.createElement('button');
-    btn.className = 'favorite';
-    btn.setAttribute('title', 'Add/Remove from favorites');
-
-    if (this.favorites[serviceName]) {
-      btn.className += ' favorited';
-    }
-
-    $(btn).click(e => {
-      this.toggleFav(serviceName, !this.favorites[serviceName]);
-    });
-    return btn;
-  }
-
-  toggleFav(serviceName, fav) {
-    this.favorites[serviceName] = fav;
-
-    let el = this.serviceList.find('[value="' + serviceName + '"]');
-    if (!el.length) {
-      return;
-    }
-
-    if (fav) {
-      el.find('.favorite').addClass('favorited');
+  onClickFilter(source, status) {
+    if (this.statusFilter == status) {
+      this.statusFilter = null;
     } else {
-      el.find('.favorite').removeClass('favorited');
+      this.statusFilter = status;
     }
-    el.attr('data-fav', fav ? 1 : 0);
+    updateFilterDisplay(this.statusFilter);
+    this.refreshList();
+  }
 
-    const elIdx = parseInt(el.attr('data-index'));
+  updateStatusBar(serviceStatus) {
+    this.passingStatusBarElement.css(
+      "width",
+      ((serviceStatus["passing"] || 0) / serviceStatus["total"]) * 100 + "%"
+    );
+    this.passingStatusBarElement.html(
+      "passing (" + (serviceStatus["passing"] || 0) + ")"
+    );
+    this.warningStatusBarElement.css(
+      "width",
+      ((serviceStatus["warning"] || 0) / serviceStatus["total"]) * 100 + "%"
+    );
+    this.warningStatusBarElement.html(
+      "warning (" + (serviceStatus["warning"] || 0) + ")"
+    );
+    this.criticalStatusBarElement.css(
+      "width",
+      ((serviceStatus["critical"] || 0) / serviceStatus["total"]) * 100 + "%"
+    );
+    this.criticalStatusBarElement.html(
+      "critical (" + (serviceStatus["critical"] || 0) + ")"
+    );
+  }
 
-    let prev = fav ? null : this.serviceList.find('[data-fav="1"]').last();
-    const others = this.serviceList.find('[data-fav="' + (fav ? 1 : 0) + '"]');
-    for (var i = 0; i < others.length; i++) {
-      const idx = parseInt($(others[i]).attr("data-index"));
-      if (idx < elIdx) {
-        prev = $(others[i]);
-      } else if (idx > elIdx) {
-        break;
+  generateTitle(serviceName) {
+    var titleText =
+      serviceName +
+      ' <a href="consul-timeline-ui.html?service=' +
+      serviceName +
+      '">timeline</a>';
+    this.titleElement.html(titleText);
+    resizeAll();
+  }
+
+  elementGenerator(instance) {
+    var element = document.createElement("div");
+    element.setAttribute("class", "list-group-item service-instance");
+    var state = nodeState(instance.checks);
+    element.appendChild(weightsGenerator(instance.weights, state));
+    element.appendChild(serviceTitleGenerator(instance));
+    var node_info = this.nodes[instance.name];
+    if (node_info != null) {
+      node_info = node_info.meta;
+      element.appendChild(nodeMetaGenerator(node_info));
+      element.appendChild(document.createElement("hr"));
+    }
+    if (instance.tags && instance.tags.length > 0) {
+      element.appendChild(tagsGenerator(instance.tags));
+      element.appendChild(document.createElement("hr"));
+    }
+    element.appendChild(serviceMetaGenerator(instance.sMeta));
+    element.appendChild(connectGenerator(instance));
+    element.appendChild(checksStatusGenerator(instance, instance.name));
+    element.setAttribute("status", state);
+
+    return element;
+  }
+
+  matchElement(instance, filter) {
+    if (
+      this.statusFilter != null &&
+      nodeState(instance["checks"]) != this.statusFilter
+    ) {
+      return false;
+    }
+
+    if (instance.name.match(filter)) {
+      return true;
+    }
+
+    if (instance.addr.match(filter)) {
+      return true;
+    }
+
+    for (var i in instance.tags) {
+      if (instance.tags[i].match(filter)) {
+        return true;
       }
-    };
-
-    if (!prev || !prev.length) {
-      this.serviceList.prepend(el);
-    } else {
-      prev.after(el);
     }
 
-    // if favorited, scroll to element new position
-    if (fav) {
-      const container = $('#service-wrapper');
-      const top = el.position().top;
-      const scroll = container.scrollTop();
-      container.scrollTop(scroll + el.offset().top - container.offset().top);
+    for (var key in instance.sMeta) {
+      if (key.match(filter) || instance.sMeta[key].match(filter)) {
+        return true;
+      }
     }
 
-    this.saveFavorites();
+    var node = this.nodes[instance.name];
+    for (var key in node.meta) {
+      if ((key + ":" + node.meta[key]).match(filter)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 

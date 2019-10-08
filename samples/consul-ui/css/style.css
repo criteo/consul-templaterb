@@ -91,7 +91,6 @@ td.serviceName {
 
 #service-wrapper .list-group-item:last-child, #instances-wrapper .list-group-item:last-child,
 #keys-wrapper .list-group-item:last-child {
-  border-bottom-width: 0px;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
 }
@@ -239,10 +238,15 @@ pre, code {
   margin-bottom: 0px;
 }
 
-.connect-enabled{
+.service-list-item {
+  cursor: pointer;
+}
+
+.connect-enabled {
   float:right;
   border: 1px #ccc solid;
 }
-.connect-disabled{
+
+.connect-disabled {
   display: none;
 }
