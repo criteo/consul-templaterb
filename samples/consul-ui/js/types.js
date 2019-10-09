@@ -44,8 +44,6 @@ class ConsulUIManager {
         this.favorites = new Favorites("favorite_services");
       }
       this.showProxies = false;
-  
-      this.maxDisplayedElements = 500;
     }
   
     prepareData() {
@@ -76,7 +74,6 @@ class ConsulUIManager {
       }
       var selectItem = null;
       var selectElement = null;
-      var elementDisplayed = 0;
       var elementTotal = 0;
   
       if (this.activateFavorite) {
@@ -89,7 +86,6 @@ class ConsulUIManager {
                 selectItem = favList[i];
                 selectElement = this.data[favList[i]]["element"];
               }
-              elementDisplayed++;
               elementTotal++;
               this.listElement.append(this.data[favList[i]]["element"]);
             }
@@ -104,12 +100,8 @@ class ConsulUIManager {
           if (selectItem == null || this.selectedItem == key) {
             selectItem = key;
             selectElement = this.data[key]["element"];
-            elementDisplayed++;
           }
-          if (elementTotal < this.maxDisplayedElements) {
-            this.listElement.append(this.data[key]["element"]);
-            elementDisplayed++;
-          }
+          this.listElement.append(this.data[key]["element"]);
           elementTotal++;
         }
       }
