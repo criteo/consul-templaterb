@@ -25,7 +25,7 @@ class ConsulUIManager {
       this.filterElement = filterElement;
       this.listElement = listElement;
       this.counterElement = counterElement;
-      var obj = this;
+      this.elements = {}
       this.filterElement.keyup(debounce(this.updateFilter.bind(this), 250));
   
       this.URLLabelFilter = URLLabelFilter;
@@ -48,7 +48,7 @@ class ConsulUIManager {
   
     prepareData() {
       for (var key in this.data) {
-        this.data[key]["element"] = this.elementGenerator(this.data[key]);
+        this.elements[key] = this.elementGenerator(key, this.data[key]);
       }
     }
   
@@ -81,13 +81,13 @@ class ConsulUIManager {
         var favDict = this.favorites.favorites;
         for (var i in favList) {
           if (favList[i] in this.data) {
-            if (this.matchElement(this.data[favList[i]], filter)) {
+            if (this.matchElement(favList[i], this.data[favList[i]], filter)) {
               if (selectItem == null || this.selectedItem == favList[i]) {
                 selectItem = favList[i];
-                selectElement = this.data[favList[i]]["element"];
+                selectElement = this.elements[favList[i]];
               }
               elementTotal++;
-              this.listElement.append(this.data[favList[i]]["element"]);
+              this.listElement.append(this.elements[favList[i]]);
             }
           }
         }
@@ -96,19 +96,19 @@ class ConsulUIManager {
       }
   
       for (var key in this.data) {
-        if (!(key in favDict) && this.matchElement(this.data[key], filter)) {
+        if (!(key in favDict) && this.matchElement(key, this.data[key], filter)) {
           if (selectItem == null || this.selectedItem == key) {
             selectItem = key;
-            selectElement = this.data[key]["element"];
+            selectElement = this.elements[key];
           }
-          this.listElement.append(this.data[key]["element"]);
+          this.listElement.append(this.elements[key]);
           elementTotal++;
         }
       }
       this.elementTotal = elementTotal;
+      this.counterElement.html(this.elementTotal);
       selectElement.scrollIntoView();
       this.selectItem(selectElement, selectItem);
-      this.counterElement.html(this.elementTotal);
     }
   
     onClickElement(source, selected) {
@@ -170,6 +170,24 @@ class ConsulUIManager {
       this.filterValue = this.filterElement.val();
       this.refreshList();
     }
+  }
+
+  class CodeDisplayer {
+      constructor(codeElement, titleElement) {
+        this.codeElement = codeElement
+        this.titleElement = titleElement
+      }
+
+      displayData(key, code) {
+        this.titleElement.html(key);
+        this.codeElement.text(code);
+        this.codeElement.removeClass();
+
+        $('pre code').each(function(i, block) {
+            hljs.highlightBlock(block);
+        });
+        resizeWrapper('data-wrapper', 'kv-data');
+      }
   }
   
   class DisplayFlag {

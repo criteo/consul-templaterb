@@ -63,7 +63,7 @@ class ServiceSideSelector extends SideSelector {
     this.flags = flags;
   }
 
-  matchElement(service, filter) {
+  matchElement(serviceName, service, filter) {
     if (
       service["kind"] != undefined &&
       !this.flags["showConnectProxies"].state
@@ -90,8 +90,7 @@ class ServiceSideSelector extends SideSelector {
     return false;
   }
 
-  elementGenerator(service) {
-    var serviceName = service.name;
+  elementGenerator(serviceName, service) {
     var element = document.createElement("li");
     var CSSClass = "service-list-item list-group-item list-group-item-action";
 
