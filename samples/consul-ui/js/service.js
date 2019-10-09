@@ -5,7 +5,8 @@ class ConsulServiceManager extends ConsulUIManager {
     this.mainSelector = new ServiceMainSelector(
       $("#service-title"),
       $("#instances-list"),
-      $("#instances-filter")
+      $("#instances-filter"),
+      $("#instance-counter"),
     );
     this.sideSelector = new ServiceSideSelector(
       this.mainSelector,
@@ -183,20 +184,35 @@ class ServiceSideSelector extends SideSelector {
 }
 
 class ServiceMainSelector extends MainSelector {
-  constructor(titleElement, listElement, filterElement) {
-    super(listElement, filterElement);
+  constructor(titleElement, listElement, filterElement, counterElement) {
+    super(listElement, filterElement, counterElement);
     this.titleElement = titleElement;
     this.passingStatusBarElement = $("#service-progress-passing");
     this.warningStatusBarElement = $("#service-progress-warning");
     this.criticalStatusBarElement = $("#service-progress-critical");
+    this.passingStatusButtonElement = $("#service-status-passing");
+    this.warningStatusButtonElement = $("#service-status-warning");
+    this.criticalStatusButtonElement = $("#service-status-critical");
+    this.totalStatusButtonElement = $("#service-status-total");
+    this.initStatusButtons();
     this.initStatusBar();
     this.statusFilter = null;
   }
 
-  initSelector(service) {
-    super.initSelector(service.instances);
-    this.generateTitle(service.name);
-    this.updateStatusBar(service.status);
+  initStatusButtons() {
+    var obj = this;
+    this.passingStatusButtonElement.get(0).addEventListener("click", function() {
+      obj.onClickFilter(this, "passing");
+    });
+    this.warningStatusButtonElement.get(0).addEventListener("click", function() {
+      obj.onClickFilter(this, "warning");
+    });
+    this.criticalStatusButtonElement.get(0).addEventListener("click", function() {
+      obj.onClickFilter(this, "critical");
+    });
+    this.totalStatusButtonElement.get(0).addEventListener("click", function() {
+      obj.onClickFilter(this, null);
+    });
   }
 
   initStatusBar() {
@@ -212,37 +228,33 @@ class ServiceMainSelector extends MainSelector {
     });
   }
 
-  onClickFilter(source, status) {
-    if (this.statusFilter == status) {
-      this.statusFilter = null;
-    } else {
-      this.statusFilter = status;
-    }
-    updateFilterDisplay(this.statusFilter);
-    this.refreshList();
+  initSelector(service) {
+    super.initSelector(service.instances);
+    this.generateTitle(service.name);
   }
 
-  updateStatusBar(serviceStatus) {
+  updateStatusCounters() {
+    updateStatusItem(this.selectorStatus);
     this.passingStatusBarElement.css(
       "width",
-      ((serviceStatus["passing"] || 0) / serviceStatus["total"]) * 100 + "%"
+      ((this.selectorStatus["passing"] || 0) / this.selectorStatus["total"]) * 100 + "%"
     );
     this.passingStatusBarElement.html(
-      "passing (" + (serviceStatus["passing"] || 0) + ")"
+      "passing (" + (this.selectorStatus["passing"] || 0) + ")"
     );
     this.warningStatusBarElement.css(
       "width",
-      ((serviceStatus["warning"] || 0) / serviceStatus["total"]) * 100 + "%"
+      ((this.selectorStatus["warning"] || 0) / this.selectorStatus["total"]) * 100 + "%"
     );
     this.warningStatusBarElement.html(
-      "warning (" + (serviceStatus["warning"] || 0) + ")"
+      "warning (" + (this.selectorStatus["warning"] || 0) + ")"
     );
     this.criticalStatusBarElement.css(
       "width",
-      ((serviceStatus["critical"] || 0) / serviceStatus["total"]) * 100 + "%"
+      ((this.selectorStatus["critical"] || 0) / this.selectorStatus["total"]) * 100 + "%"
     );
     this.criticalStatusBarElement.html(
-      "critical (" + (serviceStatus["critical"] || 0) + ")"
+      "critical (" + (this.selectorStatus["critical"] || 0) + ")"
     );
   }
 
@@ -278,6 +290,10 @@ class ServiceMainSelector extends MainSelector {
     element.setAttribute("status", state);
 
     return element;
+  }
+
+  getStatus(instance) {
+    return nodeState(instance["checks"]);
   }
 
   matchElement(instance, filter) {

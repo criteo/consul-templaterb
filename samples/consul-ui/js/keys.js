@@ -1,7 +1,6 @@
 class ConsulKeysManager extends ConsulUIManager {
   constructor(resourceURL) {
     super(resourceURL);
-    var flags = {};
     this.codeDisplayer = new CodeDisplayer(
       $("#kv-data"),
       $("#kv-title"),
@@ -14,7 +13,6 @@ class ConsulKeysManager extends ConsulUIManager {
       "filter",
       "key"
     );
-    var obj = this;
     this.fetchResource();
   }
 

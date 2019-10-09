@@ -129,11 +129,14 @@ class ConsulUIManager {
   }
   
   class MainSelector {
-    constructor(listElement, filterElement) {
+    constructor(listElement, filterElement, counterElement) {
       this.listElement = listElement;
       this.filterValue = "";
       this.filterElement = filterElement;
       this.filterElement.keyup(debounce(this.updateFilter.bind(this), 250));
+      this.selectorStatus = {}
+      this.statusFilter = null;
+      this.counterElement = counterElement;
     }
   
     initSelector(data) {
@@ -158,12 +161,35 @@ class ConsulUIManager {
         );
         var filter = new RegExp(safeReg);
       }
-  
+
+      this.selectorStatus = {}
+      var displayedCounter = 0
+      var maxDisplayed = 100
       for (var key in this.data) {
         if (this.matchElement(this.data[key], filter)) {
-          this.listElement.append(this.data[key]["element"]);
+          if (displayedCounter < maxDisplayed) {
+            this.listElement.append(this.data[key]["element"]);
+            displayedCounter++
+          } 
+          
+          var state = this.getStatus(this.data[key]);
+          this.selectorStatus[state] = (this.selectorStatus[state] || 0) + 1;
+          this.selectorStatus['total'] = (this.selectorStatus['total'] || 0) + 1;
         }
       }
+      this.counterElement.html(displayedCounter);
+      this.updateStatusCounters();
+    }
+
+    onClickFilter(source, status) {
+        if (this.statusFilter == status) {
+          this.statusFilter = null;
+        } else {
+          this.statusFilter = status;
+        }
+    
+        updateFilterDisplay(this.statusFilter);
+        this.refreshList();
     }
   
     updateFilter() {

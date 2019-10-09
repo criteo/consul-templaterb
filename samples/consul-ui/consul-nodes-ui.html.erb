@@ -10,10 +10,10 @@
               <input id="instance-filter" type="text" placeholder="filter nodes by name, service or tags" class="form-control" />
             </div>
             <div id="instance-statuses" class="col-2">
-              <span id="service-status-passing"  status="passing" onclick="consulNodes.onClickFilter(this)" class="badge mx-1 badge-success passing service-status">0</span>
-              <span id="service-status-warning"  status="warning" onclick="consulNodes.onClickFilter(this)" class="badge mx-1 badge-warning warning service-status">0</span>
-              <span id="service-status-critical" status="critical" onclick="consulNodes.onClickFilter(this)" class="badge mx-1 badge-danger critical service-status">0</span>
-              <span id="service-status-total" status="total" onclick="consulNodes.onClickFilter(this)" class="badge mx-1 badge-dark service-status">0</span>
+              <span id="service-status-passing"  status="passing" class="badge mx-1 badge-success passing service-status">0</span>
+              <span id="service-status-warning"  status="warning" class="badge mx-1 badge-warning warning service-status">0</span>
+              <span id="service-status-critical" status="critical" class="badge mx-1 badge-danger critical service-status">0</span>
+              <span id="service-status-total" status="total" class="badge mx-1 badge-dark service-status">0</span>
             </div>
           </div>
           <div id="instances-wrapper">
@@ -27,9 +27,10 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <script src="js/utils.js"></script>
+  <script src="js/types.js"></script>
   <script src="js/nodes.js"></script>
   <script type="text/javascript">
-    consulNodes = new ConsulNodes('<%= datasource %>','<%= refresh %>');
+    consulNodesManager = new ConsulNodesManager('<%= datasource %>');
   </script>
   </body>
 </html>

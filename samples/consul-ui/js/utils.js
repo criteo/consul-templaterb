@@ -416,11 +416,14 @@ function getChecksNode(node) {
 
 function getGeneralNodeStatus(nodeService) {
   status='passing';
+
   for (var serviceKey in nodeService) {
-    switch(nodeState(nodeService[serviceKey]['Checks'])) {
+    if (nodeService[serviceKey] != null && "Checks" in nodeService[serviceKey]) {
+      switch(nodeState(nodeService[serviceKey]['Checks'])) {
         case 'passing': break;
         case 'warning': status='warning'; break;
         case 'critical': return 'critical'; break;
+      }
     }
   }
   return status;
