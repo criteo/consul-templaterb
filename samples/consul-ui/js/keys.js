@@ -1,132 +1,90 @@
-class ConsulKeys {
-  constructor(ressourceURL, refresh) {
-    this.ressourceURL = ressourceURL;
-    this.fetchRessource();
-    this.keysList = $("#keys-list");
-    this.keysFilter = $("#keys-filter");
-    this.keysFilter.keyup(debounce(this.filterService, 250));
-    this.refresh = parseInt(refresh);
-    this.keysFilterCounter = $("#keys-counter");
-    this.keysFilterCount = 0;
+class ConsulKeysManager extends ConsulUIManager {
+  constructor(resourceURL) {
+    super(resourceURL);
+    var flags = {};
+    this.codeDisplayer = new CodeDisplayer(
+      $("#kv-data"),
+      $("#kv-title"),
+    )
+    this.sideSelector = new KeySideSelector(
+      this.codeDisplayer,
+      $("#keys-filter"),
+      $("#keys-list"),
+      $("#keys-counter"),
+      "filter",
+      "key"
+    );
+    var obj = this;
+    this.fetchResource();
   }
 
-  fetchRessource() {
-    $.ajax({url: this.ressourceURL, cache: false, dataType: "json", sourceObject: this, success: function(result){
-      consulKeys.initRessource(result);
-    }});
-  }
-
-  initRessource(data) {
-    this.data = data;
-    this.reloadKeysList();
-    console.log('Data generated at: ' + data['generated_at']);
-
-    var urlParam = new URL(location.href).searchParams.get('key');
-    if (urlParam) {
-      var nodes = document.getElementById('keys-list').childNodes;
-      for(var i in nodes) {
-        if($(nodes[i]).find(".key-name").html() == urlParam) {
-          var selectedElement = $(nodes[i])
-          this.selectKey(selectedElement);
-          selectedElement.focus()
-          break;
-        }
-      }
-    } else {
-      this.selectKey(document.getElementById('keys-list').firstElementChild);
-    }
-
-    if(this.refresh > 0) {
-      setTimeout(this.fetchRessource, this.refresh * 1000);
-    }
-  }
-
-  reloadKeysList() {
-    this.keysList.html('');
-    this.keysFilterCount = 0;
-
-    for (var key in this.data.kv) {
-
-      var listItem = document.createElement('button');
-      listItem.setAttribute('type','button');
-      listItem.setAttribute('onfocus','consulKeys.onClickServiceName(this)');
-      listItem.setAttribute('onclick','consulKeys.onClickServiceName(this)');
-      listItem.setAttribute('value',key);
-      listItem.setAttribute('class','list-group-item list-group-item-action');
-
-      var serviceNameItem = document.createElement('div');
-      serviceNameItem.setAttribute('class', 'key-name');
-      serviceNameItem.appendChild(document.createTextNode(key));
-      listItem.appendChild(serviceNameItem);
-
-      this.keysFilterCount += 1;
-      this.keysList.append(listItem);
-    }
-    this.keysFilterCounter.html(this.keysFilterCount);
-    resizeWrapper('keys-wrapper', 'keys-list');
-    this.filterService();
-  }
-
-  filterService() {
-    var filter = new RegExp(consulKeys.keysFilter.val());
-    consulKeys.keysFilterCount = 0;
-    consulKeys.keysList.children('button').each(function (){
-      var ui = $(this);
-      if(keyMatcher(this, filter)) {
-        ui.removeClass('d-none');
-        ui.addClass('d-block');
-        consulKeys.keysFilterCount += 1;
-        consulKeys.keysFilterCounter.html(consulKeys.keysFilterCount);
-      } else {
-        ui.removeClass('d-block');
-        ui.addClass('d-none');
-      }
-    })
-  }
-
-  onClickServiceName(source) {
-    this.selectKey(source);
-    this.selectedKeyName = $(source).find(".key-name").html()
-    this.updateURL();
-  }
-
-  updateURL() {
-    var newUrl = new URL(location.href);
-    if (this.selectedKeyName) {
-      newUrl.searchParams.set('key', this.selectedKeyName);
-    } else {
-      newUrl.searchParams.delete('key')
-    }
-    window.history.pushState({},"",newUrl.href);
-  }
-
-  selectKey(source) {
-    if (this.selectedKey) {
-      $(this.selectedKey).removeClass('active');
-    }
-    var serviceName = $(source).find(".key-name").html()
-    this.selectedKey = source.closest( "button" );
-    $(this.selectedKey).addClass('active');
-    this.displayKey([serviceName]);
-  }
-
-  displayKey(key) {
-    $("#kv-title").html(key);
-    if(this.data.kv[key] != null) {
-      var dataToDisplay = atob(this.data.kv[key]);
-    } else {
-      var dataToDisplay = 'NO DATA';
-    }
-
-    $("#kv-data").text(dataToDisplay);
-    $("#kv-data").removeClass();
-
-    $('pre code').each(function(i, block) {
-      hljs.highlightBlock(block);
-    });
-    resizeWrapper('data-wrapper', 'kv-data');
+  async initResource(data) {
+    this.sideSelector.data = data["kv"];
+    this.sideSelector.prepareData();
+    this.sideSelector.refreshList();
   }
 }
+
+class KeySideSelector extends SideSelector {
+    constructor(
+      codeDisplayer,
+      filterElement,
+      listElement,
+      counterElement,
+      URLLabelFilter,
+      URLLabelSelected
+    ) {
+      super(
+        filterElement,
+        listElement,
+        counterElement,
+        URLLabelFilter,
+        URLLabelSelected,
+        false
+      );
+      this.codeDisplayer = codeDisplayer
+    }
+  
+    matchElement(key, keyData, filter) {
+      return key.match(filter);
+    }
+  
+    elementGenerator(key, data) {
+      var element = document.createElement("li");
+
+      var CSSClass = "service-list-item list-group-item list-group-item-action";
+  
+      var obj = this;
+      element.addEventListener("focus", function() {
+        obj.onClickElement(this, key);
+      });
+      element.addEventListener("click", function() {
+        obj.onClickElement(this, key);
+      });
+  
+      element.setAttribute("value", key);
+
+      element.setAttribute("class", CSSClass);
+  
+      var nameItem = document.createElement("div");
+      nameItem.setAttribute("class", "service-name");
+      nameItem.appendChild(document.createTextNode(key));
+      element.appendChild(nameItem);
+
+      return element;
+    }
+  
+    selectItem(element, key) {
+      super.selectItem(element, key);
+      if(this.data[key] != null) {
+        var dataToDisplay = atob(this.data[key]);
+      } else {
+        var dataToDisplay = 'NO DATA';
+      }
+      this.codeDisplayer.displayData(key, dataToDisplay);
+    }
+  }
+  
 
 $( window ).resize(resizeData);
 resizeData();
