@@ -2,6 +2,11 @@
 
 ## (UNRELEASED)
 
+IMPROVEMENTS:
+
+* Refactor JS code in consul-ui
+* Removed old samples not used anymore
+
 BUGFIXs:
 
 * Avoid try publishing several times Gem on rubygems.org

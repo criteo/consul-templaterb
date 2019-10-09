@@ -251,19 +251,17 @@ by consul-templaterb.
 Have a look into the [samples/](samples/) directory to browse example files which contains those
 examples:
 
-1. [List all nodes on Cluster](samples/nodes.html.erb)
-2. [Show all services in Cluster](samples/services.html.erb)
-3. [Show all Service Checks and their output](samples/checks.html.erb)
-4. [Show all Key/Values nicely](samples/keys.html.erb)
-5. [Show Choregraphies  - work on content of K/V with JSON](samples/criteo_choregraphies.html.erb)
-6. [Services in XML](samples/consul_template.xml.erb)
-7. [Services in JSON](samples/consul_template.json.erb)
-8. [Generate HaProxy Configuration](samples/ha_proxy.cfg.erb)
-9. [Export Consul Statistics to Prometheus](samples/metrics.erb) : count all services, their state,
+1. [List all nodes on Cluster](samples/consul-ui/consul_nodes.json.erb)
+2. [Show all services in Cluster](samples/consul-ui/consul_services.json.erb)
+3. [Show all Key/Values nicely](samples/consul-ui/consul_keys.json.erb)
+4. [Services in XML](samples/consul_template.xml.erb)
+5. [Services in JSON](samples/consul_template.json.erb)
+6. [Generate HaProxy Configuration](samples/ha_proxy.cfg.erb)
+7. [Export Consul Statistics to Prometheus](samples/metrics.erb) : count all services, their state,
    datacenters and nodes and export it to prometheus easily to trigger alerts.
-10. [List all services/Nodes with their statuses for all datacenters](samples/all_services.txt.erb)
-11. [Show all services/instances not passing on all DCs](samples/tools/find_all_failing_services.txt.erb)
-12. [List all rubygems consul versions from remote server JSON](samples/list_ruby_versions_from_rubygems.txt.erb)
+8. [List all services/Nodes with their statuses for all datacenters](samples/all_services.txt.erb)
+9. [Show all services/instances not passing on all DCs](samples/tools/find_all_failing_services.txt.erb)
+10. [List all rubygems consul versions from remote server JSON](samples/list_ruby_versions_from_rubygems.txt.erb)
 
 If you want to test it quickly, you might try with (assuming your consul agent is listening on
 `http://localhost:8500`):
