@@ -7,13 +7,13 @@
           <div class="form-group">
             <div class="form-check form-check-inline">
               <label class="form-check-label">
-                <input id="showTagsInList" type="checkbox" title="show tags" onclick="consulService.showTags(this.checked)" class="form-check-input" />
+                <input id="showTagsInList" type="checkbox" title="show tags" class="form-check-input" />
                 Show Tags
               </label>
             </div>
             <div class="form-check form-check-inline">
               <label class="form-check-label">
-                <input id="showProxiesInList" type="checkbox" title="show Consul Connect Proxies" onclick="consulService.showProxies(this.checked)" class="form-check-input" />
+                <input id="showProxiesInList" type="checkbox" title="show Consul Connect Proxies" class="form-check-input" />
                 Show Connect Proxies
               </label>
             </div>
@@ -33,13 +33,13 @@
           <h2 class="text-center" id="service-title"></h2>
           <div class="row mb-2">
             <div class="input-group float-left col-12">
-              <input id="instance-filter" type="text" placeholder="filter nodes by name or tags" class="form-control" />
+              <input id="instances-filter" type="text" placeholder="filter nodes by name or tags" class="form-control" />
             </div>
           </div>
           <div class="progress">
-            <div id="service-progress-passing" status="passing" onclick="consulService.onClickFilter(this)" class="progress-status progress-bar bg-success" role="progressbar" style="width: 100%">passing</div>
-            <div id="service-progress-warning" status="warning" onclick="consulService.onClickFilter(this)" class="progress-status progress-bar bg-warning" role="progressbar" style="width: 0%">warning</div>
-            <div id="service-progress-critical" status="critical" onclick="consulService.onClickFilter(this)" class="progress-status progress-bar bg-danger" role="progressbar" style="width: 0%">critical</div>
+            <div id="service-progress-passing" status="passing" class="progress-status progress-bar bg-success" role="progressbar" style="width: 100%">passing</div>
+            <div id="service-progress-warning" status="warning" class="progress-status progress-bar bg-warning" role="progressbar" style="width: 0%">warning</div>
+            <div id="service-progress-critical" status="critical" class="progress-status progress-bar bg-danger" role="progressbar" style="width: 0%">critical</div>
           </div>
           <div id="instances-wrapper">
             <div id="instances-list" class="list-group"></div>
@@ -52,9 +52,10 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <script src="js/utils.js"></script>
+  <script src="js/types.js"></script>
   <script src="js/service.js"></script>
   <script type="text/javascript">
-    consulService = new ConsulService('<%= datasource %>','<%= refresh %>');
+    consulServiceManager = new ConsulServiceManager('<%= datasource %>');
   </script>
   <script src="vendors/highlight/highlight.pack.js"></script>
   </body>

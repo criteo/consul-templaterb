@@ -1,6 +1,5 @@
 function buildServiceStatus(service) {
   var serviceStatus = {};
-
   for (var key in service['instances']) {
     var instance = service['instances'][key];
     var state = nodeState(instance.checks);
@@ -8,7 +7,7 @@ function buildServiceStatus(service) {
     serviceStatus[state] = (serviceStatus[state] || 0) + 1;
     serviceStatus['total'] = (serviceStatus['total'] || 0) + 1;
   }
-
+  service["status"] = serviceStatus
   return serviceStatus;
 }
 
@@ -452,4 +451,15 @@ function updateFilterDisplay(filterStatus) {
     }
   })
 
+}
+
+function updateURL(arg, value) {
+  var newUrl = new URL(location.href);
+  if (value == "" || value == null) {
+    newUrl.searchParams.delete(arg);
+  } else {
+    newUrl.searchParams.set(arg, value);
+  }
+    
+  window.history.pushState({},"",newUrl);
 }
