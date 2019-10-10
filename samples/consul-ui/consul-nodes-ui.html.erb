@@ -6,10 +6,16 @@
         <div class="col-12 col-m-12">
           <h2 class="text-center" id="service-title"></h2>
           <div class="row mb-2">
-            <div class="input-group float-left col-10">
-              <input id="instance-filter" type="text" placeholder="filter nodes by name, service or tags" class="form-control" />
+            <div class="input-group float-left col-7">
+              <input id="instance-filter" type="text" placeholder="filter nodes by name, service or tags" class="form-control" >
             </div>
-            <div id="instance-statuses" class="col-2">
+            <select id="max-display-selector" class="form-control  col-1">
+              <option selected="selected" value="100">Show 100</option>
+              <option value="500">Show 500</option>
+              <option value="1000">Show 1000</option>
+              <option value="all">All</option>
+            </select>
+            <div id="instance-statuses" class="float-right col-2">
               <span id="service-status-passing"  status="passing" class="badge mx-1 badge-success passing service-status">0</span>
               <span id="service-status-warning"  status="warning" class="badge mx-1 badge-warning warning service-status">0</span>
               <span id="service-status-critical" status="critical" class="badge mx-1 badge-danger critical service-status">0</span>

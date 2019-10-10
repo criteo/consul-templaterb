@@ -3,7 +3,9 @@ class ConsulNodesManager extends ConsulUIManager {
     super(resourceURL);
     this.mainSelector = new NodeMainSelector(
       $("#instances-list"),
-      $("#instance-filter")
+      $("#instance-filter"),
+      $("#instance-counter"),
+      $("#max-display-selector")
     );
     this.fetchResource();
   }
@@ -14,8 +16,8 @@ class ConsulNodesManager extends ConsulUIManager {
 }
 
 class NodeMainSelector extends MainSelector {
-  constructor(listElement, filterElement) {
-    super(listElement, filterElement);
+  constructor(listElement, filterElement, counterElement, maxDisplayed) {
+    super(listElement, filterElement, counterElement, maxDisplayed);
     this.statusFilter = null;
     this.passingStatusButtonElement = $("#service-status-passing");
     this.warningStatusButtonElement = $("#service-status-warning");

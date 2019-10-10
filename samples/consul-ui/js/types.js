@@ -129,7 +129,7 @@ class ConsulUIManager {
   }
   
   class MainSelector {
-    constructor(listElement, filterElement, counterElement) {
+    constructor(listElement, filterElement, counterElement, maxDisplayElement) {
       this.listElement = listElement;
       this.filterValue = "";
       this.filterElement = filterElement;
@@ -137,6 +137,9 @@ class ConsulUIManager {
       this.selectorStatus = {}
       this.statusFilter = null;
       this.counterElement = counterElement;
+      this.maxDisplayElement = maxDisplayElement;
+      this.maxDisplayElement.get(0).addEventListener("change", this.maxDisplaySelection.bind(this));
+      this.maxDisplayed = this.maxDisplayElement.val();
     }
   
     initSelector(data) {
@@ -144,6 +147,11 @@ class ConsulUIManager {
       for (var key in this.data) {
         this.data[key]["element"] = this.elementGenerator(this.data[key]);
       }
+      this.refreshList();
+    }
+
+    maxDisplaySelection() {
+      this.maxDisplayed = this.maxDisplayElement.val();
       this.refreshList();
     }
   
@@ -164,10 +172,9 @@ class ConsulUIManager {
 
       this.selectorStatus = {}
       var displayedCounter = 0
-      var maxDisplayed = 100
       for (var key in this.data) {
         if (this.matchElement(this.data[key], filter)) {
-          if (displayedCounter < maxDisplayed) {
+          if (this.maxDisplayed == "all" || displayedCounter < this.maxDisplayed) {
             this.listElement.append(this.data[key]["element"]);
             displayedCounter++
           } 
