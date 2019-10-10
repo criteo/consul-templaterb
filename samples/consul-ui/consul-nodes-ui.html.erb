@@ -6,14 +6,20 @@
         <div class="col-12 col-m-12">
           <h2 class="text-center" id="service-title"></h2>
           <div class="row mb-2">
-            <div class="input-group float-left col-10">
-              <input id="instance-filter" type="text" placeholder="filter nodes by name, service or tags" class="form-control" />
+            <div class="input-group float-left col-7">
+              <input id="instance-filter" type="text" placeholder="filter nodes by name, service or tags" class="form-control" >
             </div>
-            <div id="instance-statuses" class="col-2">
-              <span id="service-status-passing"  status="passing" onclick="consulNodes.onClickFilter(this)" class="badge mx-1 badge-success passing service-status">0</span>
-              <span id="service-status-warning"  status="warning" onclick="consulNodes.onClickFilter(this)" class="badge mx-1 badge-warning warning service-status">0</span>
-              <span id="service-status-critical" status="critical" onclick="consulNodes.onClickFilter(this)" class="badge mx-1 badge-danger critical service-status">0</span>
-              <span id="service-status-total" status="total" onclick="consulNodes.onClickFilter(this)" class="badge mx-1 badge-dark service-status">0</span>
+            <select id="max-display-selector" class="form-control  col-2">
+              <option selected="selected" value="100">Show 100</option>
+              <option value="500">Show 500</option>
+              <option value="1000">Show 1000</option>
+              <option value="all">All</option>
+            </select>
+            <div id="instance-statuses" class="float-right col-3">
+              <span id="service-status-passing"  status="passing" class="badge mx-1 badge-success passing service-status">0</span>
+              <span id="service-status-warning"  status="warning" class="badge mx-1 badge-warning warning service-status">0</span>
+              <span id="service-status-critical" status="critical" class="badge mx-1 badge-danger critical service-status">0</span>
+              <span id="service-status-total" status="total" class="badge mx-1 badge-dark service-status">0</span>
             </div>
           </div>
           <div id="instances-wrapper">
@@ -27,9 +33,10 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <script src="js/utils.js"></script>
+  <script src="js/types.js"></script>
   <script src="js/nodes.js"></script>
   <script type="text/javascript">
-    consulNodes = new ConsulNodes('<%= datasource %>','<%= refresh %>');
+    consulNodesManager = new ConsulNodesManager('<%= datasource %>');
   </script>
   </body>
 </html>
