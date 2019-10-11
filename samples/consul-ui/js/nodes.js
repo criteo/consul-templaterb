@@ -146,8 +146,8 @@ class NodeMainSelector extends MainSelector {
             }
         }
 
-        for (var key in node.meta) {
-            if ((key + ":" + node.meta[key]).match(filter)) {
+        for (var key in node.Node.Meta) {
+            if ((key + ":" + node.Node.Meta[key]).match(filter)) {
                 return true;
             }
         }
