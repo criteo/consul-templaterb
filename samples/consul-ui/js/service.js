@@ -5,9 +5,11 @@ class ConsulServiceManager extends ConsulUIManager {
         this.mainSelector = new ServiceMainSelector(
             $("#service-title"),
             $("#instances-list"),
-            $("#instances-filter"),
+            $("#instance-filter"),
             $("#instance-counter"),
-            $("#max-display-selector")
+            $("#max-display-selector"),
+            "node_filter",
+            "node_status_filter"
         );
         this.sideSelector = new ServiceSideSelector(
             this.mainSelector,
@@ -190,9 +192,11 @@ class ServiceMainSelector extends MainSelector {
         listElement,
         filterElement,
         counterElement,
-        maxDisplayed
+        maxDisplayed,
+        URLLabelFilter,
+        URLLabelStatus
     ) {
-        super(listElement, filterElement, counterElement, maxDisplayed);
+        super(listElement, filterElement, counterElement, maxDisplayed, URLLabelFilter, URLLabelStatus);
         this.titleElement = titleElement;
         this.passingStatusBarElement = $("#service-progress-passing");
         this.warningStatusBarElement = $("#service-progress-warning");
@@ -203,7 +207,6 @@ class ServiceMainSelector extends MainSelector {
         this.totalStatusButtonElement = $("#service-status-total");
         this.initStatusButtons();
         this.initStatusBar();
-        this.statusFilter = null;
     }
 
     initStatusButtons() {

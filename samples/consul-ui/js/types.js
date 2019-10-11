@@ -129,16 +129,27 @@ class SideSelector {
 }
 
 class MainSelector {
-    constructor(listElement, filterElement, counterElement, maxDisplayElement) {
+    constructor(listElement, filterElement, counterElement, maxDisplayElement, URLLabelFilter, URLLabelStatus) {
         this.listElement = listElement;
-        this.filterValue = "";
         this.filterElement = filterElement;
         this.filterElement.keyup(debounce(this.updateFilter.bind(this), 250));
         this.selectorStatus = {}
-        this.statusFilter = null;
         this.counterElement = counterElement;
         this.maxDisplayElement = maxDisplayElement;
         this.maxDisplayElement.get(0).addEventListener("change", this.maxDisplaySelection.bind(this));
+        this.URLLabelFilter = URLLabelFilter
+        this.URLLabelStatus = URLLabelStatus
+
+        this.filterValue = new URL(location.href).searchParams.get(URLLabelFilter);
+        if (this.filterValue == null) {
+            this.filterValue = "";
+        }
+        this.filterElement.val(this.filterValue)
+
+        this.statusFilter = new URL(location.href).searchParams.get(URLLabelStatus);
+        updateFilterDisplay(this.statusFilter);
+        console.log(this.statusFilter)
+
         this.maxDisplayed = this.maxDisplayElement.val();
     }
 
@@ -195,12 +206,15 @@ class MainSelector {
             this.statusFilter = status;
         }
 
+        updateURL(this.URLLabelStatus, this.statusFilter);
         updateFilterDisplay(this.statusFilter);
         this.refreshList();
     }
 
     updateFilter() {
+        console.log(this.filterValue)
         this.filterValue = this.filterElement.val();
+        updateURL(this.URLLabelFilter, this.filterValue);
         this.refreshList();
     }
 }
