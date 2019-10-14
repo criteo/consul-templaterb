@@ -299,13 +299,11 @@ class ServiceTimeline {
         var filterValue = $('#instance-filter')[0].value;
         var serviceName = serviceTimeline.serviceInstanceFilter;
         var serviceEvaluator = function(){return true};
-        var stylesheetText = '';
+        var showServiceColumn = true;
         if (serviceName != '' && serviceName != 'All') {
-           stylesheetText = '.serviceCol { display: none; }';
+           showServiceColumn = false;
            serviceEvaluator = function(e){ return e.service === serviceName }
         }
-        // Show / hide .serviceCol content
-        document.getElementById('serviceCol').textContent = stylesheetText;
         var maxRows = document.getElementById("maxRows").value;
         //$("#service-title").html(service['name']);
         var tableBody = $('#all-events > tbody');
@@ -429,7 +427,9 @@ class ServiceTimeline {
               timeElement.setAttribute('title', fullTimestamp + '\nX-Consul-Index: ' +e.idx);
               this.buildCell(row, 'td', 'ts', timeElement);
             }
-            this.buildCell(row, 'td', 'lookup serviceName serviceCol', document.createTextNode(e.service));
+            if (showServiceColumn) {
+              this.buildCell(row, 'td', 'lookup serviceName serviceCol', document.createTextNode(e.service));
+            }
             var text = e.instance;
             if (e.instance_info && e.instance_info.node) {
                 text = e.instance_info.node;
@@ -511,6 +511,11 @@ class ServiceTimeline {
         tbody.parentNode.replaceChild(frag, tbody);
         if (this.data.length > 1) {
           this.lastEntryLoaded = this.data[this.data.length - 1];
+        }
+        if (showServiceColumn) {
+          $('.serviceCol').show();
+        } else {
+          $('.serviceCol').hide();
         }
     }
 }
