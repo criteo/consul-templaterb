@@ -1,4 +1,4 @@
-service_name ; service_status ; node ; service_address ; non_passing_checks
+node ; Status
 <%
 # find all the failing services.
 # Usage: consul-templaterb --once samples/tools/find_all_failing_services.txt.erb
@@ -14,9 +14,9 @@ datacenters.each do |dc|
   nodes(dc: dc).each do |node|
     #warn node.inspect
     next unless node_filter.match(node['Node'])
-    checks(node, dc: dc).each do |check|
-      if snode.status != 'passing' && snode['ID'] == 'maint'
-%><%= node.inspect %>
+    checks_for_node(node['Node'], dc: dc).each do |check|
+      if check['Status'] != 'passing' && check['CheckID'] == '_node_maintenance'
+%>"<%= check['Node'] %>" ; "<%= check['Notes'] %>"
 <%
       end
     end

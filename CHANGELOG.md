@@ -7,6 +7,10 @@ IMPROVEMENTS:
 * Refactor JS code in consul-ui
 * Removed old samples not used anymore
 
+NEW FEATURES:
+
+* Added new function `checks_for_node`
+
 BUGFIXs:
 
 * Avoid try publishing several times Gem on rubygems.org

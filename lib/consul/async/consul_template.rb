@@ -133,6 +133,16 @@ module Consul
         create_if_missing(path, query_params) { ConsulTemplateChecks.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]')) }
       end
 
+      # https://www.consul.io/api/health.html#list-checks-for-node
+      def checks_for_node(name, dc: nil, passing: false)
+        raise 'You must specify a name for a service' if name.nil?
+        path = "/v1/health/node/#{name}"
+        query_params = {}
+        query_params[:dc] = dc if dc
+        query_params[:passing] = passing if passing
+        create_if_missing(path, query_params) { ConsulTemplateChecks.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]')) }
+      end
+
       # https://www.consul.io/api/catalog.html#list-nodes
       def nodes(dc: nil)
         path = '/v1/catalog/nodes'

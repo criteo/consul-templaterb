@@ -226,6 +226,10 @@ Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
 [List all the services of a given Node](https://www.consul.io/api/catalog.html#list-services-for-node) using its
 name or its ID. If DC is specified, will lookup for given node in another datacenter.
 
+## checks_for_node(name, dc: nil, passing: false, tag: nil)
+
+[Find all the checks](https://www.consul.io/api/health.html#list-checks-for-node) of a given node name.
+
 ## checks_for_service(name, dc: nil, passing: false, tag: nil)
 
 [Find all the checks](https://www.consul.io/api/health.html#list-checks-for-service) of a given service.
