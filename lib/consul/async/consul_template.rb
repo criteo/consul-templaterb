@@ -364,8 +364,6 @@ module Consul
     end
 
     class ConsulTemplateAbstract
-      extend Forwardable
-      def_delegators :result_delegate, :each, :[], :sort, :select, :each_value, :count, :empty?, :map
       attr_reader :result, :endpoint, :seen_at
       def initialize(consul_endpoint)
         @endpoint = consul_endpoint
@@ -383,6 +381,18 @@ module Consul
         @endpoint.ready?
       end
 
+      def method_missing(method_name, *args, &block)
+        if result_delegate.respond_to?(method_name)
+          result_delegate.send(method_name, *args, &block)
+        else
+          super
+        end
+      end
+
+      def respond_to_missing?(method_name, *args)
+        result_delegate.respond_to?(method_name, *args)
+      end
+
       protected
 
       def result_delegate
@@ -395,14 +405,12 @@ module Consul
     end
 
     class ConsulTemplateAbstractMap < ConsulTemplateAbstract
-      def_delegators :result_delegate, :each, :[], :keys, :sort, :select, :values, :each_pair, :each_value, :count, :empty?, :map
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
     class ConsulTemplateAbstractArray < ConsulTemplateAbstract
-      def_delegators :result_delegate, :each, :[], :sort, :select, :each_value, :count, :empty?, :map, :to_a
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
