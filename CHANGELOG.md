@@ -2,6 +2,8 @@
 
 ## (UNRELEASED)
 
+## 1.19.0 (October 14, 2019)
+
 IMPROVEMENTS:
 
 * Refactor JS code in consul-ui
