@@ -1,0 +1,25 @@
+service_name ; service_status ; node ; service_address ; non_passing_checks
+<%
+# find all the failing services.
+# Usage: consul-templaterb --once samples/tools/find_all_failing_services.txt.erb
+#
+# Environment variables:
+# * `CONSUL_SERVICE_FILTER` : regexp to filter services `.*` by default
+# * `CONSUL_DC_FILTER`:       regexp to filter datacenters `.*` by default
+
+node_filter = Regexp.new(ENV['CONSUL_NODE_FILTER'] || '.*')
+dc_filter = Regexp.new(ENV['CONSUL_DC_FILTER'] || '.*')
+datacenters.each do |dc|
+  next unless dc_filter.match(dc)
+  nodes(dc: dc).each do |node|
+    #warn node.inspect
+    next unless node_filter.match(node['Node'])
+    checks(node, dc: dc).each do |check|
+      if snode.status != 'passing' && snode['ID'] == 'maint'
+%><%= node.inspect %>
+<%
+      end
+    end
+  end
+end
+%>
