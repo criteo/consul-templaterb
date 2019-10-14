@@ -26,7 +26,7 @@ class SideSelector {
         this.listElement = listElement;
         this.counterElement = counterElement;
         this.elements = {}
-        this.filterElement.keyup(debounce(this.updateFilter.bind(this), 250));
+        this.filterElement.keyup(debounce('side-selector-filter-element-keyup', this.updateFilter.bind(this), 250));
 
         this.URLLabelFilter = URLLabelFilter;
         this.URLLabelSelected = URLLabelSelected;
@@ -60,8 +60,9 @@ class SideSelector {
 
     refreshList() {
         this.listElement.html("");
+        var filter;
         try {
-            var filter = new RegExp(this.filterValue);
+            filter = new RegExp(this.filterValue);
         } catch (e) {
             var safeReg = this.filterValue.replace(/[-[\]{}()*+?.,\\^$|]/g, "\\$&");
             console.log(
@@ -70,7 +71,7 @@ class SideSelector {
                 "', using strict lookup due to: " +
                 e
             );
-            var filter = new RegExp(safeReg);
+            filter = new RegExp(safeReg);
         }
         var selectItem = null;
         var selectElement = null;
@@ -107,7 +108,9 @@ class SideSelector {
         }
         this.elementTotal = elementTotal;
         this.counterElement.html(this.elementTotal);
-        selectElement.scrollIntoView();
+        if (selectElement) {
+          selectElement.scrollIntoView();
+        }
         this.selectItem(selectElement, selectItem);
     }
 
@@ -120,7 +123,9 @@ class SideSelector {
             this.selectedElem.classList.remove("active");
         }
         this.selectedElem = element;
-        this.selectedElem.classList.add("active");
+        if (element != null) {
+          this.selectedElem.classList.add("active");
+        }
 
         this.selectedItem = item;
 
@@ -132,7 +137,7 @@ class MainSelector {
     constructor(listElement, filterElement, counterElement, maxDisplayElement, URLLabelFilter, URLLabelStatus) {
         this.listElement = listElement;
         this.filterElement = filterElement;
-        this.filterElement.keyup(debounce(this.updateFilter.bind(this), 250));
+        this.filterElement.keyup(debounce('main-selector-filter-element', this.updateFilter.bind(this), 250));
         this.selectorStatus = {}
         this.counterElement = counterElement;
         this.maxDisplayElement = maxDisplayElement;
@@ -148,7 +153,7 @@ class MainSelector {
 
         this.statusFilter = new URL(location.href).searchParams.get(URLLabelStatus);
         updateFilterDisplay(this.statusFilter);
-        console.log(this.statusFilter)
+        console.log("filter", this.statusFilter);
 
         this.maxDisplayed = this.maxDisplayElement.val();
     }
@@ -212,7 +217,7 @@ class MainSelector {
     }
 
     updateFilter() {
-        console.log(this.filterValue)
+        //console.log('filter updated from ', this.filterValue, 'to', this.filterElement.val());
         this.filterValue = this.filterElement.val();
         updateURL(this.URLLabelFilter, this.filterValue);
         this.refreshList();

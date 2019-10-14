@@ -245,8 +245,10 @@ class ServiceMainSelector extends MainSelector {
     }
 
     initSelector(service) {
-        super.initSelector(service.instances);
-        this.generateTitle(service.name);
+        if (service) {
+          super.initSelector(service.instances);
+          this.generateTitle(service.name);
+        }
     }
 
     updateStatusCounters() {

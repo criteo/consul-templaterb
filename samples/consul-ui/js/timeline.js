@@ -5,10 +5,10 @@ class ServiceTimeline {
       this.fetchRessource(true);
       this.serviceList = $("#service-list");
       this.serviceFilter = $("#service-filter");
-      this.serviceFilter.keyup(debounce(this.filterService, 250));
+      this.serviceFilter.keyup(debounce('timeline-service-filter-keyup', this.filterService, 250));
       this.serviceInstanceFilter = '';
       this.instanceFilter = $("#instance-filter");
-      this.instanceFilter.keyup(debounce(this.doFilter, 250));
+      this.instanceFilter.keyup(debounce('timeline-instance-filter-keyup', this.doFilter, 250));
       this.refresh = parseInt(refresh);
       this.filterStatus = null;
       this.refreshTimeout = null;

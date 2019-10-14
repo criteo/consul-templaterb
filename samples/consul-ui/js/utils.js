@@ -11,17 +11,21 @@ function buildServiceStatus(service) {
     return serviceStatus;
 }
 
-function debounce(func, wait) {
-    var timeout;
-    return function () {
-        var context = this,
-            args = arguments;
-        var later = function () {
-            timeout = null;
-            func.apply(context, args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+var timeouts = {};
+
+function debounce(name, func, wait) {
+    return function() {
+      var context = this,
+          args = arguments;
+      var later = function () {
+          timeouts[name] = null;
+          func.apply(context, args);
+      };
+      if (timeouts[name] != null) {
+        //console.log("Clearing timeout", name);
+        clearTimeout(timeouts[name]);
+      }
+      timeouts[name] = setTimeout(later, wait);
     };
 };
 
