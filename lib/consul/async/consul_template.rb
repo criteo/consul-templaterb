@@ -396,7 +396,7 @@ module Consul
       protected
 
       def result_delegate
-        result.json
+        result.json.freeze
       end
 
       def parse_result(res)
