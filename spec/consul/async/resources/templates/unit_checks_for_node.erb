@@ -1,0 +1,11 @@
+Check consul01.prod
+<%
+  checks_for_node('consul01.prod').each do |check|
+%>-------
+CheckID: <%= check['CheckID'] %>
+Name: <%= check['Name'] %>
+Node: <%= check['Node'] %>
+Notes: <%= ERB::Util.html_escape(check['Notes']) %>
+Output: <%= ERB::Util.html_escape(check['Output']) %>
+Status: <%= check['Status'] %>
+<% end %>

@@ -1,0 +1,15 @@
+[
+    {
+        "Node": "consul01.prod",
+        "CheckID": "serfHealth",
+        "Name": "Serf Health Status",
+        "Status": "passing",
+        "Notes": "",
+        "Output": "Agent alive and reachable",
+        "ServiceID": "",
+        "ServiceName": "",
+        "ServiceTags": [],
+        "CreateIndex": 228090242,
+        "ModifyIndex": 228090242
+    }
+]

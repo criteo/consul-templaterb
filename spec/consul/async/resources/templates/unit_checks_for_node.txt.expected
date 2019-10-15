@@ -1,0 +1,8 @@
+Check consul01.prod
+-------
+CheckID: serfHealth
+Name: Serf Health Status
+Node: consul01.prod
+Notes: 
+Output: Agent alive and reachable
+Status: passing
