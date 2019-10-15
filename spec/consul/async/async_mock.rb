@@ -54,6 +54,7 @@ module Consul
          v1/coordinate/datacenters
          v1/coordinate/nodes
          v1/health/checks/consul
+         v1/health/node/consul01.prod
          v1/health/service/consul
          v1/kv/
          v1/kv/choregraphie
