@@ -2,9 +2,11 @@
 
 ## (UNRELEASED)
 
+## 1.20.0 (October 16, 2019)
+
 IMPROVEMENTS:
 * unit tests for `checks_for_node`
-* any method of array/hash cna be called on result now
+* any method of array/hash can be called on result now
 
 ## 1.19.0 (October 14, 2019)
 
