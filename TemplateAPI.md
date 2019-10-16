@@ -40,16 +40,162 @@ most of those metrics to [Prometheus](https://prometheus.io/).
 ## Common re-implemented functions for all objects
 
 Most objects returned by all those functions are contained within a `.result` object. However, in order
-to avoid having to write .result in all templates, some shortcuts have been added:
+to avoid having to write .result in all templates, some shortcuts have been added: `[]` allow to either access values for map-based data or arrays.
 
-* `[]` allow to either access values for map-based data or arrays
-* for all objects: `.each`, `sort`, `.select`, `.each_value`, `.count`, `.empty?`
-* additionnaly, for map based results, the following methods are available: `.keys`,  `.values`, `.each_pair`,
-  `.each_value`
+Also available for all results:
 
-See [lib/consul/async/consul_template.rb:230](lib/consul/async/consul_template.rb#L230) and
-[lib/consul/async/consul_template.rb:260](lib/consul/async/consul_template.rb#L260) for up to date list of
-all those methods.
+### Common methods available for all objects
+
+ * .all?
+ * .any?
+ * .assoc
+ * .chunk
+ * .chunk_while
+ * .class
+ * .clear
+ * .collect
+ * .collect_concat
+ * .compact
+ * .count
+ * .cycle
+ * .detect
+ * .dig
+ * .display
+ * .drop
+ * .drop_while
+ * .dup
+ * .each
+ * .each_cons
+ * .each_entry
+ * .each_slice
+ * .each_with_index
+ * .each_with_object
+ * .empty?
+ * .entries
+ * .enum_for
+ * .eql?
+ * .equal?
+ * .extend
+ * .fetch
+ * .find
+ * .find_all
+ * .find_index
+ * .first
+ * .flat_map
+ * .flatten
+ * .grep
+ * .grep_v
+ * .group_by
+ * .hash
+ * .include?
+ * .index
+ * .inject
+ * .inspect
+ * .is_a?
+ * .itself
+ * .keep_if
+ * .kind_of?
+ * .lazy
+ * .length
+ * .map
+ * .max
+ * .max_by
+ * .member?
+ * .min
+ * .min_by
+ * .minmax
+ * .minmax_by
+ * .nil?
+ * .none?
+ * .object_id
+ * .one?
+ * .partition
+ * .pp
+ * .rassoc
+ * .reduce
+ * .reject
+ * .replace
+ * .reverse_each
+ * .select
+ * .shift
+ * .size
+ * .slice
+ * .slice_after
+ * .slice_before
+ * .slice_when
+ * .sort
+ * .sort_by
+ * .sum
+ * .take
+ * .take_while
+ * .tap
+ * .to_a
+ * .to_enum
+ * .to_h
+ * .to_s
+ * .uniq
+ * .values_at
+ * .yield_self
+ * .zip
+
+ ### Methods available for Array objects
+
+ * .append
+ * .at
+ * .bsearch
+ * .bsearch_index
+ * .combination
+ * .concat
+ * .each_index
+ * .fill
+ * .insert
+ * .join
+ * .last
+ * .pack
+ * .permutation
+ * .pop
+ * .prepend
+ * .product
+ * .push
+ * .repeated_combination
+ * .repeated_permutation
+ * .reverse
+ * .rindex
+ * .rotate
+ * .sample
+ * .shuffle
+ * .to_ary
+ * .transpose
+ * .unshift
+
+ ### Methods available for hash objects
+
+ * .compare_by_identity
+ * .compare_by_identity?
+ * .default
+ * .default=
+ * .default_proc
+ * .default_proc=
+ * .each_key
+ * .each_pair
+ * .each_value
+ * .fetch_values
+ * .has_key?
+ * .has_value?
+ * .invert
+ * .key
+ * .key?
+ * .keys
+ * .merge
+ * .rehash
+ * .store
+ * .to_hash
+ * .to_proc
+ * .transform_keys
+ * .transform_values
+ * .update
+ * .value?
+ * .values
 
 ## coordinate
 
