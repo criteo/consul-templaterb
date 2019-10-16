@@ -172,10 +172,6 @@ Also available for all results:
 
  * .compare_by_identity
  * .compare_by_identity?
- * .default
- * .default=
- * .default_proc
- * .default_proc=
  * .each_key
  * .each_pair
  * .each_value
