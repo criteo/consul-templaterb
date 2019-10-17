@@ -45,7 +45,7 @@ module Consul
       # Run templating engine once
       def do_run(template_manager, template_renders)
         results = template_renders.map(&:run)
-        all_ready = results.reduce(true) { |a, e| a && e.ready? }
+        all_ready = results.all?(&:ready?)
         if !@all_templates_rendered && all_ready
           @all_templates_rendered = true
           cur_time = Time.now

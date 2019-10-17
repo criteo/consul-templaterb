@@ -175,7 +175,7 @@ optparse = OptionParser.new do |opts|
     sig_term = cur_sig_term
     consul_engine.add_template_callback do |all_ready, template_manager, results|
       if all_ready
-        modified = results.reduce(false) { |a, e| a || e.modified }
+        modified = results.any?(&:modified)
         if @programs[cmd].nil?
           STDERR.puts "[EXEC] Starting process: #{cmd}... on_reload=#{sig_reload ? sig_reload : 'NONE'} on_term=#{sig_term}"
           @programs[cmd] = Consul::Async::ProcessHandler.new(cmd, sig_reload: sig_reload, sig_term: sig_term)
