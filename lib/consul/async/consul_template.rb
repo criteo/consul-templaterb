@@ -79,8 +79,8 @@ module Consul
     end
 
     class EndPointsManager
-      attr_reader :consul_conf, :vault_conf, :net_info, :start_time, :coordinate, :remote_resource
-      def initialize(consul_configuration, vault_configuration, trim_mode = nil)
+      attr_reader :consul_conf, :vault_conf, :net_info, :start_time, :coordinate, :remote_resource, :templates
+      def initialize(consul_configuration, vault_configuration, templates, trim_mode = nil)
         @consul_conf = consul_configuration
         @vault_conf = vault_configuration
         @trim_mode = trim_mode
@@ -95,6 +95,7 @@ module Consul
           changes: 0,
           network_bytes: 0
         }
+        @templates = templates
         @context = {
           current_erb_path: nil,
           template_info: {
