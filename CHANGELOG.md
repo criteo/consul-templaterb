@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+NEW FEATURES:
+
+* added function `templates` to list all templates being rendered
+
 ## 1.20.0 (October 16, 2019)
 
 IMPROVEMENTS:
