@@ -10,7 +10,7 @@ require 'erb'
 module Consul
   module Async
     class ConsulTemplateEngine
-      attr_reader :template_manager, :hot_reload_failure, :template_frequency, :debug_memory, :result
+      attr_reader :template_manager, :hot_reload_failure, :template_frequency, :debug_memory, :result, :templates
       attr_writer :hot_reload_failure, :template_frequency, :debug_memory
       def initialize
         @templates = []

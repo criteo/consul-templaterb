@@ -22,10 +22,10 @@ RSpec.describe Consul::Async::ConsulTemplateRender do
       mock_vault
       mock_json
       EM.run_block do
-        template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf)
         template_file = erb
         @template_value = File.read(template_file)
         output_file = erb.gsub(/\.erb$/, '.txt')
+        template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf, [[template_file, output_file, {}]])
         @renderer = Consul::Async::ConsulTemplateRender.new(template_manager, template_file, output_file)
         @renderer.run
       end

@@ -12,9 +12,9 @@ RSpec.describe Consul::Async::ConsulTemplateEngine do
   it 'Renders properly ha_proxy.cfg.erb' do
     mock_consul
     EM.run_block do
-      template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf)
       template_file = find_absolute_path('../../../../samples/ha_proxy.cfg.erb')
       output_file = 'out.txt'
+      template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf, [[template_file, output_file, {}]])
       @renderer = Consul::Async::ConsulTemplateRender.new(template_manager, template_file, output_file)
       @renderer.run
     end
@@ -36,9 +36,9 @@ RSpec.describe Consul::Async::ConsulTemplateEngine do
       mock_vault
       mock_json
       EM.run_block do
-        template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf)
         template_file = erb
         output_file = 'out.txt'
+        template_manager = Consul::Async::EndPointsManager.new(@consul_conf, @vault_conf, [[template_file, output_file, {}]])
         @renderer = Consul::Async::ConsulTemplateRender.new(template_manager, template_file, output_file)
       end
       # For multi-pass templates, we wait for up to 3 iterations

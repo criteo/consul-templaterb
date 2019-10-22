@@ -649,3 +649,26 @@ I am the file template_info.erb included from template include.erb rendered as d
 
 </div>
 </details>
+
+## templates
+
+It returns list of templates evaluated by this instance of consul-templaterb.
+Information returned is an array of elements where elements are `[template_name, template_destination, args]`.
+
+<details><summary>Example</summary>
+<div class="samples">
+
+### Display templates info
+
+```erb
+Here are templates rendered by consul-templaterb:
+<ul>
+<% templates.each do |template, destination, args| %>
+<li>I render <%= template %> with args <%= args.inspect %> and write the result to <%= destination %></li>
+<% end %>
+</ul>
+```
+
+</div>
+</details>
+
