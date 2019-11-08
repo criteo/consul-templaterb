@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+
+require 'aws-sdk'
+
+def check_env!(key)
+  raise "#{key} must be present in the environment" unless ENV.key?(key)
+end
+
+module Storage
+  class S3
+    def logger
+      @logger ||= Logger.new(STDOUT)
+    end
+
+    def initialize(bucket_name)
+      @bucket_name = bucket_name
+    end
+
+    def backup(contents, path, expires:)
+      s3 = Aws::S3::Resource.new
+      bucket = s3.bucket(@bucket_name)
+      logger.info("Backing up application configurations in s3://#{@bucket_name}/#{path}")
+      backup_file = bucket.object(path)
+      backup_file.put(body: contents, expires: expires)
+    end
+  end
+end
+
+file_to_snapshot = ARGV.shift
+
+raise 'Unknown file to snapshot' unless file_to_snapshot
+raise "#{file_to_snaphot} is not a file" unless File.exist?(file_to_snapshot)
+
+snaphot_name = File.join(File.basename(file_to_snapshot), "#{Time.now.to_i}#{File.extname(file_to_snapshot)}")
+
+check_env!('AWS_ACCESS_KEY_ID')
+check_env!('AWS_SECRET_ACCESS_KEY')
+check_env!('AWS_REGION')
+
+storage = Storage::S3.new('consul-info-snapshots')
+storage.backup(File.read(file_to_snapshot), snaphot_name, expires: Time.now + 86_400 * 30)
