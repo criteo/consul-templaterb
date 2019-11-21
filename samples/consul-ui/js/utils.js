@@ -189,7 +189,7 @@ function serviceMetaGenerator(instanceMeta) {
             container.appendChild(metaH);
             var metaVH = document.createElement('dd');
             metaVH.className = 'col-sm-8 lookup';
-            metaVH.appendChild(document.createTextNode(instanceMeta[meta]));
+            metaVH.appendChild(serviceMetaDecorator(meta, instanceMeta[meta]));
             container.appendChild(metaVH);
         }
     }

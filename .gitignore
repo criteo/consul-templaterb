@@ -12,6 +12,7 @@
 /samples/**/*.html
 /samples/**/*.txt
 /samples/**/*.cfg
+samples/consul-ui/decorators.js
 /samples/hosts
 /samples/hosts_per_services
 /samples/prometheus_consul_coordinates

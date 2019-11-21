@@ -313,7 +313,7 @@ class ServiceMainSelector extends MainSelector {
         element.appendChild(checksStatusGenerator(instance, instance.name));
         element.setAttribute("status", state);
 
-        return element;
+        return serviceInstanceDecorator(instance, element);
     }
 
     getStatus(instance) {
