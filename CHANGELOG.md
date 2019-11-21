@@ -4,7 +4,10 @@
 
 NEW FEATURES:
 
+## 1.21.0 (November 21, 2019)
+
 * added function `templates` to list all templates being rendered
+* added support for JS decorators in consul-ui (thanks to @Thib17)
 
 ## 1.20.0 (October 16, 2019)
 
