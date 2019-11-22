@@ -308,7 +308,7 @@ class ServiceMainSelector extends MainSelector {
             element.appendChild(tagsGenerator(instance.tags));
             element.appendChild(document.createElement("hr"));
         }
-        element.appendChild(serviceMetaGenerator(instance.sMeta));
+        element.appendChild(serviceMetaGenerator(instance));
         element.appendChild(connectGenerator(instance));
         element.appendChild(checksStatusGenerator(instance, instance.name));
         element.setAttribute("status", state);

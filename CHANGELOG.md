@@ -2,6 +2,11 @@
 
 ## (UNRELEASED)
 
+## 1.21.2 (November 22, 2019)
+
+* Added instance information into serviceMetaDecorator() calls to
+  allow more sophisticated decorators.
+
 ## 1.21.1 (November 22, 2019)
 
 * Default service meta decorator now decorates http/https links in

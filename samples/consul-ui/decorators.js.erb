@@ -22,7 +22,7 @@ function serviceInstanceDecorator(instance, element) {
  * serviceMetaDecorator must return a HTML node to decorate a service instance meta.
  * It should return the decorated element.
  */
-function serviceMetaDecorator(key, value) {
+function serviceMetaDecorator(instance, key, value) {
     if (httpRegexp.test(value)) {
       return url_decorator(key, value);
     } else {
