@@ -2,6 +2,11 @@
 
 ## (UNRELEASED)
 
+## 1.21.1 (November 22, 2019)
+
+* Default service meta decorator now decorates http/https links in
+  service meta
+
 NEW FEATURES:
 
 ## 1.21.0 (November 21, 2019)

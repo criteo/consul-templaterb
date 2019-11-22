@@ -1,7 +1,31 @@
+// In this file, you can tune how data is displayed,
+// For instance create links
+
+// Utilities
+var httpRegexp = new RegExp('^http[s]?://[^ ]+$');
+
+function url_decorator(key, value) {
+  var e = document.createElement('a');
+  e.setAttribute('href', value);
+  e.appendChild(document.createTextNode(value));
+  return e;
+}
+
+/**
+ * serviceInstanceDecorator is called to decorate an instance.
+ */
 function serviceInstanceDecorator(instance, element) {
     return element;
 }
 
+/**
+ * serviceMetaDecorator must return a HTML node to decorate a service instance meta.
+ * It should return the decorated element.
+ */
 function serviceMetaDecorator(key, value) {
-    return  document.createTextNode(value);
+    if (httpRegexp.test(value)) {
+      return url_decorator(key, value);
+    } else {
+      return document.createTextNode(value);
+    }
 }
