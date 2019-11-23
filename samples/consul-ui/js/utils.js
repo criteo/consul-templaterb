@@ -175,7 +175,7 @@ function connectGenerator(instance) {
     return connectItem
 }
 
-function serviceMetaGenerator(instance) {
+function serviceMetaGenerator(instance, serviceName) {
     var instanceMeta = instance.sMeta;
     var top = document.createElement('div');
     top.className = 'instance-meta';
@@ -190,7 +190,7 @@ function serviceMetaGenerator(instance) {
             container.appendChild(metaH);
             var metaVH = document.createElement('dd');
             metaVH.className = 'col-sm-8 lookup';
-            metaVH.appendChild(serviceMetaDecorator(instance, meta, instanceMeta[meta]));
+            metaVH.appendChild(serviceMetaDecorator(instance, meta, instanceMeta[meta], serviceName));
             container.appendChild(metaVH);
         }
     }

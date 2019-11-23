@@ -158,10 +158,10 @@ class MainSelector {
         this.maxDisplayed = this.maxDisplayElement.val();
     }
 
-    initSelector(data) {
+    initSelector(data, additionalInfo) {
         this.data = data;
         for (var key in this.data) {
-            this.data[key]["element"] = this.elementGenerator(this.data[key]);
+            this.data[key]["element"] = this.elementGenerator(this.data[key], additionalInfo);
         }
         this.refreshList();
     }

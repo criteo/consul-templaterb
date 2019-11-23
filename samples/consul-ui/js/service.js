@@ -182,7 +182,7 @@ class ServiceSideSelector extends SideSelector {
 
     selectItem(element, service) {
         super.selectItem(element, service);
-        this.mainSelector.initSelector(this.data[service]);
+        this.mainSelector.initSelector(this.data[service], service);
     }
 }
 
@@ -246,7 +246,7 @@ class ServiceMainSelector extends MainSelector {
 
     initSelector(service) {
         if (service) {
-          super.initSelector(service.instances);
+          super.initSelector(service.instances, service.name);
           this.generateTitle(service.name);
         }
     }
@@ -292,7 +292,7 @@ class ServiceMainSelector extends MainSelector {
         resizeAll();
     }
 
-    elementGenerator(instance) {
+    elementGenerator(instance, serviceName) {
         var element = document.createElement("div");
         element.setAttribute("class", "list-group-item service-instance");
         var state = nodeState(instance.checks);
@@ -308,12 +308,12 @@ class ServiceMainSelector extends MainSelector {
             element.appendChild(tagsGenerator(instance.tags));
             element.appendChild(document.createElement("hr"));
         }
-        element.appendChild(serviceMetaGenerator(instance));
+        element.appendChild(serviceMetaGenerator(instance, serviceName));
         element.appendChild(connectGenerator(instance));
         element.appendChild(checksStatusGenerator(instance, instance.name));
         element.setAttribute("status", state);
 
-        return serviceInstanceDecorator(instance, element);
+        return serviceInstanceDecorator(instance, element, serviceName);
     }
 
     getStatus(instance) {

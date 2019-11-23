@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+## 1.21.3 (November 23, 2019)
+
+* added serviceName information for all decorators of services
+
 ## 1.21.2 (November 22, 2019)
 
 * Added instance information into serviceMetaDecorator() calls to
