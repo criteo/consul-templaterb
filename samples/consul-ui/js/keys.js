@@ -21,6 +21,10 @@ class ConsulKeysManager extends ConsulUIManager {
         this.sideSelector.prepareData();
         this.sideSelector.refreshList();
     }
+
+    async clean() {
+        this.sideSelector.data = {};
+    }
 }
 
 class KeySideSelector extends SideSelector {

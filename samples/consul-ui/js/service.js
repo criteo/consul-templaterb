@@ -43,6 +43,13 @@ class ConsulServiceManager extends ConsulUIManager {
         this.sideSelector.prepareData();
         this.sideSelector.refreshList();
     }
+
+  async clean() {
+        this.mainSelector.nodes = {};
+        this.sideSelector.data = {};
+        this.sideSelector.prepareData();
+        this.sideSelector.refreshList();
+    }
 }
 
 class ServiceSideSelector extends SideSelector {
