@@ -1,5 +1,9 @@
 # How to contribute to Consul-Templaterb ?
 
+## Architecxture Overview
+
+Please read [INTERNALS.md](INTERNALS.md) to understand how it works.
+
 ## Samples
 
 The [samples/](samples/) directory contains lots of useable templates that might help others using your new features.
