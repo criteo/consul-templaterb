@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+## 1.21.4 (November 28, 2019)
+
+* added 2 decorators `navBarDecorator` and `fetchedResponseDecorator`
+
 ## 1.21.3 (November 23, 2019)
 
 * added serviceName information for all decorators of services
