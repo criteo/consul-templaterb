@@ -29,3 +29,17 @@ function serviceMetaDecorator(instance, key, value, serviceName) {
       return document.createTextNode(value);
     }
 }
+
+/**
+ * navBarDecorator is called to modify to modify naviguation bar of all UI pages.
+ * it receives the nav bar div
+ * it does not have to return anything.
+ */
+function navBarDecorator(navbar) { }
+
+
+/**
+ * fetchedResponseDecorator is called with http response when a resource is fetched by any instance of ConsulUIManager
+ * it does not have to return anything.
+ */
+async function fetchedResponseDecorator(httpResponse) { }

@@ -6,7 +6,9 @@ class ConsulUIManager {
     async fetchResource() {
         const response = await fetch(this.resourceURL);
         const result = await response.json();
+
         this.data = result;
+        fetchedResponseDecorator(response);
         await this.initResource(result);
     }
 
