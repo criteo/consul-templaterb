@@ -15,6 +15,10 @@ class ConsulNodesManager extends ConsulUIManager {
     async initResource(data) {
         this.mainSelector.initSelector(data["nodes"]);
     }
+
+    async clean() {
+        this.mainSelector.initSelector({});
+    }
 }
 
 class NodeMainSelector extends MainSelector {
