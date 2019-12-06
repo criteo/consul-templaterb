@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+## 1.21.5 (December 6, 2019)
+
+* Added clean() method in nodes.js to allow nexw behaviors
+
 ## 1.21.4 (November 28, 2019)
 
 * added 2 decorators `navBarDecorator` and `fetchedResponseDecorator`
