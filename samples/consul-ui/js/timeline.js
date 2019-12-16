@@ -225,8 +225,10 @@ class ServiceTimeline {
       } else if (status != null && clazz == null) {
          if (status == 'passing') {
             clazz='success';
-         } else if (clazz != 'warning') {
+         } else if (status != 'warning') {
             clazz='danger';
+         } else {
+            clazz='warning';
          }
       }
       var span = document.createElement('span');

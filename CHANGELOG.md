@@ -4,6 +4,10 @@
 
 ## 1.21.6 (December 16, 2019)
 
+* Fixed warning color from critical to warning on consul-ui timeline
+
+## 1.21.6 (December 16, 2019)
+
 * Added node_meta_info for serviceInstanceDecorator and serviceMetaDecorator
 
 ## 1.21.5 (December 6, 2019)
