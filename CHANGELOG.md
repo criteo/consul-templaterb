@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+## 1.21.6 (December 16, 2019)
+
+* Added node_meta_info for serviceInstanceDecorator and serviceMetaDecorator
+
 ## 1.21.5 (December 6, 2019)
 
 * Added clean() method in nodes.js to allow nexw behaviors

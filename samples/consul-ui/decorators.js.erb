@@ -14,7 +14,7 @@ function url_decorator(key, value) {
 /**
  * serviceInstanceDecorator is called to decorate an instance.
  */
-function serviceInstanceDecorator(instance, element, serviceName) {
+function serviceInstanceDecorator(instance, element, serviceName, node_meta_info) {
     return element;
 }
 
@@ -22,7 +22,7 @@ function serviceInstanceDecorator(instance, element, serviceName) {
  * serviceMetaDecorator must return a HTML node to decorate a service instance meta.
  * It should return the decorated element.
  */
-function serviceMetaDecorator(instance, key, value, serviceName) {
+function serviceMetaDecorator(instance, key, value, serviceName, node_meta_info) {
     if (httpRegexp.test(value)) {
       return url_decorator(key, value);
     } else {

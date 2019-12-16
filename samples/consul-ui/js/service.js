@@ -315,12 +315,12 @@ class ServiceMainSelector extends MainSelector {
             element.appendChild(tagsGenerator(instance.tags));
             element.appendChild(document.createElement("hr"));
         }
-        element.appendChild(serviceMetaGenerator(instance, serviceName));
+        element.appendChild(serviceMetaGenerator(instance, serviceName, node_info));
         element.appendChild(connectGenerator(instance));
         element.appendChild(checksStatusGenerator(instance, instance.name));
         element.setAttribute("status", state);
 
-        return serviceInstanceDecorator(instance, element, serviceName);
+        return serviceInstanceDecorator(instance, element, serviceName, node_info);
     }
 
     getStatus(instance) {
