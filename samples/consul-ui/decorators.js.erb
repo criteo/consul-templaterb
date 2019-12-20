@@ -1,8 +1,18 @@
-// In this file, you can tune how data is displayed,
-// For instance create links
-
 // Utilities
 var httpRegexp = new RegExp('^http[s]?://[^ ]+$');
+var dc = "<%= ENV['CRITEO_DC'] || 'par'%>";
+var env = "<%= ENV['CRITEO_ENV'] || 'preprod'%>";
+
+var availability_url = 'https://grafana.crto.in/d/xFX5gCnWz/service-availability?var-datacenter=' + dc + '&var-service=';
+if (env == 'preprod') {
+  availability_url = 'https://grafana.preprod.crto.in/d/E0ANGjnZz/service-availability?var-datacenter=' + dc + '&var-service=';
+}
+var swagger_url = 'https://swaggercatalogapp.' + dc + '.' + env + '.crto.in/explore/swagger?key=';
+var slack_url = 'https://criteo.slack.com/app_redirect?channel=';
+
+var rackguru_url = 'https://rackguru.' + env + '.crto.in/serial/';
+
+var asapi_url = 'https://idm.' + env + '.crto.in/tool/multiGroupInfo/'
 
 function url_decorator(key, value) {
   var e = document.createElement('a');
@@ -11,10 +21,66 @@ function url_decorator(key, value) {
   return e;
 }
 
+function usefullLinksGenerator(instance, serviceName, node_meta_info) {
+    var top = document.createElement('div');
+    top.className = 'instance-links';
+
+    var usefullLinks = [
+        {
+            title: "Trigger security scan",
+            iconClassName: "fas fa-shield-alt",
+            href: "https://security.crto.in/#/scan/?ip=" + instance.addr
+        },
+        {
+            title: "Availability Graph",
+            iconClassName: "fas fa-chart-area",
+            href: availability_url + serviceName
+        },
+    ];
+    if (node_meta_info!= null) {
+      var serial = node_meta_info['serial_number'];
+      if (serial != null) {
+        usefullLinks.push({
+            title: "RackGuru",
+            iconClassName: "fas fa-server",
+            href: rackguru_url + serial
+        });
+      }
+    }
+    var first = true;
+    for (let usefullLink of usefullLinks) {
+        link = document.createElement('a');
+        link.href = usefullLink.href;
+        if (typeof usefullLink.iconClassName !== 'undefined') {
+            icon = document.createElement('i');
+            icon.className = usefullLink.iconClassName;
+            link.appendChild(icon);
+            link.appendChild(document.createTextNode("\u00A0"));
+        }
+        if (!first) {
+            top.appendChild(document.createTextNode(' | '));
+        } else {
+            first = false;
+        }
+        link.appendChild(document.createTextNode(usefullLink.title));
+        top.appendChild(link);
+    }
+
+    return top;
+}
+
 /**
  * serviceInstanceDecorator is called to decorate an instance.
  */
 function serviceInstanceDecorator(instance, element, serviceName, node_meta_info) {
+    for (let child of element.children) {
+        if (child.className && child.className.includes("instance-meta")) {
+            var instanceMetaChild = child;
+        }
+    }
+
+    element.insertBefore(usefullLinksGenerator(instance, serviceName, node_meta_info), instanceMetaChild);
+    element.insertBefore(document.createElement("hr"), instanceMetaChild);
     return element;
 }
 
@@ -26,8 +92,135 @@ function serviceMetaDecorator(instance, key, value, serviceName, node_meta_info)
     if (httpRegexp.test(value)) {
       return url_decorator(key, value);
     } else {
-      return document.createTextNode(value);
+      return service_meta_semantics_decorator(instance, key, value, serviceName);
     }
+}
+
+function build_link(href, value) {
+    var e = document.createElement('a');
+    e.setAttribute('href', href);
+    e.appendChild(document.createTextNode(value));
+    return e;
+}
+
+function default_decorator(instance, key, value, serviceName) {
+    return document.createTextNode(value);
+}
+
+function groups_decorator(instance, key, value, serviceName) {
+  var values = value.split(',');
+  var span = document.createElement('span');
+  var first = true;
+  for (var i in values) {
+    if (!first) {
+      span.appendChild(document.createTextNode(', '));
+    } else {
+      first = false;
+    }
+    var grp = values[i];
+    if (grp.indexOf('.') != -1) {
+      var x = document.createElement('span');
+      x.setAttribute('class', 'badge badge-warning');
+      x.appendChild(document.createTextNode(grp));
+      span.appendChild(x);
+    } else {
+      var a = document.createElement('a');
+      a.target = 'asapi';
+      a.appendChild(document.createTextNode(grp));
+      a.href = asapi_url + encodeURIComponent(grp);
+      span.appendChild(a);
+    }
+  }
+  return span;
+}
+
+/**
+ * Decorates with a slack channel link
+ */
+function slack_channel(instance, key, value, serviceName) {
+  var sName = value;
+  if (sName.startsWith('#')) {
+    sName = sName.substring(1);
+  }
+  return build_link(slack_url + encodeURIComponent(sName), '#'+ sName);
+}
+
+const start_regexp = /(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/
+
+function decorateIsoDate(value, formated) {
+  const parsed  = Date.parse(formated);
+  if (isNaN(parsed)) {
+    return document.createTextNode(value);
+  }
+  const d = new Date(parsed);
+  console.log(d);
+  const e = document.createElement('time');
+  e.setAttribute('datetime', formated);
+  e.setAttribute('title', value);
+  e.appendChild(document.createTextNode(d.toLocaleString()));
+  return e;
+}
+
+// This is the list of function called
+// When a service meta is found
+var registered_decorators = {
+    alert_availability_slack_channel: slack_channel,
+    gerrit_repository: function(instance, key, value, serviceName) {
+      return build_link('https://review.crto.in/#/q/' + value, value);
+    },
+    version: function(instance, key, value, serviceName) {
+      var asInt = parseInt(value);
+      if (asInt < 10000) {
+        return document.createTextNode(value);
+      }
+      if (instance.sMeta['CRITEO_APP_POOL'] != null) {
+          return build_link("https://devtools.crto.in/log.html?moab=cs&im=nb-to&range=100%2C" + asInt, value);
+      } else {
+          var tUrl = "https://devtools.crto.in/log.html?moab=j&im=nb-to&range=100%2C" + asInt;
+          if (instance.sMeta['jvm_artifact'] != null) {
+            tUrl += '&with-dependencies=true&artifacts=' + encodeURIComponent(instance.sMeta['jvm_artifact']);
+          }
+          return build_link(tUrl, value);
+      }
+    },
+    MESOS_TERM_DEBUG_GRANTED_TO: groups_decorator,
+    OWNERS: groups_decorator,
+    marathon_app_id: function(instance, key, value, serviceName) {
+      var app_name = value;
+      if (app_name[0] != '/') {
+        app_name = '/' + app_name;
+      }
+      if (instance.sMeta && instance.sMeta['marathon_ui']) {
+        return build_link(instance.sMeta['marathon_ui'] + '/#/apps/' + encodeURIComponent(app_name), value);
+      } else {
+        // non decorated value
+        return document.createTextNode(value);
+      }
+    },
+    marathon_app_version: function(instance, key, value, serviceName) {
+      return decorateIsoDate(value, value);
+    },
+    slack_channel: slack_channel,
+    start: function(instance, key, value, serviceName) {
+        const reg = start_regexp.exec(value);
+        if (reg != null) {
+          var formated = reg[1] + '-' + reg[2] + '-' + reg[3] + 'T' + reg[4] + ':' + reg[5] + ':' + reg[6] + 'Z';
+          return decorateIsoDate(value, formated);
+        } else {
+          return document.createTextNode(value);
+        }
+    },
+    swagger_key: function(instance, key, value, serviceName) {
+        return build_link(swagger_url + encodeURIComponent(value), value);
+    },
+}
+
+function service_meta_semantics_decorator(instance, key, value, serviceName) {
+    var fun = registered_decorators[key];
+    if (fun == null) {
+        fun = default_decorator;
+    }
+    return fun(instance, key, value);
 }
 
 /**
@@ -35,11 +228,86 @@ function serviceMetaDecorator(instance, key, value, serviceName, node_meta_info)
  * it receives the nav bar div
  * it does not have to return anything.
  */
-function navBarDecorator(navbar) { }
+function navBarDecorator(navbar) {
+  if (typeof consulManager === 'undefined') {
+    // Timepicker is not supported on this page
+    return;
+  }
+  var timepicker_container = document.createElement('div');
+  timepicker_container.innerHTML = `
+              <div class="row">
+                <button type="button" disabled class="btn btn-secondary" data-toggle="tooltip" data-html="true" title="Data returned is the closest available to request" id="currently-displayed-data-date">
+                  Pick a date to see data from the past
+                </button>
+                <div class="col-sm-14">
+                  <div class="form-group">
+                    <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                      <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1"/>
+                      <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              `;
+
+  navbar.appendChild(timepicker_container);
+  var script= document.createElement('script');
+  script.type='text/javascript';
+  // TODO(g.seux): extract code to another file and set "source" on script element
+  script.innerHTML = `
+                    $('#datetimepicker1').datetimepicker({
+                      format: 'DD/MM/YYYY HH:mm:ss Z',  // default format does not allow to select seconds
+                      sideBySide: true, // display date+time on the same widget
+                      useCurrent: true // by default, select current date
+                    });
+                  $("#datetimepicker1").on("change.datetimepicker", function (e) {
+                    console.log("Will fetch data from date " + e.date);
+                    console.log("will clean existing data");
+                    consulManager.clean().then(function(result) {
+                      switch(consulManager.constructor.name) {
+                        case "ConsulServiceManager":
+                          backup_type = 'consul_services';
+                          break;
+                        case "ConsulKeysManager":
+                          backup_type  = 'consul_keys'
+                          break;
+                        case "ConsulNodesManager":
+                          backup_type = 'consul_nodes'
+                          break;
+                        default:
+                          console.log("Unknown " + consulManager.constructor.name + " type");
+                      }
+                      if (e.date) {
+                        console.log("Will replace data by closest snapshot to " + e.date);
+                        var target_url = "https://consul-info-timeline-history.<%= ENV['CRITEO_DC'] %>.<%= ENV['CRITEO_ENV']%>.crto.in/backup/" + backup_type + "/" + e.date / 1000;
+                      } else {
+                        console.log("Will restore to local version");
+                        var target_url = defaultConsulManager.resourceURL;
+                      }
+                      if (typeof(defaultConsulManager) == 'undefined') {
+                        // store first manager to be able to restore it
+                        defaultConsulManager = consulManager
+                      }
+                      consulManager = new consulManager.constructor(target_url);
+                    });
+                  });
+  `;
+  navbar.appendChild(script);
+}
 
 
 /**
  * fetchedResponseDecorator is called with http response when a resource is fetched by any instance of ConsulUIManager
  * it does not have to return anything.
  */
-async function fetchedResponseDecorator(httpResponse) { }
+async function fetchedResponseDecorator(httpResponse) {
+  const data_date = await httpResponse.headers.get('X-Consul-Snapshot-Timestamp');
+  current_date_display = $('#currently-displayed-data-date');
+  if (data_date > 0) {
+    current_date_display.html("Data is a snapshot from: " + moment.unix(data_date).format('DD/MM/YYYY HH:mm:ss Z'));
+  } else {
+    current_date_display.html("Pick a date to see data from the past");
+  }
+}
