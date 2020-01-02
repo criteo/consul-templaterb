@@ -91,13 +91,17 @@ end
 # TYPE consul_service_changes_total counter
 
 <%
+  def escape_meta(val)
+    val.gsub('"', '\"')
+  end
+
   json_backends = {}
   now = Time.now.utc
   backends.each_pair do |k, service_info|
     service_name = service_info[:service_name]
     meta_string = ""
     service_info[:metas].each_pair do |k,v|
-      meta_string+=",#{k}=\"#{v}\""
+      meta_string+=",#{k}=\"#{escape_meta(v)}\""
     end
     service_info[:state].each_pair do |state_name, state_count|
 %>consul_service_count{service="<%= service_name %>",state="<%= state_name %>"<%= meta_string %>} <%= state_count %>
@@ -107,15 +111,15 @@ end
 
   # Global statistics
   all_stats.each_pair do |service_name, current_stats|
-%>consul_service_stats_requests_total{service="<%= service_name %>",type="success"} <%= current_stats.successes %>
+%>consul_service_stats_requests_total{service="<%= escape_meta(service_name) %>",type="success"} <%= current_stats.successes %>
 <%
     if current_stats.errors > 0
-%>consul_service_stats_requests_total{service="<%= service_name %>",type="errors"} <%= current_stats.errors %>
+%>consul_service_stats_requests_total{service="<%= escape_meta(service_name) %>",type="errors"} <%= current_stats.errors %>
 <%
     end
-%>consul_service_stats_requests_bytes{service="<%= service_name %>"} <%= current_stats.body_bytes %>
-consul_service_stats_requests_bytes_per_sec{service="<%= service_name %>"} <%= current_stats.bytes_per_sec(now) %>
-consul_service_changes_total{service="<%= service_name %>"} <%= current_stats.changes %>
+%>consul_service_stats_requests_bytes{service="<%= escape_meta(service_name) %>"} <%= current_stats.body_bytes %>
+consul_service_stats_requests_bytes_per_sec{service="<%= escape_meta(service_name) %>"} <%= current_stats.bytes_per_sec(now) %>
+consul_service_changes_total{service="<%= escape_meta(service_name) %>"} <%= current_stats.changes %>
 
 <%
   end

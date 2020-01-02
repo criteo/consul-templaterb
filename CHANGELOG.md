@@ -2,7 +2,11 @@
 
 ## (UNRELEASED)
 
-## 1.21.6 (December 16, 2019)
+## 1.21.8 (January 2, 2020)
+
+* Escape properly metadata containing double quotes in prometheus exporter
+
+## 1.21.7 (December 16, 2019)
 
 * Fixed warning color from critical to warning on consul-ui timeline
 
