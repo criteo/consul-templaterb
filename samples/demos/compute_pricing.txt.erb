@@ -1,0 +1,59 @@
+<%
+# This template compute price of infrastructure
+# based on the kind of machine the software is running on
+# Demo performed during HashiConf 2019
+# https://hashiconf.com/us/schedule/inversion-of-control-with-consul
+
+regexp = 'web-.*'
+srv_selector = Regexp.new(regexp)
+
+costs = {
+    'unknown'                 => 8,
+    'base-10g-2018-q-1'       => 10,
+    'base-10g-2015'           => 9,
+    'base-1g-2013-1'          => 5,
+    'base-1g-2015'            => 7,
+    'base-1g-2013'            => 6,
+    'cpustorage-10g-2018-h-1' => 15,
+    'io-10g-2018-h-1'         => 12,
+    'ram-1g-2015'             => 8,
+    'ram-10g-2018-q-1'        => 9,
+    'storage-10g-2015-1'      => 11,
+    'storage-1g-2015-1'       => 10,
+    'ssd-10g-2015'            => 12,
+    'ram-10g-2015' => 42,
+}
+
+
+instances = {}
+datacenters.each do |dc|
+    services(dc:dc).each do |srv_name, tags|
+        if srv_selector.match(srv_name)
+            service(srv_name, dc:dc).each do |snode|
+                instances[snode['Node']['Node']] = snode
+            end
+        end
+    end
+end
+
+
+
+result = {
+    'summary' => "Price for #{regexp}",
+    'machines'=> instances.count,
+    'price'   => 0,
+    'flavors' => {},
+}
+
+instances.each do |name, snode|
+  type = snode.service_or_node_meta_value('criteo_flavor')
+  flavor_count = result['flavors'][type] || 0
+  result['flavors'][type] = flavor_count + 1
+  cost = costs[type] || costs['unknown']
+  cost += 3 if snode.service_or_node_meta_value('os') == 'windows'
+  result['price'] += cost
+end
+
+result['unkown_prices_for'] = result['flavors'].select{ |k| costs[k].nil? }
+
+%><%= YAML.dump(result) %>
