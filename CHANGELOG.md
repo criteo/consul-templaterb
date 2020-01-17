@@ -2,41 +2,61 @@
 
 ## (UNRELEASED)
 
+## 1.22.0 (January 17, 2020)
+
+NEW FEATURES:
+
+ * Fixed compatibility with Ruby 2.7+ (fixes #57)
+
 ## 1.21.8 (January 2, 2020)
 
-* Escape properly metadata containing double quotes in prometheus exporter
+BUGFIX:
+
+ * Escape properly metadata containing double quotes in prometheus exporter
 
 ## 1.21.7 (December 16, 2019)
 
-* Fixed warning color from critical to warning on consul-ui timeline
+IMPROVEMENTS:
+
+ * Fixed warning color from critical to warning on consul-ui timeline
 
 ## 1.21.6 (December 16, 2019)
 
-* Added node_meta_info for serviceInstanceDecorator and serviceMetaDecorator
+IMPROVEMENTS:
+
+ * Added node_meta_info for serviceInstanceDecorator and serviceMetaDecorator
 
 ## 1.21.5 (December 6, 2019)
 
-* Added clean() method in nodes.js to allow nexw behaviors
+NEW FEATURES:
+
+ * Added clean() method in nodes.js to allow nexw behaviors
 
 ## 1.21.4 (November 28, 2019)
 
-* added 2 decorators `navBarDecorator` and `fetchedResponseDecorator`
+NEW FEATURES:
+
+ * added 2 decorators `navBarDecorator` and `fetchedResponseDecorator`
 
 ## 1.21.3 (November 23, 2019)
 
-* added serviceName information for all decorators of services
+IMPROVEMENTS:
+
+ * added serviceName information for all decorators of services
 
 ## 1.21.2 (November 22, 2019)
+
+IMPROVEMENTS:
 
 * Added instance information into serviceMetaDecorator() calls to
   allow more sophisticated decorators.
 
 ## 1.21.1 (November 22, 2019)
 
+IMPROVEMENTS:
+
 * Default service meta decorator now decorates http/https links in
   service meta
-
-NEW FEATURES:
 
 ## 1.21.0 (November 21, 2019)
 
@@ -194,26 +214,26 @@ It avoid templates never rendering fully when keys appear/disappear.
 
 NEW FEATURES
 
-consul-templaterb now returns an error code whether template is malformed.
-This allows to use return code to validate templates when called with `--once`.
+ * consul-templaterb now returns an error code whether template is malformed.
+   This allows to use return code to validate templates when called with `--once`.
 
 IMPROVEMENTS
 
-Do not display ugly stack trace when interrupting program with CRTL-C.
+ * Do not display ugly stack trace when interrupting program with CRTL-C.
 
 ## 1.14.1 (May 13, 2019)
 
 NEW FEATURES
 
-`endpoint.stats.last_modified` allow to display the date at which the data was last modified.
+ * `endpoint.stats.last_modified` allow to display the date at which the data was last modified.
 
 ## 1.14.0 (May 6, 2019)
 
 NEW FEATURES:
 
-When `return nil` is performed in a template, consul-templaterb now considers the template is
-not ready and thus do not start any process. It is useful if you want to start a process ONLY
-when some conditions are met.
+ * When `return nil` is performed in a template, consul-templaterb now considers the template is
+   not ready and thus do not start any process. It is useful if you want to start a process ONLY
+   when some conditions are met.
 
 ## 1.13.1 (April 12, 2019)
 
@@ -232,7 +252,7 @@ IMPROVEMENTS:
 
 NEW FEATURES:
 
-* Windows compatible
+ * Windows compatible
 
 consul-templaterb now works on Windows.
 
@@ -240,7 +260,7 @@ consul-templaterb now works on Windows.
 
 NEW FEATURES:
 
-* Added new function render_from_string() to render a template from a string (useful with KV)
+ * Added new function render_from_string() to render a template from a string (useful with KV)
 
 ## 1.10.1 (February 28, 2019)
 

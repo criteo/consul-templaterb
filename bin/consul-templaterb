@@ -288,8 +288,11 @@ STDERR.puts "Max number of descriptors set to #{new_size}" if options[:consul][:
 # See https://github.com/eventmachine/eventmachine/issues/636#issuecomment-143313282
 EM.epoll
 
-consul_conf = Consul::Async::ConsulConfiguration.new(options[:consul])
-vault_conf = Consul::Async::VaultConfiguration.new(options[:vault])
+# https://www.ruby-lang.org/en/news/2019/12/12/separation-of-positional-and-keyword-arguments-in-ruby-3-0/
+def ruby2_keywords(*); end if RUBY_VERSION < '2.7'
+
+consul_conf = Consul::Async::ConsulConfiguration.new(**options[:consul])
+vault_conf = Consul::Async::VaultConfiguration.new(**options[:vault])
 
 ARGV.each do |tpl|
   dest = compute_default_output(tpl)

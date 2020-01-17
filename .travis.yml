@@ -1,12 +1,13 @@
 language: ruby
 rvm:
-- 2.4.7
-- 2.5.6
-- 2.6.4
+- 2.4.8
+- 2.5.7
+- 2.6.5
+- 2.7.0
 jobs:
   include:
     - stage: Gem release
-      rvm: 2.5.6
+      rvm: 2.5.7
       script: echo "Publishing consul-templaterb on rubygems.org ..."
       deploy:
         provider: rubygems
