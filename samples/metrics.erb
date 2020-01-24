@@ -7,7 +7,7 @@
 #   EXCLUDE_SERVICES: comma-separated services regexps to exclude (example: lbl7.*,netsvc-probe.*,consul-probed.*)
 #   PROMETHEUS_EXPORTED_SERVICE_META: comma-separated list of meta to export into metrics of service
 <%
-  service_metas_to_export = (ENV['PROMETHEUS_EXPORTED_SERVICE_META'] || 'version,os,criteo_flavor,node_group').split(',')
+  service_metas_to_export = (ENV['PROMETHEUS_EXPORTED_SERVICE_META'] || 'OWNERS,version,os,criteo_flavor,node_group').split(',')
 
   service_tag_filter = ENV['SERVICES_TAG_FILTER'] || nil
   instance_must_tag = ENV['INSTANCE_MUST_TAG'] || service_tag_filter
