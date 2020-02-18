@@ -79,8 +79,9 @@ module Consul
     end
 
     class EndPointsManager
-      attr_reader :consul_conf, :vault_conf, :net_info, :start_time, :coordinate, :remote_resource, :templates
+      attr_reader :consul_conf, :vault_conf, :running, :net_info, :start_time, :coordinate, :remote_resource, :templates
       def initialize(consul_configuration, vault_configuration, templates, trim_mode = nil)
+        @running = true
         @consul_conf = consul_configuration
         @vault_conf = vault_configuration
         @trim_mode = trim_mode
@@ -106,6 +107,8 @@ module Consul
           },
           params: {}
         }
+        @max_consecutive_errors_on_endpoint = consul_configuration.max_consecutive_errors_on_endpoint || 10
+        @fail_fast_errors = consul_configuration.fail_fast_errors
         @coordinate = Coordinate.new(self)
         @remote_resource = RemoteResource.new(self)
 
@@ -221,7 +224,7 @@ module Consul
         raise "You need to provide a vault token to use 'secret' keyword" if vault_conf.token.nil?
         path = "/v1/#{path}".gsub(%r{/{2,}}, '/')
         query_params = { list: 'true' }
-        create_if_missing(path, query_params) do
+        create_if_missing(path, query_params, vault_conf.fail_fast_errors, vault_conf.max_consecutive_errors_on_endpoint) do
           ConsulTemplateVaultSecretList.new(VaultEndpoint.new(vault_conf, path, 'GET', true, query_params, JSON.generate(data: { keys: [] })))
         end
       end
@@ -231,7 +234,9 @@ module Consul
         path = "/v1/#{path}".gsub(%r{/{2,}}, '/')
         query_params = {}
         method = post_data ? 'POST' : 'GET'
-        create_if_missing(path, query_params) { ConsulTemplateVaultSecret.new(VaultEndpoint.new(vault_conf, path, method, true, query_params, JSON.generate(data: {}))) }
+        create_if_missing(path, query_params, vault_conf.fail_fast_errors, vault_conf.max_consecutive_errors_on_endpoint) do
+          ConsulTemplateVaultSecret.new(VaultEndpoint.new(vault_conf, path, method, true, query_params, JSON.generate(data: {})))
+        end
       end
 
       # render a relative file with the given params accessible from template
@@ -329,6 +334,7 @@ module Consul
       end
 
       def terminate
+        @running = false
         @endpoints.each_value do |v|
           v.endpoint.terminate
         end
@@ -341,7 +347,7 @@ module Consul
         VaultEndpoint.new(vault_conf, path, :POST, {}, {})
       end
 
-      def create_if_missing(path, query_params)
+      def create_if_missing(path, query_params, fail_fast_errors = @fail_fast_errors, max_consecutive_errors_on_endpoint = @max_consecutive_errors_on_endpoint)
         fqdn = path.dup
         query_params.each_pair do |k, v|
           fqdn = "#{fqdn}&#{k}=#{v}"
@@ -357,7 +363,17 @@ module Consul
             @net_info[:changes] += 1 if result.modified?
             @net_info[:network_bytes] += result.http.response_header['Content-Length'].to_i
           end
-          tpl.endpoint.on_error { @net_info[:errors] = @net_info[:errors] + 1 }
+          tpl.endpoint.on_error do |_err|
+            @net_info[:errors] = @net_info[:errors] + 1
+            if tpl.endpoint.stats.successes.zero? && fail_fast_errors
+              ::Consul::Async::Debug.puts_error "Endpoint #{path} is failing at first call with fail fast activated, terminating..."
+              terminate
+            end
+            if tpl.endpoint.stats.consecutive_errors > max_consecutive_errors_on_endpoint
+              ::Consul::Async::Debug.puts_error "Endpoint #{path} has too many consecutive errors: #{tpl.endpoint.stats.consecutive_errors}, terminating..."
+              terminate
+            end
+          end
         end
         tpl._seen_at(@iteration)
         tpl

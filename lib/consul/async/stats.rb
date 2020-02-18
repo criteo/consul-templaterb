@@ -3,7 +3,7 @@ require 'consul/async/utilities'
 module Consul
   module Async
     class EndPointStats
-      attr_reader :successes, :errors, :start, :body_bytes, :last_error, :last_success, :last_modified, :changes, :network_bytes
+      attr_reader :successes, :errors, :consecutive_errors, :start, :body_bytes, :last_error, :last_success, :last_modified, :changes, :network_bytes
 
       def initialize
         @start = Time.now.utc
@@ -15,6 +15,7 @@ module Consul
         @last_error = @start
         @last_success = @start
         @last_modified = @start
+        @consecutive_errors = 0
       end
 
       def on_response(res)
@@ -23,12 +24,14 @@ module Consul
         @body_bytes += res.http.response.bytesize
         @changes += 1 if res.modified?
         @last_modified = @last_success if res.modified?
+        @consecutive_errors = 0
         @network_bytes += res.http.response_header['Content-Length'].to_i
       end
 
       def on_error(_http)
         @last_error = Time.now.utc
         @errors += 1
+        @consecutive_errors += 1
       end
 
       def bytes_per_sec(now = Time.now.utc)

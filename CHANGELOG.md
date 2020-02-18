@@ -2,6 +2,14 @@
 
 ## (UNRELEASED)
 
+NEW FEATURES:
+
+ * Implementation of #59 - implementation of `--retry` and `--vault-retry` new flags
+   Those flags work in a similar way as in consul-template: stop program after X failures
+   of consul or vault endpoints
+ * Added --fail-fast that stop the programs immediately if vault or consul are not available
+   at startup (also works with `--once`)
+
 ## 1.22.0 (January 17, 2020)
 
 NEW FEATURES:

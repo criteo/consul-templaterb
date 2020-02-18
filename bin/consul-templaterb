@@ -27,6 +27,8 @@ options = {
     },
     base_url: ENV['VAULT_ADDR'] || 'http://localhost:8200',
     token: ENV['VAULT_TOKEN'] || nil,
+    max_consecutive_errors_on_endpoint: 10, # Stop program after n consecutive failures on same endpoint
+    fail_fast_errors: nil,                  # fail fast the program if endpoint was never success
     token_renew: true,
     retry_duration: 10,
     lease_duration_factor: 0.5, # The time it waits before actualizing data based on the lease time: 2h lease * 0.5 = Fetch data every 1h
@@ -45,6 +47,8 @@ options = {
     },
     base_url: ENV['CONSUL_HTTP_ADDR'] || 'http://localhost:8500',
     token: ENV['CONSUL_HTTP_TOKEN'] || nil,
+    max_consecutive_errors_on_endpoint: 10, # Stop program after n consecutive failures on same endpoint
+    fail_fast_errors: nil,                  # fail fast the program if endpoint was never success
     retry_duration: 10,      # On error, retry after n seconds
     min_duration: 5,         # On sucess and when differences are found
     retry_on_non_diff: 3,    # On success but when there are not differences
@@ -94,6 +98,17 @@ optparse = OptionParser.new do |opts|
     exit 0
   end
 
+  opts.on('--retry [RETRIES]', '--consul-retry-attempts [RETRIES]', Integer,
+          "If consul fails after n retries, stop the program, default=#{options[:consul][:max_consecutive_errors_on_endpoint]}") do |value|
+    raise "#{value} Must be greater or equal to 0" unless value >= 0
+    options[:consul][:max_consecutive_errors_on_endpoint] = value
+  end
+
+  opts.on('-f', '--[no-]fail-fast', 'If consul/vault endpoints fail at startup, fail immediately') do |v|
+    options[:consul][:fail_fast_errors] = v
+    options[:vault][:fail_fast_errors] = v
+  end
+
   opts.on('-g', '--no-gzip-compression', 'Disable GZIP compression in HTTP requests') do
     options[:consul][:enable_gzip_compression] = false
   end
@@ -121,6 +136,12 @@ optparse = OptionParser.new do |opts|
   options[:vault][:token_renew] = true
   opts.on('--[no-]vault-renew', 'Control auto-renewal of the Vault token. Default: activated') do |vault_renew|
     options[:vault][:token_renew] = vault_renew
+  end
+
+  opts.on('--vault-retry [RETRIES]', '--vault-retry-attempts [RETRIES]', Integer,
+          "If vault fails after n retries, stop the program, default=#{options[:vault][:max_consecutive_errors_on_endpoint]}") do |value|
+    raise "#{value} Must be greater or equal to 0" unless value >= 0
+    options[:vault][:max_consecutive_errors_on_endpoint] = value
   end
 
   opts.on('--vault-lease-duration-factor=<factor>', Float, 'Wait at least <factor> * lease time before updating a Vault secret. Default: 0.5') do |factor|

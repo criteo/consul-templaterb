@@ -7,7 +7,8 @@ module Consul
   module Async
     class ConsulConfiguration
       attr_reader :base_url, :token, :retry_duration, :min_duration, :wait_duration, :max_retry_duration, :retry_on_non_diff,
-                  :missing_index_retry_time_on_diff, :missing_index_retry_time_on_unchanged, :debug, :enable_gzip_compression
+                  :missing_index_retry_time_on_diff, :missing_index_retry_time_on_unchanged, :debug, :enable_gzip_compression,
+                  :fail_fast_errors, :max_consecutive_errors_on_endpoint
       def initialize(base_url: 'http://localhost:8500',
                      debug: { network: false },
                      token: nil,
@@ -19,7 +20,9 @@ module Consul
                      missing_index_retry_time_on_diff: 15,
                      missing_index_retry_time_on_unchanged: 60,
                      enable_gzip_compression: true,
-                     paths: {})
+                     paths: {},
+                     max_consecutive_errors_on_endpoint: 10,
+                     fail_fast_errors: 1)
         @base_url = base_url
         @token = token
         @debug = debug
@@ -32,6 +35,8 @@ module Consul
         @missing_index_retry_time_on_diff = missing_index_retry_time_on_diff
         @missing_index_retry_time_on_unchanged = missing_index_retry_time_on_unchanged
         @paths = paths
+        @max_consecutive_errors_on_endpoint = max_consecutive_errors_on_endpoint
+        @fail_fast_errors = fail_fast_errors
       end
 
       def ch(path, symbol)
@@ -57,7 +62,9 @@ module Consul
                                 missing_index_retry_time_on_diff: ch(path, :missing_index_retry_time_on_diff),
                                 missing_index_retry_time_on_unchanged: ch(path, :missing_index_retry_time_on_unchanged),
                                 enable_gzip_compression: enable_gzip_compression,
-                                paths: @paths)
+                                paths: @paths,
+                                max_consecutive_errors_on_endpoint: @max_consecutive_errors_on_endpoint,
+                                fail_fast_errors: @fail_fast_errors)
       end
     end
     class ConsulResult

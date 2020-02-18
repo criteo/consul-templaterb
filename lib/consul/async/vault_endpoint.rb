@@ -10,7 +10,7 @@ module Consul
   module Async
     class VaultConfiguration
       attr_reader :base_url, :token, :token_renew, :retry_duration, :min_duration, :wait_duration, :max_retry_duration, :retry_on_non_diff,
-                  :lease_duration_factor, :debug
+                  :lease_duration_factor, :debug, :max_consecutive_errors_on_endpoint, :fail_fast_errors
 
       def initialize(base_url: 'http://localhost:8200',
                      debug: { network: false },
@@ -20,7 +20,9 @@ module Consul
                      min_duration: 0.1,
                      lease_duration_factor: 0.5,
                      max_retry_duration: 600,
-                     paths: {})
+                     paths: {},
+                     max_consecutive_errors_on_endpoint: 10,
+                     fail_fast_errors: false)
         @base_url = base_url
         @token_renew = token_renew
         @debug = debug
@@ -30,6 +32,8 @@ module Consul
         @lease_duration_factor = lease_duration_factor
         @paths = paths
         @token = token
+        @max_consecutive_errors_on_endpoint = max_consecutive_errors_on_endpoint
+        @fail_fast_errors = fail_fast_errors
       end
 
       def ch(path, symbol)
@@ -51,7 +55,9 @@ module Consul
                                min_duration: ch(path, :min_duration),
                                max_retry_duration: ch(path, :max_retry_duration),
                                lease_duration_factor: ch(path, :lease_duration_factor),
-                               paths: @paths)
+                               paths: @paths,
+                               max_consecutive_errors_on_endpoint: @max_consecutive_errors_on_endpoint,
+                               fail_fast_errors: @fail_fast_errors)
       end
     end
     class VaultResult

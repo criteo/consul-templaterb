@@ -44,6 +44,12 @@ module Consul
 
       # Run templating engine once
       def do_run(template_manager, template_renders)
+        unless template_manager.running
+          ::Consul::Async::Debug.puts_info '[FATAL] TemplateManager has been stopped, stopping everything'
+          @result = 3
+          EventMachine.stop
+          return
+        end
         results = template_renders.map(&:run)
         all_ready = results.all?(&:ready?)
         if !@all_templates_rendered && all_ready

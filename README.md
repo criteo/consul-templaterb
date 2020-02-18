@@ -160,6 +160,9 @@ $ consul-templaterb --help
 USAGE: consul-templaterb [[options]]
     -h, --help                       Show help
     -v, --version                    Show Version
+        --retry, --consul-retry-attempts [RETRIES]
+                                     If consul fails after n retries, stop the program, default=10
+    -f, --[no-]fail-fast             If consul/vault endpoints fail at startup, fail immediately
     -g, --no-gzip-compression        Disable GZIP compression in HTTP requests
     -c, --consul-addr=<address>      Address of Consul, eg: http://localhost:8500
     -l, --log-level=<log_level>      Log level, default=info, any of none|error|info|debug
@@ -167,6 +170,8 @@ USAGE: consul-templaterb [[options]]
     -V, --vault-addr=<address>       Address of Vault, eg: http://localhost:8200
         --vault-token=<token>        Token used to authenticate against vault.
         --[no-]vault-renew           Control auto-renewal of the Vault token. Default: activated
+        --vault-retry, --vault-retry-attempts [RETRIES]
+                                     If vault fails after n retries, stop the program, default=10
         --vault-lease-duration-factor=<factor>
                                      Wait at least <factor> * lease time before updating a Vault secret. Default: 0.5
     -w, --wait=<min_duration>        Wait at least n seconds before each template generation
