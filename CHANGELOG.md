@@ -2,6 +2,8 @@
 
 ## (UNRELEASED)
 
+## 1.23.0 (February 18, 2020)
+
 NEW FEATURES:
 
  * Implementation of #59 - implementation of `--retry` and `--vault-retry` new flags
