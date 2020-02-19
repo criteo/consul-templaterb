@@ -1,10 +1,11 @@
 require 'consul/async/utilities'
 require 'consul/async/stats'
 require 'em-http'
-require 'thread'
 require 'json'
 module Consul
   module Async
+    # The class configuring Consul endpoints
+    # It allows to translate configuration options per specific endpoint/path
     class ConsulConfiguration
       attr_reader :base_url, :token, :retry_duration, :min_duration, :wait_duration, :max_retry_duration, :retry_on_non_diff,
                   :missing_index_retry_time_on_diff, :missing_index_retry_time_on_unchanged, :debug, :enable_gzip_compression,
@@ -51,6 +52,7 @@ module Consul
 
       def create(path)
         return self unless @paths[path.to_sym]
+
         ConsulConfiguration.new(base_url: ch(path, :base_url),
                                 debug: ch(path, :debug),
                                 token: ch(path, :token),
@@ -67,6 +69,9 @@ module Consul
                                 fail_fast_errors: @fail_fast_errors)
       end
     end
+
+    # This keep track of answer from Consul
+    # It also keep statistics about result (x_consul_index, stats...)
     class ConsulResult
       attr_reader :data, :http, :x_consul_index, :last_update, :stats, :retry_in
       def initialize(data, modified, http, x_consul_index, stats, retry_in, fake: false)
@@ -102,6 +107,8 @@ module Consul
         next_retry + last_update
       end
     end
+    # Basic Encapsulation of HTTP response from Consul
+    # It supports empty responses to handle first call is an easy way
     class HttpResponse
       attr_reader :response_header, :response, :error
       def initialize(http, override_nil_response = nil)
@@ -116,6 +123,9 @@ module Consul
         end
       end
     end
+    # This class represents a specific path in Consul HTTP API
+    # It also stores x_consul_index and keep track on updates of API
+    # So, it basically performs all the optimizations to keep updated with Consul internal state.
     class ConsulEndpoint
       attr_reader :conf, :path, :x_consul_index, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value, :query_params
       def initialize(conf, path, enforce_json_200 = true, query_params = {}, default_value = '[]')
@@ -144,12 +154,12 @@ module Consul
         on_response do |result|
           state = result.x_consul_index.to_i < 1 ? '[WARN]' : '[ OK ]'
           stats = result.stats
-          STDERR.puts "[DBUG]#{state}#{result.modified? ? '[MODFIED]' : '[NO DIFF]'}" \
+          warn "[DBUG]#{state}#{result.modified? ? '[MODFIED]' : '[NO DIFF]'}" \
           "[s:#{stats.successes},err:#{stats.errors}]" \
           "[#{stats.body_bytes_human.ljust(8)}][#{stats.bytes_per_sec_human.ljust(9)}]"\
           " #{path.ljust(48)} idx:#{result.x_consul_index}, next in #{result.retry_in} s"
         end
-        on_error { |http| STDERR.puts "[ERROR]: #{path}: #{http.error.inspect}" }
+        on_error { |http| warn "[ERROR]: #{path}: #{http.error.inspect}" }
       end
 
       def on_response(&block)
@@ -173,7 +183,7 @@ module Consul
       def build_request(consul_index)
         res = {
           head: {
-            'Accept'         => 'application/json',
+            'Accept' => 'application/json',
             'X-Consul-Index' => consul_index,
             'X-Consul-Token' => conf.token
           },
@@ -216,7 +226,7 @@ module Consul
       def fetch
         options = {
           connect_timeout: 5, # default connection setup timeout
-          inactivity_timeout: conf.wait_duration + 1 + (conf.wait_duration / 16), # default connection inactivity (post-setup) timeout
+          inactivity_timeout: conf.wait_duration + 1 + (conf.wait_duration / 16) # default connection inactivity (post-setup) timeout
         }
         connection = {
           conn: EventMachine::HttpRequest.new(conf.base_url, options)
@@ -228,7 +238,7 @@ module Consul
             is_kv_empty = path.start_with?('/v1/kv') && http.response_header.status == 404
             if !is_kv_empty && enforce_json_200 && http.response_header.status != 200 && http.response_header['Content-Type'] != 'application/json'
               _handle_error(http, consul_index) do
-                STDERR.puts "[RETRY][#{path}] (#{@consecutive_errors} errors)" if (@consecutive_errors % 10) == 1
+                warn "[RETRY][#{path}] (#{@consecutive_errors} errors)" if (@consecutive_errors % 10) == 1
               end
             else
               n_consul_index = find_x_consul_index(http)

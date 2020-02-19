@@ -3,6 +3,7 @@ require 'yaml'
 require 'json'
 module Consul
   module Async
+    # Various utilities
     class Utilities
       def self.bytes_to_h(bytes)
         if bytes < 1024
@@ -25,6 +26,7 @@ module Consul
       # Loads parameters from a file, supports JSON and YAML
       def self.load_parameters_from_file(parameters_file)
         raise "Parameters file #{parameters_file} does not exists" unless File.exist? parameters_file
+
         if parameters_file.downcase.end_with?('.yaml', '.yml')
           YAML.load_file(parameters_file)
         elsif parameters_file.downcase.end_with?('.json')
@@ -35,7 +37,7 @@ module Consul
       end
 
       def self.random
-        @random = Random.new unless @random
+        @random ||= Random.new
         @random
       end
     end

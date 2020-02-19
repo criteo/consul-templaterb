@@ -1,12 +1,13 @@
 require 'consul/async/utilities'
 require 'em-http'
-require 'thread'
 require 'forwardable'
 require 'erb'
 require 'digest'
 
 module Consul
   module Async
+    # Exception thrown when a template is invalid and cause a Runtime Exception during
+    # its rendering
     class InvalidTemplateException < StandardError
       attr_reader :cause
       def initialize(cause)
@@ -14,6 +15,7 @@ module Consul
       end
     end
 
+    # Exception thrown when the template is Invalid due to a Syntax Error
     class SyntaxErrorInTemplate < InvalidTemplateException
       attr_reader :cause
       def initialize(cause)
@@ -21,6 +23,7 @@ module Consul
       end
     end
 
+    # Class to handle the retrival of a Remote resource (such a JSON API)
     class RemoteResource
       def initialize(endpoints_manager)
         @endp_manager = endpoints_manager
@@ -78,6 +81,10 @@ module Consul
       end
     end
 
+    # This class keep references over all endpoints (aka datasources) registered for all templates.
+    # This allows reusing those endpoints as well as performing listing and garbage collecting.
+    # This is also the main object visible from ERB files which contains all methods available
+    # to template writters.
     class EndPointsManager
       attr_reader :consul_conf, :vault_conf, :running, :net_info, :start_time, :coordinate, :remote_resource, :templates
       def initialize(consul_configuration, vault_configuration, templates, trim_mode = nil)
@@ -100,9 +107,9 @@ module Consul
         @context = {
           current_erb_path: nil,
           template_info: {
-            'source_root'       => nil,
-            'source'            => nil,
-            'destination'       => nil,
+            'source_root' => nil,
+            'source' => nil,
+            'destination' => nil,
             'was_rendered_once' => false
           },
           params: {}
@@ -119,6 +126,7 @@ module Consul
       # https://www.consul.io/api/health.html#list-nodes-for-service
       def service(name, dc: nil, passing: false, tag: nil)
         raise 'You must specify a name for a service' if name.nil?
+
         path = "/v1/health/service/#{name}"
         query_params = {}
         query_params[:dc] = dc if dc
@@ -130,6 +138,7 @@ module Consul
       # https://www.consul.io/api/health.html#list-checks-for-service
       def checks_for_service(name, dc: nil, passing: false)
         raise 'You must specify a name for a service' if name.nil?
+
         path = "/v1/health/checks/#{name}"
         query_params = {}
         query_params[:dc] = dc if dc
@@ -140,6 +149,7 @@ module Consul
       # https://www.consul.io/api/health.html#list-checks-for-node
       def checks_for_node(name, dc: nil, passing: false)
         raise 'You must specify a name for a service' if name.nil?
+
         path = "/v1/health/node/#{name}"
         query_params = {}
         query_params[:dc] = dc if dc
@@ -182,8 +192,8 @@ module Consul
       # Return a param of template
       def param(key, default_value = nil)
         v = @context[:params][key]
-        v = @context[:params][key.to_sym] unless v
-        v = default_value unless v
+        v ||= @context[:params][key.to_sym]
+        v ||= default_value
         v
       end
 
@@ -222,6 +232,7 @@ module Consul
 
       def secrets(path = '')
         raise "You need to provide a vault token to use 'secret' keyword" if vault_conf.token.nil?
+
         path = "/v1/#{path}".gsub(%r{/{2,}}, '/')
         query_params = { list: 'true' }
         create_if_missing(path, query_params, vault_conf.fail_fast_errors, vault_conf.max_consecutive_errors_on_endpoint) do
@@ -231,6 +242,7 @@ module Consul
 
       def secret(path = '', post_data = nil)
         raise "You need to provide a vault token to use 'secret' keyword" if vault_conf.token.nil?
+
         path = "/v1/#{path}".gsub(%r{/{2,}}, '/')
         query_params = {}
         method = post_data ? 'POST' : 'GET'
@@ -243,12 +255,14 @@ module Consul
       def render_file(path, params = {})
         new_path = File.expand_path(path, File.dirname(@context[:current_erb_path]))
         raise "render_file ERROR: #{path} is resolved as #{new_path}, but the file does not exists" unless File.exist? new_path
+
         render(File.read(new_path), new_path, params, current_template_info: template_info)
       end
 
       # render a sub template from a string template
       def render_from_string(template_content, params = {})
         return unless template_content
+
         sha1res = Digest::SHA1.hexdigest(template_content)
         new_path = File.expand_path(":memory:sha1:#{sha1res}", File.dirname(@context[:current_erb_path]))
         render(template_content, new_path, params, current_template_info: template_info)
@@ -256,6 +270,7 @@ module Consul
 
       def find_line(e)
         return e.message.dup[5..-1] if e.message.start_with? '(erb):'
+
         e.backtrace.each do |line|
           return line[5..-1] if line.start_with? '(erb):'
         end
@@ -273,6 +288,7 @@ module Consul
         }
         result = ERB.new(tpl, nil, @trim_mode).result(binding)
         raise "Result is not a string :='#{result}' for #{tpl_file_path}" unless result.is_a?(String)
+
         @context = old_value
         result
       rescue StandardError => e
@@ -380,6 +396,7 @@ module Consul
       end
     end
 
+    # Abstract class that stores information about a result
     class ConsulTemplateAbstract
       attr_reader :result, :endpoint, :seen_at
       def initialize(consul_endpoint)
@@ -421,12 +438,14 @@ module Consul
       end
     end
 
+    # Concrete class of a result when the result is a JSON Object
     class ConsulTemplateAbstractMap < ConsulTemplateAbstract
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
+    # Concrete class of a result when the result is a JSON Array
     class ConsulTemplateAbstractArray < ConsulTemplateAbstract
       def initialize(consul_endpoint)
         super(consul_endpoint)
@@ -436,8 +455,11 @@ module Consul
     # technically this class could be also an array, a simple string or any simple json object other than a hash.
     class ConsulTemplateAbstractJSONObject < ConsulTemplateAbstractMap; end
 
+    # Just another name
     class ConsulTemplateAbstractJSONArray < ConsulTemplateAbstractArray; end
 
+    # The ServiceInstance has shortcuts (such as service_address method), but is
+    # basically a Hash.
     class ServiceInstance < Hash
       def initialize(obj)
         merge!(obj)
@@ -471,6 +493,7 @@ module Consul
         ret = 'passing'
         checks = self['Checks']
         return ret unless checks
+
         checks.each do |chk|
           st = chk['Status']
           if st == 'critical'
@@ -494,6 +517,7 @@ module Consul
       end
     end
 
+    # Representation as a Map of a Service (includes Service, Node, Checks)
     class ConsulTemplateService < ConsulTemplateAbstractMap
       def initialize(consul_endpoint)
         super(consul_endpoint)
@@ -503,6 +527,7 @@ module Consul
 
       def result_delegate
         return @cached_result if @cached_json == result.json
+
         new_res = []
         result.json.each do |v|
           new_res << ServiceInstance.new(v)
@@ -513,12 +538,14 @@ module Consul
       end
     end
 
+    # Object returned by datacenters(), basically a JSON Array
     class ConsulTemplateDatacenters < ConsulTemplateAbstractArray
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
+    # Object returned by services() an abstract map of service_name, tags
     class ConsulTemplateServices < ConsulTemplateAbstractMap
       def initialize(consul_endpoint)
         super(consul_endpoint)
@@ -526,6 +553,7 @@ module Consul
 
       def parse_result(res)
         return res unless res.data == '{}' || endpoint.query_params[:tag]
+
         res_json = JSON.parse(res.data)
         result = {}
         res_json.each do |name, tags|
@@ -536,33 +564,43 @@ module Consul
       end
     end
 
+    # Another name to handle backwards compatibility
     class ConsulTemplateJSONObject < ConsulTemplateAbstractJSONObject; end
+
+    # Another name to handle backwards compatibility
     class ConsulTemplateJSONArray < ConsulTemplateAbstractJSONArray; end
 
+    # Object returned by /v1/agent/self, a JSON Map
     class ConsulAgentSelf < ConsulTemplateAbstractMap
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
+    # Object returning metrics from Consul agent, a JSON Map
     class ConsulAgentMetrics < ConsulTemplateAbstractMap
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
+    # List of checks for agent
     class ConsulTemplateChecks < ConsulTemplateAbstractArray
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
+    # List of nodes of the whole cluster
     class ConsulTemplateNodes < ConsulTemplateAbstractArray
       def initialize(consul_endpoint)
         super(consul_endpoint)
       end
     end
 
+    # Key/Values representations
+    # This is an array as it might contain several values
+    # Several helpers exist to handle nicely transformations
     class ConsulTemplateKV < ConsulTemplateAbstractArray
       attr_reader :root
       def initialize(consul_endpoint, root)
@@ -584,6 +622,7 @@ module Consul
       def get_value_decoded(name = root)
         val = get_value(name)
         return nil unless val
+
         Base64.decode64(val)
       end
 
@@ -591,10 +630,12 @@ module Consul
       def get_value_json(name = root, catch_errors: true)
         x = get_value_decoded(name)
         return nil unless x
+
         begin
           JSON.parse(x)
         rescue JSON::ParserError => e
           return nil if catch_errors
+
           raise StandardError.new(e), "get_value_json() cannot deserialize kv(#{name}) as JSON: #{e.message}", e.backtrace
         end
       end
@@ -603,23 +644,29 @@ module Consul
       def get_value_yaml(name = root, catch_errors: true)
         x = get_value_decoded(name)
         return nil unless x
+
         begin
           YAML.safe_load(x)
         rescue YAML::ParserError => e
           return nil if catch_errors
+
           raise StandardError.new(e), "get_value_yaml() cannot deserialize kv(#{name}) as YAML: #{e.message}", e.backtrace
         end
       end
     end
 
+    # Vault Secrets is a Map of secrets properly decoded
     class ConsulTemplateVaultSecret < ConsulTemplateAbstractMap
       def initialize(vault_endpoint)
         super(vault_endpoint)
       end
     end
+
+    # Array of available secrets
     class ConsulTemplateVaultSecretList < ConsulTemplateAbstractArray
       def parse_result(res)
         return res if res.data.nil?
+
         res.mutate(JSON.generate(res.json['data']['keys']))
         res
       end

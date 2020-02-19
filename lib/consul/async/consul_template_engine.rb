@@ -5,10 +5,11 @@ require 'consul/async/vault_endpoint'
 require 'consul/async/consul_template'
 require 'consul/async/consul_template_render'
 require 'em-http'
-require 'thread'
 require 'erb'
 module Consul
   module Async
+    # The Engine keeps tracks of all templates, handle hot-reload of files if needed
+    # as well as ticking the clock to compute state of templates periodically.
     class ConsulTemplateEngine
       attr_reader :template_manager, :hot_reload_failure, :template_frequency, :debug_memory, :result, :templates
       attr_writer :hot_reload_failure, :template_frequency, :debug_memory
@@ -61,17 +62,17 @@ module Consul
           @template_callbacks.each do |c|
             c.call([all_ready, template_manager, results])
           end
-        rescue StandardError => cbk_error
-          ::Consul::Async::Debug.puts_error "callback error: #{cbk_error.inspect}"
-          raise cbk_error
+        rescue StandardError => e
+          ::Consul::Async::Debug.puts_error "callback error: #{e.inspect}"
+          raise e
         end
       rescue Consul::Async::InvalidTemplateException => e
-        STDERR.puts "[FATAL]#{e}"
+        warn "[FATAL]#{e}"
         template_manager.terminate
         @result = 1
         EventMachine.stop
       rescue StandardError => e
-        STDERR.puts "[FATAL] Error occured: #{e.inspect} - #{e.backtrace.join("\n\t")}"
+        warn "[FATAL] Error occured: #{e.inspect} - #{e.backtrace.join("\n\t")}"
         template_manager.terminate
         @result = 2
         EventMachine.stop
@@ -82,6 +83,7 @@ module Consul
         do_run(template_manager, template_renders)
 
         return if @all_templates_rendered || @periodic_started
+
         # We continue if rendering not done and periodic not started
         EventMachine.next_tick do
           do_run_fast(template_manager, template_renders)
@@ -111,7 +113,7 @@ module Consul
               diff_num_objects = new_memory_state[:objects] - @last_memory_state[:objects]
               if diff_allocated != 0 || diff_num_objects.abs > (@last_memory_state[:pages] / 3)
                 timediff = new_memory_state[:time] - @last_memory_state[:time]
-                STDERR.puts "[MEMORY] #{new_memory_state[:time]} significant RAM Usage detected\n" \
+                warn "[MEMORY] #{new_memory_state[:time]} significant RAM Usage detected\n" \
                             "[MEMORY] #{new_memory_state[:time]} Pages  : #{new_memory_state[:pages]}" \
                             " (diff #{diff_allocated} aka #{(diff_allocated / timediff).round(0)}/s) \n" \
                             "[MEMORY] #{new_memory_state[:time]} Objects: #{new_memory_state[:objects]}"\

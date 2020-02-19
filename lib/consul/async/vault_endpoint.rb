@@ -3,11 +3,11 @@ require 'consul/async/stats'
 require 'consul/async/debug'
 require 'em-http'
 require 'net/http'
-require 'thread'
 require 'json'
 
 module Consul
   module Async
+    # Configuration for Vault Endpoints
     class VaultConfiguration
       attr_reader :base_url, :token, :token_renew, :retry_duration, :min_duration, :wait_duration, :max_retry_duration, :retry_on_non_diff,
                   :lease_duration_factor, :debug, :max_consecutive_errors_on_endpoint, :fail_fast_errors
@@ -48,6 +48,7 @@ module Consul
 
       def create(path)
         return self unless @paths[path.to_sym]
+
         VaultConfiguration.new(base_url: ch(path, :base_url),
                                debug: ch(path, :debug),
                                token: ch(path, :token),
@@ -60,6 +61,7 @@ module Consul
                                fail_fast_errors: @fail_fast_errors)
       end
     end
+    # Keep information about Vault result of a query
     class VaultResult
       attr_reader :data, :http, :stats, :retry_in
 
@@ -92,6 +94,8 @@ module Consul
         @data_json
       end
     end
+
+    # VaultHttpResponse supports empty results (when no data has been received yet)
     class VaultHttpResponse
       attr_reader :response_header, :response, :error, :json
 
@@ -109,6 +113,7 @@ module Consul
       end
     end
 
+    # Endpoint in vault (a path in Vault)
     class VaultEndpoint
       attr_reader :conf, :path, :http_method, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value, :query_params
 
@@ -140,7 +145,7 @@ module Consul
         on_response do |result|
           state = result.x_consul_index.to_i < 1 ? '[WARN]' : '[ OK ]'
           stats = result.stats
-          STDERR.puts "[DBUG]#{state}#{result.modified? ? '[MODFIED]' : '[NO DIFF]'}" \
+          warn "[DBUG]#{state}#{result.modified? ? '[MODFIED]' : '[NO DIFF]'}" \
           "[s:#{stats.successes},err:#{stats.errors}]" \
           "[#{stats.body_bytes_human.ljust(8)}][#{stats.bytes_per_sec_human.ljust(9)}]"\
           " #{path.ljust(48)} idx:#{result.x_consul_index}, next in #{result.retry_in} s"
@@ -192,6 +197,7 @@ module Consul
 
       def _get_errors(http)
         return [http.error] if http.error
+
         unless http.json.nil?
           return http.json['errors'] if http.json.key?('errors')
         end
@@ -213,7 +219,7 @@ module Consul
       def fetch
         options = {
           connect_timeout: 5, # default connection setup timeout
-          inactivity_timeout: 1, # default connection inactivity (post-setup) timeout
+          inactivity_timeout: 1 # default connection inactivity (post-setup) timeout
         }
         connection = EventMachine::HttpRequest.new(conf.base_url, options)
         cb = proc do |_|
@@ -241,9 +247,7 @@ module Consul
           end
 
           http.errback do
-            unless @stopping
-              _handle_error(http) { connection = EventMachine::HttpRequest.new(conf.base_url, options) }
-            end
+            _handle_error(http) { connection = EventMachine::HttpRequest.new(conf.base_url, options) } unless @stopping
           end
           queue.pop(&cb)
         end

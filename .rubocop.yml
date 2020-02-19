@@ -3,6 +3,9 @@ AllCops:
     - bundle/**/*
   TargetRubyVersion: 2.4
 
+Layout/LineLength:
+  Max: 175
+
 Metrics/AbcSize:
   Max: 82
 
@@ -18,9 +21,6 @@ Metrics/ClassLength:
 Metrics/CyclomaticComplexity:
   Max: 20
 
-Metrics/LineLength:
-  Max: 175
-
 Metrics/MethodLength:
   Max: 65
 
@@ -30,14 +30,28 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Max: 23
 
-Style/Documentation:
+# We use `dc` as a parameter in many methods
+Naming/MethodParameterName:
   Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: true
 
 Style/FrozenStringLiteralComment:
   Enabled: false
 
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
 Style/MultilineBlockChain:
   Enabled: false
 
-Style/VariableNumber:
-  Enabled: false

@@ -9,7 +9,7 @@ RSpec.describe Consul::Async::ConsulTemplateRender do
     @vault_conf = Consul::Async::VaultConfiguration.new(token: 'fake')
   end
 
-  unit_templates = File.expand_path('../resources/templates', __FILE__)
+  unit_templates = File.expand_path('resources/templates', __dir__)
 
   it "Expects unit_templates (#{unit_templates}) is a valid directory" do
     expect(File.directory?(unit_templates)).to be true

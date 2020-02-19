@@ -24,7 +24,7 @@ RSpec.describe Consul::Async::ConsulTemplateEngine do
     expect(@renderer.render).to eq read 'samples/haproxy.cfg'
   end
 
-  samples_path = File.expand_path('../../../../samples', __FILE__)
+  samples_path = File.expand_path('../../../samples', __dir__)
 
   it "Expects samples (#{samples_path}) is a valid directory" do
     expect(File.directory?(samples_path)).to be true

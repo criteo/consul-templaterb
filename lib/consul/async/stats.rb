@@ -2,6 +2,8 @@ require 'consul/async/utilities'
 
 module Consul
   module Async
+    # Object keeping stats about a single Endpoint
+    # Accessible within the .stats of a EndPoint
     class EndPointStats
       attr_reader :successes, :errors, :consecutive_errors, :start, :body_bytes, :last_error, :last_success, :last_modified, :changes, :network_bytes
 

@@ -14,12 +14,13 @@ end
 def compute_default_output(source)
   dest = source.gsub(/\.erb$/, '')
   raise "Source and destination cannot be the same in #{source}" if source == dest || dest.empty?
+
   dest
 end
 
 options = {
   erb: {
-    trim_mode: '-', # trim_mode for ERB
+    trim_mode: '-' # trim_mode for ERB
   },
   vault: {
     debug: {
@@ -59,22 +60,22 @@ options = {
     enable_gzip_compression: true,
     paths: {
       '/v1/catalog/services': {
-        min_duration: 15,    # Since services change a lot, refresh services every 15 seconds
+        min_duration: 15    # Since services change a lot, refresh services every 15 seconds
       },
       '/v1/catalog/nodes': {
-        min_duration: 15,    # Do not wake up before 15 seconds when node appear/disappear
+        min_duration: 15    # Do not wake up before 15 seconds when node appear/disappear
       },
       '/v1/coordinate/nodes': {
-        min_duration: 60,    # Since coordinates change a lot, refresh coordinates every 30 seconds
+        min_duration: 60    # Since coordinates change a lot, refresh coordinates every 30 seconds
       },
       '/v1/catalog/datacenters': {
-        min_duration: 60,    # Datacenters are not added every minute, right?
+        min_duration: 60    # Datacenters are not added every minute, right?
       },
       '/v1/agent/metrics': {
-        min_duration: 60,    # Refresh metrics only minute max
+        min_duration: 60    # Refresh metrics only minute max
       },
       '/v1/agent/self': {
-        min_duration: 60,    # Refresh self info every minute max
+        min_duration: 60    # Refresh self info every minute max
       }
     }
   }
@@ -89,18 +90,19 @@ optparse = OptionParser.new do |opts|
   opts.banner = usage_text
 
   opts.on('-h', '--help', 'Show help') do
-    STDERR.puts opts
+    warn opts
     exit 0
   end
 
   opts.on('-v', '--version', 'Show Version') do
-    STDERR.puts Consul::Async::VERSION
+    warn Consul::Async::VERSION
     exit 0
   end
 
   opts.on('--retry [RETRIES]', '--consul-retry-attempts [RETRIES]', Integer,
           "If consul fails after n retries, stop the program, default=#{options[:consul][:max_consecutive_errors_on_endpoint]}") do |value|
     raise "#{value} Must be greater or equal to 0" unless value >= 0
+
     options[:consul][:max_consecutive_errors_on_endpoint] = value
   end
 
@@ -141,6 +143,7 @@ optparse = OptionParser.new do |opts|
   opts.on('--vault-retry [RETRIES]', '--vault-retry-attempts [RETRIES]', Integer,
           "If vault fails after n retries, stop the program, default=#{options[:vault][:max_consecutive_errors_on_endpoint]}") do |value|
     raise "#{value} Must be greater or equal to 0" unless value >= 0
+
     options[:vault][:max_consecutive_errors_on_endpoint] = value
   end
 
@@ -150,6 +153,7 @@ optparse = OptionParser.new do |opts|
 
   opts.on('-w', '--wait=<min_duration>', Integer, 'Wait at least n seconds before each template generation') do |min_duration|
     raise "--wait=#{min_duration} must be greater than 0" unless min_duration.positive?
+
     consul_engine.template_frequency = min_duration
   end
 
@@ -169,6 +173,7 @@ optparse = OptionParser.new do |opts|
     raise "Please specify a signal, use any of: #{valid_signals.inspect}" unless val
     return nil if val == none_value
     raise "Invalid signal #{val}, valid signals: #{valid_signals.inspect}" unless valid_signals.include? val
+
     val
   end
 
@@ -198,7 +203,7 @@ optparse = OptionParser.new do |opts|
       if all_ready
         modified = results.any?(&:modified)
         if @programs[cmd].nil?
-          STDERR.puts "[EXEC] Starting process: #{cmd}... on_reload=#{sig_reload ? sig_reload : 'NONE'} on_term=#{sig_term}"
+          warn "[EXEC] Starting process: #{cmd}... on_reload=#{sig_reload || 'NONE'} on_term=#{sig_term}"
           @programs[cmd] = Consul::Async::ProcessHandler.new(cmd, sig_reload: sig_reload, sig_term: sig_term)
           @programs[cmd].start
         else
@@ -207,7 +212,7 @@ optparse = OptionParser.new do |opts|
           begin
             @programs[cmd].process_status
           rescue Consul::Async::ProcessDoesNotExist => e
-            STDERR.puts "[FATAL] The process is dead, aborting run: #{e.inspect}"
+            warn "[FATAL] The process is dead, aborting run: #{e.inspect}"
             template_manager.terminate
             EventMachine.stop
           end
@@ -243,9 +248,10 @@ optparse = OptionParser.new do |opts|
     dest = splitted[1]
     unless dest
       dest = compute_default_output(source)
-      STDERR.puts "-t --template #{tpl} : Since output has not been set, using #{dest}"
+      warn "-t --template #{tpl} : Since output has not been set, using #{dest}"
     end
     raise "Source and destination cannot be the same in #{tpl}" if source == dest || dest.empty?
+
     command = splitted[2]
     parameter_file = splitted[3]
     params = {}
@@ -255,6 +261,7 @@ optparse = OptionParser.new do |opts|
       consul_engine.add_template_callback do |_all_ready, _template_manager, results|
         results.each do |res|
           next unless res.ready? && res.modified && res.output_file == dest && res.template_file == source
+
           # Our template has been fully rendered
           system(command)
         end
@@ -265,7 +272,7 @@ optparse = OptionParser.new do |opts|
   opts.on('-o', '--once', 'Do not run the process as a daemon') do
     consul_engine.add_template_callback do |all_ready, template_manager, _|
       if all_ready
-        STDERR.puts '[INFO] Program ends since daemon mode has been disabled, file(s) has been written'
+        warn '[INFO] Program ends since daemon mode has been disabled, file(s) has been written'
         template_manager.terminate
         EventMachine.stop
       end
@@ -275,7 +282,7 @@ end
 
 def kill_program
   @programs.each do |k, v|
-    STDERR.puts "Killing process #{k}..."
+    warn "Killing process #{k}..."
     v.kill
   end
   @programs = {}
@@ -295,14 +302,12 @@ def find_max_descriptors(max_descripors)
 end
 
 %i[consul vault].each do |type|
-  unless options[type][:base_url].start_with? 'http', 'https'
-    options[type][:base_url] = "http://#{options[type][:base_url]}"
-  end
+  options[type][:base_url] = "http://#{options[type][:base_url]}" unless options[type][:base_url].start_with? 'http', 'https'
 end
 
 # Since we might be using a lots of descriptors, document this
 new_size = find_max_descriptors(65_536)
-STDERR.puts "Max number of descriptors set to #{new_size}" if options[:consul][:debug][:network]
+warn "Max number of descriptors set to #{new_size}" if options[:consul][:debug][:network]
 
 # This is needed to avoid EM not to crash on some Linux Hosts
 # When using a very large number of Consul Endpoints
@@ -329,7 +334,7 @@ Signal.trap('USR1', 'IGNORE') unless Gem.win_platform?
   Signal.trap(sig) do |signo|
     # handle nicely forks
     m_p = my_pid == Process.pid
-    STDERR.puts "[KILL] received #{Signal.signame(signo)}, stopping myself" if m_p
+    warn "[KILL] received #{Signal.signame(signo)}, stopping myself" if m_p
     template_manager.terminate
     kill_program if m_p
   end
@@ -338,7 +343,7 @@ end
 begin
   consul_engine.run(template_manager)
 rescue Interrupt => e
-  STDERR.puts "[WARN] consul-templaterb has been interrupted #{e}"
+  warn "[WARN] consul-templaterb has been interrupted #{e}"
 end
 
 exit consul_engine.result

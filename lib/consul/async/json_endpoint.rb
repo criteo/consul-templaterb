@@ -5,6 +5,7 @@ require 'json'
 
 module Consul
   module Async
+    # Configuration to apply to JSONEndpoints
     class JSONConfiguration
       attr_reader :url, :retry_duration, :min_duration, :retry_on_non_diff,
                   :debug, :enable_gzip_compression, :request_method, :json_body,
@@ -34,6 +35,7 @@ module Consul
         self
       end
     end
+    # Result from call to a Remote JSON endpoint
     class JSONResult
       attr_reader :data, :http, :last_update, :stats, :retry_in
       def initialize(data, modified, http, stats, retry_in, fake: false)
@@ -67,6 +69,7 @@ module Consul
         next_retry + last_update
       end
     end
+    # Encapsulation of HTTP Response
     class HttpResponse
       attr_reader :response_header, :response, :error
       def initialize(http, override_nil_response = nil)
@@ -81,6 +84,7 @@ module Consul
         end
       end
     end
+    # Endpoint (aka URL) of a remote API that might be called
     class JSONEndpoint
       attr_reader :conf, :url, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value, :query_params
       def initialize(conf, url, default_value, enforce_json_200 = true, query_params = {})

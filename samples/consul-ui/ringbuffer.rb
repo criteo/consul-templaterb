@@ -1,4 +1,6 @@
 module ConsulTimeline
+  # Node of a ringbuffer
+  # This contains entries to next and previous elemens as well as the value
   class RingBufferNode
     attr_reader :prev, :value, :next
     attr_writer :prev, :next, :value
@@ -28,10 +30,15 @@ module ConsulTimeline
       "[prev=#{@prev.object_id}, next=#{@next.object_id}, value=#{@value}]"
     end
   end
+  # A ringbuffer that supports inserting out of order elements at the right place
+  # This is needed as Consul might notify us from changes in any order, so we
+  # might receive a notification t-2 AFTER t-1, at t.
+  # The ringbuffer will discard old elements so it keeps the "n" most recent elements only.
   class SortedRingBuffer
     include Enumerable
     def initialize(max_size, sort_func)
       raise "Invalid size #{max_size}" unless max_size.positive?
+
       @head = RingBufferNode.new(nil, nil, nil)
       @sort_func = sort_func
       @tail = @head
@@ -43,11 +50,11 @@ module ConsulTimeline
 
     def push(obj)
       return unless obj
+
       cur = @tail
       raise "No head.next found in #{@head}" unless @head.next
-      while cur && cur.value && @sort_func.call(cur.value, obj).positive?
-        cur = cur.prev
-      end
+
+      cur = cur.prev while cur&.value && @sort_func.call(cur.value, obj).positive?
       if cur.nil?
         # The value we try to insert is before @head
         # no need to do anything
@@ -64,6 +71,7 @@ module ConsulTimeline
 
     def each
       return enum_for(:each) unless block_given? # Sparkling magic!
+
       cur = @head
       until cur.nil?
         yield cur.value if cur.value
@@ -103,5 +111,6 @@ if ARGV.count.positive? && ARGV[0] == 'debug'
   ringbuff.push 99_999_999_999_999
   arr = ringbuff.to_a
   raise "OOPS wrong size := #{arr.count} instead of #{size}" unless arr.count == size
+
   STDOUT.puts JSON.generate(arr)
 end
