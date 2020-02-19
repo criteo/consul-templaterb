@@ -153,7 +153,6 @@ function decorateIsoDate(value, formated) {
     return document.createTextNode(value);
   }
   const d = new Date(parsed);
-  console.log(d);
   const e = document.createElement('time');
   e.setAttribute('datetime', formated);
   e.setAttribute('title', value);
@@ -221,6 +220,64 @@ function service_meta_semantics_decorator(instance, key, value, serviceName) {
         fun = default_decorator;
     }
     return fun(instance, key, value);
+}
+
+const node_meta_decorators = {
+  'os': function(k, v, nodeMetaTags, serviceMetaIfAny) {
+    var e = document.createElement('span');
+    e.setAttribute('class', 'badge badge-light mx-1 lookup');
+    e.appendChild(document.createTextNode(k + ':' + v + ' '));
+    var i = document.createElement('i');
+    i.setAttribute('class', 'fab fa-' + v);
+    e.appendChild(i);
+    return e;
+  }
+}
+
+function default_node_meta_decorator(k, value, nodeMetaTags, serviceMetaIfAny) {
+  if (httpRegexp.test(value)) {
+    var e = document.createElement('a');
+    e.setAttribute('href', value);
+    e.setAttribute('class', 'lookup');
+    e.appendChild(document.createTextNode(k + ':'+ value));
+    var metaTag = document.createElement('span');
+    metaTag.setAttribute('class', 'badge badge-secondary mx-1');
+    metaTag.appendChild(e);
+    return metaTag;
+  } else {
+    var metaTag = document.createElement('span');
+    metaTag.setAttribute('class', 'badge badge-primary mx-1 lookup');
+    metaTag.appendChild(document.createTextNode(k + ':' + value));
+    return metaTag;
+  }
+}
+
+function find_decorator(k, v) {
+  const nd = node_meta_decorators[k];
+  if (nd != null) {
+    return nd;
+  } else {
+    return default_node_meta_decorator;
+  }
+}
+
+function nodeMetaGenerator(nodeMetaTags, serviceMetaIfAny) {
+    var allMeta = document.createElement('div');
+    var metaTags = document.createElement('div');
+    metaTags.setAttribute('title', 'Node Meta')
+    metaTags.className = 'node-meta';
+    for (var tagKey in nodeMetaTags) {
+        const tagValue = nodeMetaTags[tagKey];
+        if (tagValue == ''){
+          continue;
+        }
+        const decorator = find_decorator(tagKey, tagValue);
+        var clazz = 'badge badge-primary mx-1 lookup';
+        const elem = decorator(tagKey, tagValue, nodeMetaTags, serviceMetaIfAny);
+        metaTags.appendChild(elem);
+    }
+    allMeta.appendChild(metaTags);
+    return allMeta;
 }
 
 /**

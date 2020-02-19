@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.24.0 (February 19, 2020)
+
+NEW FEATURES:
+
+ * pluggable node meta
+
 ## 1.23.0 (February 18, 2020)
 
 NEW FEATURES:

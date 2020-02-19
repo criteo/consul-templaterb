@@ -250,3 +250,7 @@ pre, code {
 .connect-disabled {
   display: none;
 }
+
+.hidden {
+  display: none;
+}

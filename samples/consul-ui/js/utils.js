@@ -122,22 +122,6 @@ function nodeAddressGenator(nodeaddr) {
     return htmlAddress;
 }
 
-function nodeMetaGenerator(nodeMetaTags) {
-    var metaTags = document.createElement('div');
-    metaTags.setAttribute('title', 'Node Meta')
-    metaTags.className = 'node-meta';
-    for (var tagKey in nodeMetaTags) {
-        if (!nodeMetaTags[tagKey]) {
-            continue;
-        }
-        var metaTag = document.createElement('span');
-        metaTag.setAttribute('class', 'badge badge-primary mx-1 lookup');
-        metaTag.appendChild(document.createTextNode(tagKey + ':' + nodeMetaTags[tagKey]));
-        metaTags.appendChild(metaTag);
-    }
-    return metaTags;
-}
-
 function tagsGenerator(instanceTags) {
     var tags = document.createElement('div');
 
