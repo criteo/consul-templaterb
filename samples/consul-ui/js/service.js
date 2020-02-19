@@ -308,7 +308,7 @@ class ServiceMainSelector extends MainSelector {
         var node_info = this.nodes[instance.name];
         if (node_info != null) {
             node_info = node_info.meta;
-            element.appendChild(nodeMetaGenerator(node_info));
+            element.appendChild(nodeMetaGenerator(node_info, instance.sMeta));
             element.appendChild(document.createElement("hr"));
         }
         if (instance.tags && instance.tags.length > 0) {

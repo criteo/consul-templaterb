@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.24.1 (February 19, 2020)
+
+BUGFIX:
+
+ * Properly set service meta in node meta decorator
+
 ## 1.24.0 (February 19, 2020)
 
 NEW FEATURES:
