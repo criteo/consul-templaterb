@@ -5,30 +5,31 @@
 [![License](https://img.shields.io/badge/license-ApacheV2-yellowgreen.svg)](#license)
 
 The ruby GEM [consul-templaterb](https://rubygems.org/gems/consul-templaterb)
-is both a library and an executable that allows to generate files
+is both a library and an executable that allows generating files
 using data from Consul (Discovery and Key/Value Store) easily using ruby's
-erb templates. It also support launching programs and baby-sitting processes
+[ERB](https://en.wikipedia.org/wiki/ERuby) templates.
+It also supports launching programs and babysitting processes
 when rendering the files, thus notifying programs when data do change.
 
-It is intended for user accustomed to expressiveness or Ruby templating (ERB),
+It is intended for the users accustomed to expressiveness or Ruby templating,
 allowing for more flexibility and features than Go templates.
 
-It also allows to use all of ruby language, especially useful for generating
+It also allows using all of the Ruby language, especially useful for generating
 files in several formats ([JSON](samples/consul_template.json.erb),
 [XML](samples/consul_template.xml.erb)) for which text substitutions are hard
 to get right (escaping, attributes encoding...).
 
-It also focuses on good performance and lightweight usage of bandwidth,
+It also focuses on providing good performance and lightweight usage of bandwidth,
 especially for very large clusters and watching lots of services.
 
-For complicated rendering of templates and large Consul Clusters, it usually
+For the rendering of complex templates in large Consul Clusters, it usually
 renders faster with a more predictable way the template than the original
 consul-template.
 
-It provides a very [simple API](TemplateAPI.md) to write your own templates
+It provides a very [simple API](TemplateAPI.md) to write your templates
 with fully [working examples](samples/).
 
-It also allow to display a very nice and hi-performance HTML5 UI for Consul,
+It also allows displaying a very nice and hi-performance HTML5 UI for Consul,
 see [consul-ui](samples/consul-ui) for details.
 
 ## Video introduction to consul-templaterb
@@ -42,19 +43,15 @@ inspired strongly the creation of this GEM and this executable wants
 to achieve better results in some use cases, especially for very large
 Consul clusters with many nodes and servers.
 
-consul-template has more features regarding Consul support (for instance, it
-has support for Hashicorp's Vault), but consul-templaterb focuses on getting
-more power with the generation of templates and more performance.
-
 Consul Template uses Go templates which is very limited in its set of
 features: it is complicated to sort, apply real transformations
 using code and even interact with the OS (ex: get the current date, format
 timestamps...).
 
-The sort feature for instances allow you to create predictable output (i.e: meaning
+The sort feature for instances allow you to create a predictable output (i.e: meaning
 that the order of nodes is predictable), thus it might offer better performance
 since the reload of processes if happening ONLY when the files are binary
-different. Thus, if using consul-templaterb, you will reload less your haproxy or
+different. Thus, if using consul-templaterb, you will reload less your HAProxy or
 load-balancer than you would do with consul-template.
 
 Compared to consul-template, consul-templaterb offers the following features:
@@ -66,7 +63,7 @@ Compared to consul-template, consul-templaterb offers the following features:
 * Supports all Ruby features (ex: base64, real JSON/XML generation...)
 * Information about bandwidth
 
-The executable supports semantics and command line flags and options similar to
+The executable supports semantics and command-line flags and options similar to
 HashiCorp's Consul-template, so many flags you might use in consul-template will
 work in a similar way. It also supports the same environment variable
 `CONSUL_HTTP_ADDR` to find the Consul Agent to query and `CONSUL_HTTP_TOKEN` to
@@ -96,7 +93,7 @@ $ gem install consul-templaterb
 ```
 
 If you simply want to use the executable on your preferred Linux distribution, you
-have to install first: ruby and ruby dev.
+have to install first: `ruby` and `ruby-dev`.
 
 ### Quick install on Ubuntu-Linux
 
@@ -110,7 +107,7 @@ You can now use it directly using the binary `consul-templaterb` in your path.
 
 On Windows, a bug exists with Ruby greater than 2.4.
 
-In order to make it work, use this commands as explained in
+To make it work, use this command as explained in
 https://github.com/oneclick/rubyinstaller2/issues/96#issuecomment-434619796
 
 ```
@@ -119,10 +116,10 @@ gem install eventmachine consul-templaterb --platform ruby
 
 ### Run it with Docker
 
-An Docker image is also available https://hub.docker.com/r/discoverycriteo/consul-templaterb
+A Docker image is also available https://hub.docker.com/r/discoverycriteo/consul-templaterb
 and allows to quickly have a working
 [Consul-UI](https://github.com/criteo/consul-templaterb/blob/master/samples/consul-ui/README.md)
-that will server the UI to explore your Consul Cluster.
+that will serve the UI to explore your Consul Cluster.
 
 ### Playing with the samples templates
 
@@ -145,7 +142,7 @@ Using samples/checks.html output for samples/checks.html.erb
 [...]
 ```
 
-It will render a full web site you may browse to look in real time the status of your
+It will render a full web site you may browse to look in real-time the status of your
 Consul Cluster.
 
 You can now have a look to the [API Documentation](TemplateAPI.md) to modify existing
@@ -202,10 +199,10 @@ In the same way as consul-template, consul-templaterb supports multiple template
 commands when the files do change. The parameter `--template <ERB>:<DEST>:[reload_command]:params_file` works
 in the following way:
 
-* ERB : the ERB file to use as a template
+* ERB: the ERB file to use as a template
 * DEST: the destination file
 * reload_command: optional shell command executed whenever the file has been modified
-* params_file: JSON or YAML file to load and to use as parameter for template (see
+* params_file: JSON or YAML file to load and to use as parameter for the template (see
   [param() function](TemplateAPI.md#paramparameter_name-default_value-nil) to retrieve
   the values)
 
@@ -219,7 +216,7 @@ $ consul-templaterb \\
   --template "samples/consul_template.erb:consul-summary.txt"
 ```
 
-### Process management and signalisation of configuration files
+### Process management and signalization of configuration files
 
 With the `--exec` argument (can be specified multiple times), consul-templaterb will launch
 the process specified when all templates have been generated. When generated file(s) do change,
@@ -247,7 +244,7 @@ By design, the GEM supports limiting the number of requests per endpoints (see c
 `bin/consul-templaterb` file). It avoids using too much network to fetch data from Consul
 in large Consul Clusters (especially when watching lots of files).
 
-The limitation is static for now, but fair dynamic bandwidth allocation will allow to limit
+The limitation is static for now, but fair dynamic bandwidth allocation will allow limiting
 the bandwidth used to get information for all services by capping the global bandwidth used
 by consul-templaterb.
 
@@ -260,13 +257,13 @@ examples:
 2. [Show all services in Cluster](samples/consul-ui/consul_services.json.erb)
 3. [Show all Key/Values nicely](samples/consul-ui/consul_keys.json.erb)
 4. [Services in XML](samples/consul_template.xml.erb)
-5. [Services in JSON](samples/consul_template.json.erb)
-6. [Generate HaProxy Configuration](samples/ha_proxy.cfg.erb)
-7. [Export Consul Statistics to Prometheus](samples/metrics.erb) : count all services, their state,
-   datacenters and nodes and export it to prometheus easily to trigger alerts.
+5. [Services in JSON or YAML](samples/consul_template.json.erb)
+6. [Generate HAProxy Configuration](samples/ha_proxy.cfg.erb)
+7. [Export Consul Statistics to Prometheus](samples/metrics.erb): count all services, their state,
+   datacenters and nodes and export it to Prometheus easily to trigger alerts.
 8. [List all services/Nodes with their statuses for all datacenters](samples/all_services.txt.erb)
 9. [Show all services/instances not passing on all DCs](samples/tools/find_all_failing_services.txt.erb)
-10. [List all rubygems consul versions from remote server JSON](samples/list_ruby_versions_from_rubygems.txt.erb)
+10. [List all RubyGems consul versions from remote server JSON](samples/list_ruby_versions_from_rubygems.txt.erb)
 
 If you want to test it quickly, you might try with (assuming your consul agent is listening on
 `http://localhost:8500`):
@@ -282,10 +279,19 @@ use (website updated automagically when values to change).
 All templates are validated using the Travis CI, so all should be working for your Consul
 Configuration.
 
+### Structured text generation (YAML, JSON, XML...)
+
+Since ERB supports real language features, we recommend you to use Hashes or Arrays in Ruby and
+at the end to generate the output. It allows changing very quickly from JSON to YAML or XML and
+avoiding all the pitfalls of structured language serialization (such as escaping attributes or
+indentation).
+
+See [Services in JSON or YAML](samples/consul_template.json.erb) to look at a working example.
+
 ## Template development
 
 Please look at [the template API](TemplateAPI.md) to have a list of all functions you might use for your
-templates. Also have a look to [samples/](samples/) directory to have full working examples.
+templates. Don't forget to have a look at the [samples/](samples/) directory to have full working examples.
 
 ## Development
 
@@ -325,10 +331,10 @@ Please consult [CHANGELOG.md](CHANGELOG.md) for fixed bugs.
 
 * [x] Hashi's Vault support (EXPERIMENTAL)
 * [ ] Implement automatic dynamic rate limit
-* [x] More samples: apache, nginx, full website displaying consul information...
-* [x] Optimize rendering speed at start-up: an iteration is done very second by default, but it would be possible to speed
+* [x] More samples: apache, nginx, a full website displaying consul information...
+* [x] Optimize rendering speed at start-up: an iteration is done every second by default, but it would be possible to speed
       up rendering by iterating with higher frequency until the first write of result has been performed.
-* [ ] Allow to tune bandwidth using a simple configuration file (while it should not be necessary for 90% of use-cases)
+* [ ] Allow tuning bandwidth using a simple configuration file (while it should not be necessary for 90% of use-cases)
 
 ## Contributing
 
@@ -339,4 +345,4 @@ This project is intended to be a safe, welcoming space for collaboration, and co
 
 ## License
 
-The gem is available as open source under the terms of the Apache v2 license. See [LICENSE.txt](LICENSE.txt) file.
+The gem is available as Open-Source under the terms of the Apache v2 license. See [LICENSE.txt](LICENSE.txt) file.

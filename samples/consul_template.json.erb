@@ -1,6 +1,7 @@
 <%
 # This template can be configure the following way with environment variables
 # Environment variables to filter services/instances
+#   OUTPUT_FORMAT: `JSON | YAML` to output to YAML or JSON
 #   SERVICES_TAG_FILTER: basic tag filter for service (default HTTP)
 #   INSTANCE_MUST_TAG: Second level of filtering (optional, default to SERVICES_TAG_FILTER)
 #   INSTANCE_EXCLUDE_TAG: Exclude instances having the given tag (default: canary)
@@ -15,20 +16,6 @@
   services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }  # Compute the health of a Service
 
   # Compute the health of a Service
-  def compute_attributes(snode)
-    w = 100
-    snode['Service']['Tags'].each do |tag|
-      match = /^weight-([1-9][0-9])*$/.match(tag)
-      w = match[1].to_i if match
-    end
-    attributes = ""
-    node_status = snode.status
-    attributes = "#{attributes} disabled" if node_status == 'critical'
-    if node_status == 'warning'
-      w = w / 8
-    end
-    attributes = "#{attributes} weight #{w}" if w.positive?
-  end
   backends = {}
   services(tag: service_tag_filter).each do |service_name, tags|
     if !services_blacklist.any? {|r| r.match(service_name)} && tags.include?(instance_must_tag)
@@ -58,9 +45,17 @@
                  addr:   snode.service_address,
                  port:   snode['Service']['Port'],
                  tags:   snode['Service']['Tags'],
+                 weights:snode.weights,
       }
       service[:instances] << server
     end
   end
   json = { services: json_backends}
-%><%= JSON.pretty_generate(json) %>
+%><%= case (ENV['OUTPUT_FORMAT'] || 'JSON').upcase
+      when 'JSON'
+        JSON.pretty_generate(json)
+      when 'YAML', 'YML'
+        YAML.dump(json)
+      else
+        raise "Cannot serialize to #{ENV['OUTPUT_FORMAT']}"
+      end %>
