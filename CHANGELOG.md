@@ -2,9 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.25.0 (February 27, 2020)
+
 NEW FEATURES:
 
  * Added support for `agent_members()` aka https://www.consul.io/api/agent.html#list-members
+ * Added [samples/members.json.erb](samples/members.json.erb) demonstrating its usage
 
 ## 1.24.1 (February 19, 2020)
 

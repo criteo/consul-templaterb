@@ -453,20 +453,22 @@ efficient in some cases than retrieving all values one by one.
 
 ## agent_members(wan: false)
 
-[Get the Serf information](https://www.consul.io/api/agent.html#list-members) from Consul Agent perspective.
+[Get the Serf information](https://www.consul.io/api/agent.html#list-members) from Consul Agent point of view.
 This is a list of Serf information containing serf information. This information is not consistent and should be used with care, most of the time, you should prefer `nodes()`.
 
-The object do contains the following attributes (accessed as Hash elements):
+If you are using `consul-templaterb` with a Consul server directly, you might use `wan:true` to have the list of all
+consul servers connected thru WAN (aka all consul servers from all datacenters).
+
+The returned value is an array containing the following objects containing the following attributes (accessed as Hash elements):
  * "Name": Name of node
  * "Addr": IP Address of node as seen in serf
  * "Port": Serf port
  * "Tags": Hash of properties, including version, dc, VSN info...
  * "Status": Serf code from 0 to 5 giving Health information
 
- Another property is available as status, that translates the Hash property "Status" into something human redable ('none', 'alive', 'leaving', 'left', 'failed')
+ Another property is available as `status()`, that translates the Hash property "Status" into something human redable ('none', 'alive', 'leaving', 'left', 'failed').
 
  See [samples/members.json.erb](samples/members.json.erb) for example of usage.
-            
 
 ## agent_metrics()
 
