@@ -1,0 +1,3 @@
+<%= agent_members.map do |a|
+      "#{a['Name']}/#{a['Addr']}/#{a.status}/#{a['Status']}"
+    end.join("\n") %>

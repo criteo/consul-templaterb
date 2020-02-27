@@ -1,0 +1,48 @@
+[
+    {
+        "Name": "tableaunode005-par",
+        "Addr": "10.236.127.20",
+        "Port": 8301,
+        "Tags": {
+            "acls": "1",
+            "build": "1.5.1criteoB:",
+            "dc": "par",
+            "id": "c3704306-a271-c212-16dd-a7d42c8e22bb",
+            "role": "node",
+            "segment": "",
+            "vsn": "2",
+            "vsn_max": "3",
+            "vsn_min": "2"
+        },
+        "Status": 1,
+        "ProtocolMin": 1,
+        "ProtocolMax": 5,
+        "ProtocolCur": 2,
+        "DelegateMin": 2,
+        "DelegateMax": 5,
+        "DelegateCur": 4
+    },
+    {
+        "Name": "kubes02e171-par",
+        "Addr": "10.236.134.42",
+        "Port": 8301,
+        "Tags": {
+            "acls": "1",
+            "build": "1.5.1criteoB:",
+            "dc": "par",
+            "id": "2d89527d-9a7d-057e-e301-296423cd04ea",
+            "role": "node",
+            "segment": "",
+            "vsn": "2",
+            "vsn_max": "3",
+            "vsn_min": "2"
+        },
+        "Status": 4,
+        "ProtocolMin": 1,
+        "ProtocolMax": 5,
+        "ProtocolCur": 2,
+        "DelegateMin": 2,
+        "DelegateMax": 5,
+        "DelegateCur": 4
+    }
+]

@@ -189,6 +189,15 @@ module Consul
         create_if_missing(path, query_params) { ConsulAgentMetrics.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value)) }
       end
 
+      # https://www.consul.io/api/agent.html#list-members
+      def agent_members(wan: false)
+        path = '/v1/agent/members'
+        query_params = {}
+        query_params['wan'] = true if wan
+        default_value = '[]'
+        create_if_missing(path, query_params) { ConsulTemplateMembers.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value)) }
+      end
+
       # Return a param of template
       def param(key, default_value = nil)
         v = @context[:params][key]
@@ -595,6 +604,43 @@ module Consul
     class ConsulTemplateNodes < ConsulTemplateAbstractArray
       def initialize(consul_endpoint)
         super(consul_endpoint)
+      end
+    end
+
+    # The ServiceInstance has shortcuts (such as service_address method), but is
+    # basically a Hash.
+    class SerfMember < Hash
+      def initialize(obj)
+        merge!(obj)
+      end
+
+      # List the possible Serf statuses as text, indexed by self['Status']
+      def serf_statuses
+        %w[none alive leaving left failed].freeze
+      end
+
+      # Return status as text
+      def status
+        serf_statuses[self['Status']] || "unknownStatus:#{self['Status']}"
+      end
+    end
+
+    # List of serf members of the whole cluster
+    class ConsulTemplateMembers < ConsulTemplateAbstractArray
+      def initialize(consul_endpoint)
+        super(consul_endpoint)
+      end
+
+      def result_delegate
+        return @cached_result if @cached_json == result.json
+
+        new_res = []
+        result.json.each do |v|
+          new_res << SerfMember.new(v)
+        end
+        @cached_result = new_res
+        @cached_json = result.json
+        new_res
       end
     end
 

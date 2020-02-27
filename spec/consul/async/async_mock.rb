@@ -44,7 +44,8 @@ module Consul
 
     def mock_consul
       results = {}
-      %w[v1/agent/metrics
+      %w[v1/agent/members
+         v1/agent/metrics
          v1/agent/self
          v1/catalog/datacenters
          v1/catalog/nodes

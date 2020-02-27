@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+NEW FEATURES:
+
+ * Added support for `agent_members()` aka https://www.consul.io/api/agent.html#list-members
+
 ## 1.24.1 (February 19, 2020)
 
 BUGFIX:

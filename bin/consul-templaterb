@@ -74,6 +74,9 @@ options = {
       '/v1/agent/metrics': {
         min_duration: 60    # Refresh metrics only minute max
       },
+      '/v1/agent/members': {
+        min_duration: 60    # Refresh self info every minute max
+      },
       '/v1/agent/self': {
         min_duration: 60    # Refresh self info every minute max
       }
