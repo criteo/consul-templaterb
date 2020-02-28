@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.25.1 (February 28, 2020)
+
+NEW FEATURES:
+
+ * Properly declare minimum Ruby version to 2.4 in GEM spec
+
 ## 1.25.0 (February 27, 2020)
 
 NEW FEATURES:
