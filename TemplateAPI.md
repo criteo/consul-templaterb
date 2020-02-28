@@ -540,7 +540,7 @@ consul-templaterb --template "source.html.erb:dest.html:reload_command:params.ya
 [...]
 ```
 
-See [samples/common/header.html.erb](samples/common/header.html.erb) for example of usage.
+See [samples/consul-ui/consul-services-ui.html.erb](samples/consul-ui/consul-services-ui.html.erb) for example of usage.
 
 ## secrets(prefix)
 
