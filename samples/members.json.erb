@@ -1,0 +1,10 @@
+<%= JSON.pretty_generate(agent_members.sort {|a,b| a['Name'] <=> b['Name']}.map do |m|
+    {
+        'Name'  => m['Name'],
+        'Addr'  => m['Addr'],
+        'Port'  => m['Port'],
+        'Tags'  => m['Tags'],
+        'state' => m.status # returns 'none', 'alive', 'leaving', 'left', 'failed'
+    }
+  end
+) %>
