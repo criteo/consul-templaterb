@@ -2,6 +2,7 @@
 
 [![Build Status](https://api.travis-ci.org/criteo/consul-templaterb.svg?branch=master)](https://travis-ci.org/criteo/consul-templaterb)
 [![Gem Version](https://badge.fury.io/rb/consul-templaterb.svg)](http://github.com/criteo/consul-templaterb/releases)
+[![GEM Downloads](https://ruby-gem-downloads-badge.herokuapp.com/consul-templaterb?type=total&metric=true)](https://rubygems.org/gems/consul-templaterb)
 [![License](https://img.shields.io/badge/license-ApacheV2-yellowgreen.svg)](#license)
 
 The ruby GEM [consul-templaterb](https://rubygems.org/gems/consul-templaterb)
