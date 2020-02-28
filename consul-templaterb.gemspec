@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.extra_rdoc_files = ['README.md', 'CHANGELOG.md', 'TemplateAPI.md']
   spec.require_paths = ['lib']
+  spec.required_ruby_version = '>= 2.4.0'
 
   spec.add_runtime_dependency 'em-http-request', '>= 1.1.5'
   spec.add_runtime_dependency 'eventmachine', '>= 1.2.7'
