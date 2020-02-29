@@ -2,6 +2,8 @@
 
 ## (UNRELEASED)
 
+## 1.25.2 (February 29, 2020)
+
 BUGFIX:
 
  * Update rake to 12.3.3 to fix [CVE-2020-8130](https://github.com/advisories/GHSA-jppv-gw3r-w3q8)
