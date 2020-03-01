@@ -44,8 +44,8 @@ to avoid having to write .result in all templates, some shortcuts have been adde
 
 Also available for all results:
 
-### Common methods available for all objects
-
+<details><summary>Common methods available for all object</summary>
+<div class="samples">
  * .all?
  * .any?
  * .assoc
@@ -137,9 +137,10 @@ Also available for all results:
  * .values_at
  * .yield_self
  * .zip
+</div></details>
 
- ### Methods available for Array objects
-
+<details><summary>Methods available for Array objects</summary>
+<div class="samples">
  * .append
  * .at
  * .bsearch
@@ -167,9 +168,9 @@ Also available for all results:
  * .to_ary
  * .transpose
  * .unshift
+ </div></details>
 
- ### Methods available for hash objects
-
+<details><summary>Methods available for hash objects</summary>
  * .compare_by_identity
  * .compare_by_identity?
  * .each_key
@@ -192,6 +193,7 @@ Also available for all results:
  * .update
  * .value?
  * .values
+ </div></details>
 
 ## coordinate
 
