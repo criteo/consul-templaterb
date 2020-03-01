@@ -44,156 +44,162 @@ to avoid having to write .result in all templates, some shortcuts have been adde
 
 Also available for all results:
 
-<details><summary>Common methods available for all object</summary>
+<details id="common-methods-available-for-all-objects">
+<summary>Common methods available for all objects</summary>
 <div class="samples">
- * .all?
- * .any?
- * .assoc
- * .chunk
- * .chunk_while
- * .class
- * .clear
- * .collect
- * .collect_concat
- * .compact
- * .count
- * .cycle
- * .detect
- * .dig
- * .display
- * .drop
- * .drop_while
- * .dup
- * .each
- * .each_cons
- * .each_entry
- * .each_slice
- * .each_with_index
- * .each_with_object
- * .empty?
- * .entries
- * .enum_for
- * .eql?
- * .equal?
- * .extend
- * .fetch
- * .find
- * .find_all
- * .find_index
- * .first
- * .flat_map
- * .flatten
- * .grep
- * .grep_v
- * .group_by
- * .hash
- * .include?
- * .index
- * .inject
- * .inspect
- * .is_a?
- * .itself
- * .keep_if
- * .kind_of?
- * .lazy
- * .length
- * .map
- * .max
- * .max_by
- * .member?
- * .min
- * .min_by
- * .minmax
- * .minmax_by
- * .nil?
- * .none?
- * .object_id
- * .one?
- * .partition
- * .pp
- * .rassoc
- * .reduce
- * .reject
- * .replace
- * .reverse_each
- * .select
- * .shift
- * .size
- * .slice
- * .slice_after
- * .slice_before
- * .slice_when
- * .sort
- * .sort_by
- * .sum
- * .take
- * .take_while
- * .tap
- * .to_a
- * .to_enum
- * .to_h
- * .to_s
- * .uniq
- * .values_at
- * .yield_self
- * .zip
-</div></details>
+<ul>
+<li>.all?</li>
+<li>.any?</li>
+<li>.assoc</li>
+<li>.chunk</li>
+<li>.chunk_while</li>
+<li>.class</li>
+<li>.clear</li>
+<li>.collect</li>
+<li>.collect_concat</li>
+<li>.compact</li>
+<li>.count</li>
+<li>.cycle</li>
+<li>.detect</li>
+<li>.dig</li>
+<li>.display</li>
+<li>.drop</li>
+<li>.drop_while</li>
+<li>.dup</li>
+<li>.each</li>
+<li>.each_cons</li>
+<li>.each_entry</li>
+<li>.each_slice</li>
+<li>.each_with_index</li>
+<li>.each_with_object</li>
+<li>.empty?</li>
+<li>.entries</li>
+<li>.enum_for</li>
+<li>.eql?</li>
+<li>.equal?</li>
+<li>.extend</li>
+<li>.fetch</li>
+<li>.find</li>
+<li>.find_all</li>
+<li>.find_index</li>
+<li>.first</li>
+<li>.flat_map</li>
+<li>.flatten</li>
+<li>.grep</li>
+<li>.grep_v</li>
+<li>.group_by</li>
+<li>.hash</li>
+<li>.include?</li>
+<li>.index</li>
+<li>.inject</li>
+<li>.inspect</li>
+<li>.is_a?</li>
+<li>.itself</li>
+<li>.keep_if</li>
+<li>.kind_of?</li>
+<li>.lazy</li>
+<li>.length</li>
+<li>.map</li>
+<li>.max</li>
+<li>.max_by</li>
+<li>.member?</li>
+<li>.min</li>
+<li>.min_by</li>
+<li>.minmax</li>
+<li>.minmax_by</li>
+<li>.nil?</li>
+<li>.none?</li>
+<li>.object_id</li>
+<li>.one?</li>
+<li>.partition</li>
+<li>.pp</li>
+<li>.rassoc</li>
+<li>.reduce</li>
+<li>.reject</li>
+<li>.replace</li>
+<li>.reverse_each</li>
+<li>.select</li>
+<li>.shift</li>
+<li>.size</li>
+<li>.slice</li>
+<li>.slice_after</li>
+<li>.slice_before</li>
+<li>.slice_when</li>
+<li>.sort</li>
+<li>.sort_by</li>
+<li>.sum</li>
+<li>.take</li>
+<li>.take_while</li>
+<li>.tap</li>
+<li>.to_a</li>
+<li>.to_enum</li>
+<li>.to_h</li>
+<li>.to_s</li>
+<li>.uniq</li>
+<li>.values_at</li>
+<li>.yield_self</li>
+<li>.zip</li>
+</ul></div></details>
 
-<details><summary>Methods available for Array objects</summary>
+<details>
+<summary id="methods-available-for-array-objects">Methods available for Array objects</summary>
 <div class="samples">
- * .append
- * .at
- * .bsearch
- * .bsearch_index
- * .combination
- * .concat
- * .each_index
- * .fill
- * .insert
- * .join
- * .last
- * .pack
- * .permutation
- * .pop
- * .prepend
- * .product
- * .push
- * .repeated_combination
- * .repeated_permutation
- * .reverse
- * .rindex
- * .rotate
- * .sample
- * .shuffle
- * .to_ary
- * .transpose
- * .unshift
- </div></details>
+<ul>
+<li>.append</li>
+<li>.at</li>
+<li>.bsearch</li>
+<li>.bsearch_index</li>
+<li>.combination</li>
+<li>.concat</li>
+<li>.each_index</li>
+<li>.fill</li>
+<li>.insert</li>
+<li>.join</li>
+<li>.last</li>
+<li>.pack</li>
+<li>.permutation</li>
+<li>.pop</li>
+<li>.prepend</li>
+<li>.product</li>
+<li>.push</li>
+<li>.repeated_combination</li>
+<li>.repeated_permutation</li>
+<li>.reverse</li>
+<li>.rindex</li>
+<li>.rotate</li>
+<li>.sample</li>
+<li>.shuffle</li>
+<li>.to_ary</li>
+<li>.transpose</li>
+<li>.unshift</li>
+</ul></div></details>
 
-<details><summary>Methods available for hash objects</summary>
- * .compare_by_identity
- * .compare_by_identity?
- * .each_key
- * .each_pair
- * .each_value
- * .fetch_values
- * .has_key?
- * .has_value?
- * .invert
- * .key
- * .key?
- * .keys
- * .merge
- * .rehash
- * .store
- * .to_hash
- * .to_proc
- * .transform_keys
- * .transform_values
- * .update
- * .value?
- * .values
- </div></details>
+<details id="Methods-available-for-hash-objects">
+<summary>Methods available for hash objects</summary>
+<ul>
+<li>.compare_by_identity</li>
+<li>.compare_by_identity?</li>
+<li>.each_key</li>
+<li>.each_pair</li>
+<li>.each_value</li>
+<li>.fetch_values</li>
+<li>.has_key?</li>
+<li>.has_value?</li>
+<li>.invert</li>
+<li>.key</li>
+<li>.key?</li>
+<li>.keys</li>
+<li>.merge</li>
+<li>.rehash</li>
+<li>.store</li>
+<li>.to_hash</li>
+<li>.to_proc</li>
+<li>.transform_keys</li>
+<li>.transform_values</li>
+<li>.update</li>
+<li>.value?</li>
+<li>.values</li>
+</ul></div></details>
 
 ## coordinate
 
