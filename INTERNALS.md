@@ -12,6 +12,8 @@ the list of services registered in the cluster).
 
 For each endpoint, `consul-templaterb` performs a watch by getting information about the last transaction on this endpoints, storing it locally and watching at Consul to get updates about the data within this endpoint.
 
+![Main Loop](docs/images/consul-templaterb.svg)
+
 ## How it works
 
 There is a loop in the engine, every second, all templates are rendered using the `ERB` template engine.
