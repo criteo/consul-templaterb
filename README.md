@@ -33,6 +33,8 @@ with fully [working examples](samples/).
 It also allows displaying a very nice and hi-performance HTML5 UI for Consul,
 see [consul-ui](samples/consul-ui) for details.
 
+There is an article [docs/article-06_Template-based_discovery_with_consul-templaterb.md](docs/article-06_Template-based_discovery_with_consul-templaterb.md) summarizing why we developped this tool (also available on [medium](https://medium.com/criteo-labs/template-based-discovery-with-consul-templaterb-8ff88434c457)).
+
 ## Video introduction to consul-templaterb
 
 [![Introduction to Consul-templaterb](docs/images/consul-ui_001.png)](https://youtu.be/zLzrLGLLl4Q)
