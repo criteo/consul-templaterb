@@ -9,7 +9,7 @@
   require 'set'
 
   # Services to hide
-  services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || '.*netsvc-probe.*,.*consul-probed.*').split(',')
+  services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || '.*netsvc-probe.*,.*consul-probed.*,.lbl7.*').split(',')
   services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }
 
   num_services={}
