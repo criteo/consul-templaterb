@@ -2,6 +2,17 @@
 
 ## (UNRELEASED)
 
+NEW FEATURES:
+
+## 1.26.0 (March 5, 2020)
+
+ * Using `agent: http://vault_or_consul_agent:port>` on most methods will now override the agent
+   used to perform Consul queries. It might be useful for very large clusters or large WAN federations,
+   because you can perform some requests on some agents, and some others on other agenrs. Might
+   also be useful to federate data from preprod/prod for instance.
+   See [samples/all_services_multi_agents.txt.erb](samples/all_services_multi_agents.txt.erb) for an
+   example.
+
 ## 1.25.2 (February 29, 2020)
 
 BUGFIX:

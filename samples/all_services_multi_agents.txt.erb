@@ -1,0 +1,69 @@
+ __________________________________________________________________
+|  DC   | Services |______________Instances________________| Nodes |
+|       |          | Passing | Warning | Critic  |  Total  |       |
+|-------+----------+---------+---------+---------+---------+-------|
+<%
+  # This template list all instances on all DCs
+  # And aggregates a list of Services, Services Instances/status
+  # And nodes.
+  require 'set'
+
+
+  def find_best_agent_for_dc(dc)
+    agent = service('consul-relay', passing: true, dc:dc).first
+    agent = service('consul-agent-http', passing: true, dc:dc).first unless agent
+    service('consul', passing: true, dc:dc).first unless agent
+    return nil unless agent
+    port = agent['Service']['Port'] || 8500
+    "http://#{agent.service_address}:#{port}"
+  end
+
+  # Services to hide
+  services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || '.*netsvc-probe.*,.*consul-probed.*').split(',')
+  services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }
+
+  num_services={}
+  num_instances={}
+  all_states = ['passing', 'warning', 'critical', 'total']
+  distinct_services=Set.new
+  datacenters().each do |dc|
+    next unless find_best_agent_for_dc(dc)
+    num_services[dc] = 0
+    num_instances[dc] = {
+      'passing'  => 0,
+      'warning'  => 0,
+      'critical' => 0,
+      'total'    => 0
+    }
+    services(dc:dc, agent: find_best_agent_for_dc(dc)).each do |service_name, tags|
+      next if services_blacklist.any? {|r| r.match(service_name)}
+      distinct_services.add(service_name)
+      num_services[dc]+=1
+      service(service_name, dc:dc, agent: find_best_agent_for_dc(dc)).each do |snode|
+        num_instances[dc][snode.status]+=1
+        num_instances[dc]['total']+=1
+      end 
+    end
+  end
+  num_instances_total={
+    'passing'  => 0,
+    'warning'  => 0,
+    'critical' => 0,
+    'total'    => 0
+  }
+  num_nodes_total=0
+  num_services.each do |dc, num_services_for_dc|
+    all_states.each do |s|
+      num_instances_total[s] += num_instances[dc][s]
+    end
+    num_nodes=nodes(dc:dc, agent: find_best_agent_for_dc(dc)).count
+    num_nodes_total+=num_nodes
+%>| <%= dc.rjust(5) %> | <%= num_services_for_dc.to_s.rjust(8) %> |<% all_states.each do |status|
+%> <%= num_instances[dc][status].to_s.rjust(7) %> |<% end %> <%= num_nodes.to_s.rjust(5) %> |
+<%
+  end
+%>|-------+----------+---------+---------+---------+---------+-------|
+| TOTAL | <%= distinct_services.count.to_s.rjust(8) %> |<% all_states.each do |status|
+%> <%= num_instances_total[status].to_s.rjust(7) %> |<%
+end %> <%= num_nodes_total.to_s.rjust(5) %> |
+'_______|__________|_________|_________|_________|_________|_______'

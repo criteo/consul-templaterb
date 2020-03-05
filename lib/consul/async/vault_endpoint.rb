@@ -46,10 +46,15 @@ module Consul
         end
       end
 
-      def create(path)
+      def create(path, agent: nil)
         return self unless @paths[path.to_sym]
 
-        VaultConfiguration.new(base_url: ch(path, :base_url),
+        base_url = ch(path, :base_url)
+        if agent
+          agent = "http://#{agent}" unless agent.start_with? 'http', 'https'
+          base_url = agent
+        end
+        VaultConfiguration.new(base_url: base_url,
                                debug: ch(path, :debug),
                                token: ch(path, :token),
                                retry_duration: ch(path, :retry_duration),
@@ -117,8 +122,8 @@ module Consul
     class VaultEndpoint
       attr_reader :conf, :path, :http_method, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value, :query_params
 
-      def initialize(conf, path, http_method = 'GET', enforce_json_200 = true, query_params = {}, default_value = '{}', post_data = {})
-        @conf = conf.create(path)
+      def initialize(conf, path, http_method = 'GET', enforce_json_200 = true, query_params = {}, default_value = '{}', post_data = {}, agent: nil)
+        @conf = conf.create(path, agent: agent)
         @default_value = default_value
         @path = path
         @http_method = http_method

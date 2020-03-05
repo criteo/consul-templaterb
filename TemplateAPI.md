@@ -7,6 +7,10 @@ annoted with `[]`.
 Most of them support the optional dc attribute to use data from another datacenter. If the `dc`
 attribute is not specified, the function will output data from the current datacenter.
 
+Starting with version 1.26.0, most methods also support the
+`agent: "http://address_of_vault_or_consul_agent:port"` to use another agent than the one specified in command line. It opens the way to use different agents/DC or to create templates federating several different not-linked clusters (ex: prod/preprod).
+Example on how using it: [samples/all_services_multi_agents.txt.erb](samples/all_services_multi_agents.txt.erb).
+
 To ease template development, `consul-templaterb` supports HOT reload of templates, thus it is possible to
 develop the templates interactively. While developing, it is possible to use the switch `--hot-reload=keep`,
 thus the application will display a warning if the template is invalid and won't stop
@@ -211,7 +215,7 @@ The coordinate object allow to interact with the coordinates of DCs and nodes as
 [List the Wan Coordinates](https://www.consul.io/api/coordinate.html#read-wan-coordinates) from local DC to
 other DCs. If dc is set, it will perform the same operation but from another DC.
 
-### coordinate.nodes([dc: datacenter])
+### coordinate.nodes([dc: datacenter], [agent: consul_agent_address])
 
 [Read all LAN nodes coordinates](https://www.consul.io/api/coordinate.html#read-lan-coordinates-for-all-nodes).
 If If dc is set, it will perform the same operation but for another DC.
@@ -221,7 +225,7 @@ If If dc is set, it will perform the same operation but for another DC.
 Computes the rtt between 2 nodes returned by `coordinate.nodes` or `coordinate.datacenters`. A re-implementation of Golang sample code
 [Working with Coordinates](https://www.consul.io/docs/internals/coordinates.html#working-with-coordinates).
 
-## datacenters()
+## datacenters([agent: consul_agent_address])
 
 [Get the list of datacenters as string array](https://www.consul.io/api/catalog.html#list-datacenters).
 
@@ -241,7 +245,7 @@ Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
 </div>
 </details>
 
-## services([dc: datacenter], [tag: tagToFilterWith])
+## services([dc: datacenter], [tag: tagToFilterWith], [agent: consul_agent_address])
 
 [List the services matching the optional tag filter](https://www.consul.io/api/catalog.html#list-services),
 if tag is not specified, will match all the services. Note that this endpoint performs client side tag
@@ -278,7 +282,7 @@ Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
 </div>
 </details>
 
-## service(serviceName, [dc: datacenter], [tag: tagToFilterWith], [passing: true])
+## service(serviceName, [dc: datacenter], [tag: tagToFilterWith], [passing: true], [agent: consul_agent_address])
 
 [List the instances](https://www.consul.io/api/health.html#list-nodes-for-service) of a service having the given
 optional tag. If no tag is specified, will return all instances of service. By default, it will return all the
@@ -350,7 +354,7 @@ Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
 </div>
 </details>
 
-## nodes([dc: datacenter])
+## nodes([dc: datacenter], [agent: consul_agent_address])
 
 [List all the nodes of selected datacenter](https://www.consul.io/api/catalog.html#list-nodes). No filtering is
 applied.
@@ -371,20 +375,20 @@ Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
 </div>
 </details>
 
-## node(nodeNameOrId, [dc: datacenter])
+## node(nodeNameOrId, [dc: datacenter], [agent: consul_agent_address])
 
 [List all the services of a given Node](https://www.consul.io/api/catalog.html#list-services-for-node) using its
 name or its ID. If DC is specified, will lookup for given node in another datacenter.
 
-## checks_for_node(name, dc: nil, passing: false, tag: nil)
+## checks_for_node(name, dc: nil, passing: false, tag: nil, [agent: consul_agent_address])
 
 [Find all the checks](https://www.consul.io/api/health.html#list-checks-for-node) of a given node name.
 
-## checks_for_service(name, dc: nil, passing: false, tag: nil)
+## checks_for_service(name, dc: nil, passing: false, tag: nil, [agent: consul_agent_address])
 
 [Find all the checks](https://www.consul.io/api/health.html#list-checks-for-service) of a given service.
 
-## kv(name, [dc: nil], [keys: false], [recurse: false])
+## kv(name, [dc: nil], [keys: false], [recurse: false], [agent: consul_agent_address])
 
 [Read keys from KV Store](https://www.consul.io/api/kv.html#read-key). It can be used for both listing the keys and
 getting the values. See the file in samples [keys.html.erb](samples/keys.html.erb) for a working example.
@@ -459,7 +463,7 @@ value123 : <%= result.get_decoded('/my/multiple/values/value123') %>
 Since `kv('/my/multiple/values', recurse: true)` will retrieve all values at once, it might be more
 efficient in some cases than retrieving all values one by one.
 
-## agent_members(wan: false)
+## agent_members(wan: false, [agent: consul_agent_address])
 
 [Get the Serf information](https://www.consul.io/api/agent.html#list-members) from Consul Agent point of view.
 This is a list of Serf information containing serf information. This information is not consistent and should be used with care, most of the time, you should prefer `nodes()`.
@@ -478,13 +482,13 @@ The returned value is an array containing the following objects containing the f
 
  See [samples/members.json.erb](samples/members.json.erb) for example of usage.
 
-## agent_metrics()
+## agent_metrics([agent: consul_agent_address])
 
 [Get the metrics of Consul Agent](https://www.consul.io/api/agent.html#view-metrics). Since this endpoint does
 not support blocking queries, data will be refreshed every few seconds, but will not use blocking queries
 mechanism.
 
-## agent_self()
+## agent_self([agent: consul_agent_address])
 
 [Get the configuration of Consul Agent](https://www.consul.io/api/agent.html#read-configuration).
 Since this endpoint does not support blocking queries, data will be refreshed every few seconds,
@@ -550,7 +554,7 @@ consul-templaterb --template "source.html.erb:dest.html:reload_command:params.ya
 
 See [samples/consul-ui/consul-services-ui.html.erb](samples/consul-ui/consul-services-ui.html.erb) for example of usage.
 
-## secrets(prefix)
+## secrets(prefix, [agent: vault_agent_address])
 
 It requires that a Vault token is given either in parameter or in environment variable
 The [policies](https://www.vaultproject.io/docs/concepts/policies.html) should be properly set.
@@ -576,7 +580,7 @@ Full example: [samples/vault-ldap.txt.erb](samples/vault-ldap.txt.erb)
 </div>
 </details>
 
-## secret(path, [data = nil])
+## secret(path, [data = nil], [agent: vault_agent_address])
 
 It requires that a Vault token is given either in parameter or in environment variable
 The [policies](https://www.vaultproject.io/docs/concepts/policies.html) should be properly set.
@@ -698,4 +702,3 @@ Here are templates rendered by consul-templaterb:
 
 </div>
 </details>
-

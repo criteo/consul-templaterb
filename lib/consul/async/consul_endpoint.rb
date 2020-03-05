@@ -50,10 +50,15 @@ module Consul
         end
       end
 
-      def create(path)
+      def create(path, agent: nil)
         return self unless @paths[path.to_sym]
 
-        ConsulConfiguration.new(base_url: ch(path, :base_url),
+        base_url = ch(path, :base_url)
+        if agent
+          agent = "http://#{agent}" unless agent.start_with? 'http', 'https'
+          base_url = agent
+        end
+        ConsulConfiguration.new(base_url: base_url,
                                 debug: ch(path, :debug),
                                 token: ch(path, :token),
                                 retry_duration: ch(path, :retry_duration),
@@ -128,8 +133,8 @@ module Consul
     # So, it basically performs all the optimizations to keep updated with Consul internal state.
     class ConsulEndpoint
       attr_reader :conf, :path, :x_consul_index, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value, :query_params
-      def initialize(conf, path, enforce_json_200 = true, query_params = {}, default_value = '[]')
-        @conf = conf.create(path)
+      def initialize(conf, path, enforce_json_200 = true, query_params = {}, default_value = '[]', agent = nil)
+        @conf = conf.create(path, agent: agent)
         @default_value = default_value
         @path = path
         @queue = EM::Queue.new
