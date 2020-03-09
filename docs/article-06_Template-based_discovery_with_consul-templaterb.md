@@ -120,4 +120,5 @@ If you don’t want to bother configuring and tuning it, you can try it very qui
 * [Mixing Observability with Service Discovery](https://medium.com/criteo-labs/mixing-observability-with-service-discovery-2bb8909e8530)
 
 Pierre Souchay, 2020-03-03
+
 Also published on https://medium.com/criteo-labs/template-based-discovery-with-consul-templaterb-8ff88434c457
