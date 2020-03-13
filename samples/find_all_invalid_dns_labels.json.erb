@@ -1,0 +1,12 @@
+<%
+  r = /^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,62}[a-zA-Z0-9])?$/
+  invalid_services = {}
+  services.each do |servive_name, tags|
+    errors = []
+    errors << "Invalid service name #{servive_name}" unless r.match(servive_name)
+    tags.each do |tag|
+      errors << "Invalid tag #{tag}" unless r.match(tag)
+    end
+    invalid_services[servive_name] = errors unless errors.empty?
+  end
+%><%= JSON.pretty_generate({"errors": invalid_services.size, "details": invalid_services}) %>
