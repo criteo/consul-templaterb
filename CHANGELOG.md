@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.26.1 (March 27, 2020)
+
+BUGFIX:
+
+ * Using `agent: http://vault_or_consul_agent:port>` was not properly taken into account in some endpoints
+
 ## 1.26.0 (March 5, 2020)
 
 NEW FEATURES:

@@ -53,7 +53,7 @@ module Consul
         query_params = {}
         query_params[:dc] = dc if dc
         @endp_manager.create_if_missing(path, query_params, agent: agent) do
-          ConsulTemplateNodes.new(ConsulEndpoint.new(@endp_manager.consul_conf, path, true, query_params, '[]', agent: agent))
+          ConsulTemplateNodes.new(ConsulEndpoint.new(@endp_manager.consul_conf, path, true, query_params, '[]', agent))
         end
       end
 
@@ -63,7 +63,7 @@ module Consul
         query_params = {}
         query_params[:dc] = dc if dc
         @endp_manager.create_if_missing(path, query_params, agent: agent) do
-          ConsulTemplateNodes.new(ConsulEndpoint.new(@endp_manager.consul_conf, path, true, query_params, '[]', agent: agent))
+          ConsulTemplateNodes.new(ConsulEndpoint.new(@endp_manager.consul_conf, path, true, query_params, '[]', agent))
         end
       end
 
@@ -136,7 +136,7 @@ module Consul
         query_params[:dc] = dc if dc
         query_params[:passing] = passing if passing
         query_params[:tag] = tag if tag
-        create_if_missing(path, query_params, agent: agent) { ConsulTemplateService.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]')) }
+        create_if_missing(path, query_params, agent: agent) { ConsulTemplateService.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]', agent)) }
       end
 
       # https://www.consul.io/api/health.html#list-checks-for-service
@@ -147,7 +147,7 @@ module Consul
         query_params = {}
         query_params[:dc] = dc if dc
         query_params[:passing] = passing if passing
-        create_if_missing(path, query_params, agent: agent) { ConsulTemplateChecks.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]')) }
+        create_if_missing(path, query_params, agent: agent) { ConsulTemplateChecks.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]', agent)) }
       end
 
       # https://www.consul.io/api/health.html#list-checks-for-node
@@ -158,7 +158,7 @@ module Consul
         query_params = {}
         query_params[:dc] = dc if dc
         query_params[:passing] = passing if passing
-        create_if_missing(path, query_params, agent: agent) { ConsulTemplateChecks.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]')) }
+        create_if_missing(path, query_params, agent: agent) { ConsulTemplateChecks.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]', agent)) }
       end
 
       # https://www.consul.io/api/catalog.html#list-nodes
@@ -166,7 +166,7 @@ module Consul
         path = '/v1/catalog/nodes'
         query_params = {}
         query_params[:dc] = dc if dc
-        create_if_missing(path, query_params, agent: agent) { ConsulTemplateNodes.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]')) }
+        create_if_missing(path, query_params, agent: agent) { ConsulTemplateNodes.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]', agent)) }
       end
 
       # https://www.consul.io/api/catalog.html#list-services-for-node
@@ -174,7 +174,7 @@ module Consul
         path = "/v1/catalog/node/#{name_or_id}"
         query_params = {}
         query_params[:dc] = dc if dc
-        create_if_missing(path, query_params, agent: agent) { ConsulTemplateNodes.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '{}')) }
+        create_if_missing(path, query_params, agent: agent) { ConsulTemplateNodes.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '{}', agent)) }
       end
 
       # https://www.consul.io/api/agent.html#read-configuration
@@ -182,7 +182,7 @@ module Consul
         path = '/v1/agent/self'
         query_params = {}
         default_value = '{"Config":{}, "Coord":{}, "Member":{}, "Meta":{}, "Stats":{}}'
-        create_if_missing(path, query_params, agent: agent) { ConsulAgentSelf.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value)) }
+        create_if_missing(path, query_params, agent: agent) { ConsulAgentSelf.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value, agent)) }
       end
 
       # https://www.consul.io/api/agent.html#view-metrics
@@ -190,7 +190,7 @@ module Consul
         path = '/v1/agent/metrics'
         query_params = {}
         default_value = '{"Gauges":[], "Points":[], "Member":{}, "Counters":[], "Samples":{}}'
-        create_if_missing(path, query_params, agent: agent) { ConsulAgentMetrics.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value)) }
+        create_if_missing(path, query_params, agent: agent) { ConsulAgentMetrics.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value, agent)) }
       end
 
       # https://www.consul.io/api/agent.html#list-members
@@ -199,7 +199,7 @@ module Consul
         query_params = {}
         query_params['wan'] = true if wan
         default_value = '[]'
-        create_if_missing(path, query_params, agent: agent) { ConsulTemplateMembers.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value)) }
+        create_if_missing(path, query_params, agent: agent) { ConsulTemplateMembers.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value, agent)) }
       end
 
       # Return a param of template
@@ -222,14 +222,14 @@ module Consul
         query_params[:dc] = dc if dc
         # Tag filtering is performed on client side
         query_params[:tag] = tag if tag
-        create_if_missing(path, query_params, agent: agent) { ConsulTemplateServices.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '{}')) }
+        create_if_missing(path, query_params, agent: agent) { ConsulTemplateServices.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '{}', agent)) }
       end
 
       # https://www.consul.io/api/catalog.html#list-datacenters
       def datacenters(agent: nil)
         path = '/v1/catalog/datacenters'
         query_params = {}
-        create_if_missing(path, query_params, agent: agent) { ConsulTemplateDatacenters.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]')) }
+        create_if_missing(path, query_params, agent: agent) { ConsulTemplateDatacenters.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]', agent)) }
       end
 
       # https://www.consul.io/api/kv.html#read-key
@@ -240,7 +240,7 @@ module Consul
         query_params[:recurse] = recurse if recurse
         query_params[:keys] = keys if keys
         default_value = '[]'
-        create_if_missing(path, query_params, agent: agent) { ConsulTemplateKV.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value), name) }
+        create_if_missing(path, query_params, agent: agent) { ConsulTemplateKV.new(ConsulEndpoint.new(consul_conf, path, true, query_params, default_value, agent), name) }
       end
 
       def secrets(path = '', agent: nil)
