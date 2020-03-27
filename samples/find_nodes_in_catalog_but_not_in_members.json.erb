@@ -1,0 +1,28 @@
+<%= 
+   all_catalog = nodes.map{ |n| [n['Node'], n] }.to_h
+   all_members = agent_members.sort{ |a,b| a['Name'] <=> b['Name'] }
+   members_by_state = {}
+   all_members.each do |m|
+     state = m.status
+     members = members_by_state[state] || 0
+     members_by_state[state] = members + 1
+   end
+   # Find all virtual nodes (eg: k8s-sync)
+   catalog_external_sources = nodes.select{|n| (n['Meta']||{})['external-source'] }.map{|n| n['Node']}
+   in_catalog_but_not_in_members = all_catalog.keys - all_members.map{ |m| m['Name'] }
+   not_virtual_not_in_members = in_catalog_but_not_in_members - catalog_external_sources
+   JSON.pretty_generate(
+    {
+      'stats' => {
+        'catalog' => all_catalog.count,
+        'catalog_virtual' => in_catalog_but_not_in_members.count,
+        'members' => all_members.count,
+        'members_by_state': members_by_state,
+        'catalog_external_sources' => catalog_external_sources,
+      },
+      'errors': {
+        'in_catalog_but_not_in_members' => in_catalog_but_not_in_members,
+        'not_virtual_not_in_members'    =>  not_virtual_not_in_members,
+      }
+   })
+%>
