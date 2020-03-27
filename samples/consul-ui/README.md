@@ -50,6 +50,25 @@ The content is statically created, so you can serve it using any HTTP server ver
 For development, you might use `python -m SimpleHTTPServer` in order to server the result
 on your browser.
 
+### Running it in production
+
+Whatever your solution, be sure to have a index.html, so read next below on
+how generating an index.html.
+
+#### Running with web server
+
+You can run it with your favoite web server, at Criteo we run it with nginx
+which handles nicely cache and offer good performance.
+
+In that case, consul-templaterb can start nginx with `--exec` or you can run it
+as a daemon, in which case, consul-templaterb only generate the files.
+
+#### Run it in Consul
+
+You can run consul with `-ui-dir=/path/to/directory/of/consul-ui`, in such case
+reaching consul on poort 8500 will redirect to the /ui/ path, displaying the UI
+of your choice on http://consul-agent.example.org:8500/ui/.
+
 ### Generating index.html
 
 By default, the command `consul-templaterb -c http://localhost:8500 samples/consul-ui/*.erb``
