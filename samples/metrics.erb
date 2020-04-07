@@ -21,6 +21,20 @@
   all_stats = {}
   service_count = 0
 
+  statuses = agent_members().map {|m| m.status}.reduce({}) do |sum, s|
+    v = sum[s] || 0
+    sum[s] = v + 1
+    sum
+  end
+%>
+# HELP consul_members_count A gauge of number of serf members with their count and their status('alive', 'leaving', 'left', 'failed')
+# TYPE consul_members_count gauge
+<%
+  statuses.each do |k, v|
+%>
+consul_members_count{serf="lan",status="<%= k %>"} <%= v %><%
+  end
+
   services(tag: service_tag_filter).each do |service_name, tags|
     if !services_blacklist.any? {|r| r.match(service_name)} && (instance_must_tag.nil? || tags.include?(instance_must_tag))
       service_count += 1

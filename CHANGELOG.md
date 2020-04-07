@@ -2,6 +2,10 @@
 
 ## (UNRELEASED)
 
+NEW FEATURES:
+
+ * Added `consul_members_count` metric in [samples/metrics.erb](samples/metrics.erb)
+
 ## 1.26.1 (March 27, 2020)
 
 BUGFIX:
