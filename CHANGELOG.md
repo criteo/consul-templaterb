@@ -4,6 +4,14 @@
 
 NEW FEATURES:
 
+## 1.26.2 (April 15, 2020)
+
+BUGFIX:
+
+ * Fixed broken Dockerfile (was missing the new `decorator.js.erb` file). Fixes #61 (Thanks to @ simongareste)
+
+NEW FEATURES:
+
  * Added `consul_members_count` metric in [samples/metrics.erb](samples/metrics.erb)
 
 ## 1.26.1 (March 27, 2020)
