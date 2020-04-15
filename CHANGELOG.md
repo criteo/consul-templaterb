@@ -4,6 +4,12 @@
 
 NEW FEATURES:
 
+## 1.26.3 (April 15, 2020)
+
+BUGFIX:
+
+ * Removed all Criteo specific decorators from Consul-UI
+
 ## 1.26.2 (April 15, 2020)
 
 BUGFIX:
