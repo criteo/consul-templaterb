@@ -1,0 +1,17 @@
+<%
+  # This example show how to display local time informaition about changes
+  # Example of usage to display logs of changes on nodes() endpoint:
+  #
+  #   consul-templaterb --template "display_timestamped_changes.txt.erb:display_timestamped_changes.txt:cat display_timestamped_changes.txt" -l error
+  #
+  # Would output:
+  #   Last update: 1588800554 (2020-05-06 21:29:14 UTC), X-Consul-Index: 4345827328
+  #   Last update: 1588800569 (2020-05-06 21:29:29 UTC), X-Consul-Index: 4345829548
+  #   Last update: 1588800676 (2020-05-06 21:31:16 UTC), X-Consul-Index: 4345836342
+  #
+  @my_last_time = Time.now.utc unless @my_last_time
+  val = nodes()
+  new_idx = val.endpoint.x_consul_index
+  @my_last_time = Time.now.utc if @my_last_idx != new_idx
+  @my_last_idx = new_idx
+%>Last update: <%= @my_last_time.to_i %> (<%= @my_last_time %>), X-Consul-Index: <%= new_idx %>
