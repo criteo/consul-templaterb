@@ -28,6 +28,9 @@ options = {
     },
     base_url: ENV['VAULT_ADDR'] || 'http://localhost:8200',
     token: ENV['VAULT_TOKEN'] || nil,
+    tls_client_cert: ENV['VAULT_CLIENT_CERT'] || nil,
+    tls_client_key: ENV['VAULT_CLIENT_KEY'] || nil,
+    tls_cacert: ENV['VAULT_CACERT'] || nil,
     max_consecutive_errors_on_endpoint: 10, # Stop program after n consecutive failures on same endpoint
     fail_fast_errors: nil,                  # fail fast the program if endpoint was never success
     token_renew: true,
@@ -48,6 +51,9 @@ options = {
     },
     base_url: ENV['CONSUL_HTTP_ADDR'] || 'http://localhost:8500',
     token: ENV['CONSUL_HTTP_TOKEN'] || nil,
+    tls_client_cert: ENV['CONSUL_CLIENT_CERT'] || nil,
+    tls_client_key: ENV['CONSUL_CLIENT_KEY'] || nil,
+    tls_cacert: ENV['CONSUL_CACERT'] || nil,
     max_consecutive_errors_on_endpoint: 10, # Stop program after n consecutive failures on same endpoint
     fail_fast_errors: nil,                  # fail fast the program if endpoint was never success
     retry_duration: 10,      # On error, retry after n seconds

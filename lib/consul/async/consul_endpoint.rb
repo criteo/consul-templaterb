@@ -9,7 +9,7 @@ module Consul
     class ConsulConfiguration
       attr_reader :base_url, :token, :retry_duration, :min_duration, :wait_duration, :max_retry_duration, :retry_on_non_diff,
                   :missing_index_retry_time_on_diff, :missing_index_retry_time_on_unchanged, :debug, :enable_gzip_compression,
-                  :fail_fast_errors, :max_consecutive_errors_on_endpoint
+                  :fail_fast_errors, :max_consecutive_errors_on_endpoint, :tls_client_cert, :tls_client_key, :tls_cacert
       def initialize(base_url: 'http://localhost:8500',
                      debug: { network: false },
                      token: nil,
@@ -23,7 +23,10 @@ module Consul
                      enable_gzip_compression: true,
                      paths: {},
                      max_consecutive_errors_on_endpoint: 10,
-                     fail_fast_errors: 1)
+                     fail_fast_errors: 1,
+                     tls_client_cert: nil,
+                     tls_client_key: nil,
+                     tls_cacert: nil)
         @base_url = base_url
         @token = token
         @debug = debug
@@ -38,6 +41,9 @@ module Consul
         @paths = paths
         @max_consecutive_errors_on_endpoint = max_consecutive_errors_on_endpoint
         @fail_fast_errors = fail_fast_errors
+        @tls_client_cert = tls_client_cert
+        @tls_client_key = tls_client_key
+        @tls_cacert = tls_cacert
       end
 
       def ch(path, symbol)
@@ -71,7 +77,11 @@ module Consul
                                 enable_gzip_compression: enable_gzip_compression,
                                 paths: @paths,
                                 max_consecutive_errors_on_endpoint: @max_consecutive_errors_on_endpoint,
-                                fail_fast_errors: @fail_fast_errors)
+                                fail_fast_errors: @fail_fast_errors,
+                                tls_client_cert: ch(path, :tls_client_cert),
+                                tls_client_key: ch(path, :tls_client_key),
+                                tls_cacert: ch(path, :tls_cacert)
+                                )
       end
     end
 
@@ -233,6 +243,13 @@ module Consul
           connect_timeout: 5, # default connection setup timeout
           inactivity_timeout: conf.wait_duration + 1 + (conf.wait_duration / 16) # default connection inactivity (post-setup) timeout
         }
+        if !conf.tls_client_cert.nil?
+          options[:tls] = {
+            cert_chain_file: conf.tls_client_cert,
+            private_key_file: conf.tls_client_key,
+            verify_peer: false # TODO: use the tls_cacert in the cert_chain_file and verify
+          }
+        end
         connection = {
           conn: EventMachine::HttpRequest.new(conf.base_url, options)
         }
