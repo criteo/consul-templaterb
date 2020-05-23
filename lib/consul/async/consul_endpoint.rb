@@ -80,8 +80,7 @@ module Consul
                                 fail_fast_errors: @fail_fast_errors,
                                 tls_client_cert: ch(path, :tls_client_cert),
                                 tls_client_key: ch(path, :tls_client_key),
-                                tls_cacert: ch(path, :tls_cacert)
-                                )
+                                tls_cacert: ch(path, :tls_cacert))
       end
     end
 
@@ -243,7 +242,7 @@ module Consul
           connect_timeout: 5, # default connection setup timeout
           inactivity_timeout: conf.wait_duration + 1 + (conf.wait_duration / 16) # default connection inactivity (post-setup) timeout
         }
-        if !conf.tls_client_cert.nil?
+        unless conf.tls_client_cert.nil?
           options[:tls] = {
             cert_chain_file: conf.tls_client_cert,
             private_key_file: conf.tls_client_key,

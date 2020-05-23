@@ -187,7 +187,7 @@ module Consul
           connect_timeout: 5, # default connection setup timeout
           inactivity_timeout: 60 # default connection inactivity (post-setup) timeout
         }
-        if !conf.tls_client_cert.nil?
+        unless conf.tls_client_cert.nil?
           options[:tls] = {
             cert_chain_file: conf.tls_client_cert,
             private_key_file: conf.tls_client_key,
