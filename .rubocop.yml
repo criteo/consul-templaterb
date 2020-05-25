@@ -7,7 +7,7 @@ Layout/LineLength:
   Max: 175
 
 Metrics/AbcSize:
-  Max: 82
+  Max: 87
 
 Metrics/BlockLength:
   Max: 160
@@ -19,16 +19,16 @@ Metrics/ClassLength:
   Max: 275
 
 Metrics/CyclomaticComplexity:
-  Max: 20
+  Max: 21
 
 Metrics/MethodLength:
-  Max: 65
+  Max: 68
 
 Metrics/ParameterLists:
-  Max: 14
+  Max: 18
 
 Metrics/PerceivedComplexity:
-  Max: 23
+  Max: 24
 
 # We use `dc` as a parameter in many methods
 Naming/MethodParameterName:
