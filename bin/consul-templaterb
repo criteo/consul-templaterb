@@ -28,9 +28,9 @@ options = {
     },
     base_url: ENV['VAULT_ADDR'] || 'http://localhost:8200',
     token: ENV['VAULT_TOKEN'] || nil,
-    tls_client_cert: ENV['VAULT_CLIENT_CERT'] || nil,
-    tls_client_key: ENV['VAULT_CLIENT_KEY'] || nil,
-    tls_cacert: ENV['VAULT_CACERT'] || nil,
+    tls_cert_chain: ENV['VAULT_CLIENT_CERT'] || nil,
+    tls_private_key: ENV['VAULT_CLIENT_KEY'] || nil,
+    tls_verify_peer: true,
     max_consecutive_errors_on_endpoint: 10, # Stop program after n consecutive failures on same endpoint
     fail_fast_errors: nil,                  # fail fast the program if endpoint was never success
     token_renew: true,
@@ -51,9 +51,9 @@ options = {
     },
     base_url: ENV['CONSUL_HTTP_ADDR'] || 'http://localhost:8500',
     token: ENV['CONSUL_HTTP_TOKEN'] || nil,
-    tls_client_cert: ENV['CONSUL_CLIENT_CERT'] || nil,
-    tls_client_key: ENV['CONSUL_CLIENT_KEY'] || nil,
-    tls_cacert: ENV['CONSUL_CACERT'] || nil,
+    tls_cert_chain: ENV['CONSUL_CLIENT_CERT'] || nil,
+    tls_private_key: ENV['CONSUL_CLIENT_KEY'] || nil,
+    tls_verify_peer: true,
     max_consecutive_errors_on_endpoint: 10, # Stop program after n consecutive failures on same endpoint
     fail_fast_errors: nil,                  # fail fast the program if endpoint was never success
     retry_duration: 10,      # On error, retry after n seconds
@@ -128,6 +128,18 @@ optparse = OptionParser.new do |opts|
     options[:consul][:base_url] = consul_url
   end
 
+  opts.on('--consul-cert-chain=<path/to/cert_chain>', String, 'Path to Consul TLS client certificate chain to use') do |consul_client_cert|
+    options[:consul][:tls_cert_chain] = consul_client_cert
+  end
+
+  opts.on('--consul-private-key=<path/to/private_key>', String, 'Path to Consul TLS client private key to use') do |consul_client_key|
+    options[:consul][:tls_private_key] = consul_client_key
+  end
+
+  opts.on('--skip-consul-verify-tls', 'Skip verifying Consul TLS via certificate authority (DANGEROUS)') do
+    options[:consul][:tls_verify_peer] = false
+  end
+
   opts.on('-l', '--log-level=<log_level>', String, "Log level, default=info, any of #{::Consul::Async::Debug.levels.join('|')}") do |log_level|
     ::Consul::Async::Debug.level = log_level
   end
@@ -138,6 +150,18 @@ optparse = OptionParser.new do |opts|
 
   opts.on('-V', '--vault-addr=<address>', String, 'Address of Vault, eg: http://localhost:8200') do |vault_url|
     options[:vault][:base_url] = vault_url
+  end
+
+  opts.on('--vault-cert-chain=<path/to/cert_chain>', String, 'Path to Vault TLS client certificate chain to use') do |vault_client_cert|
+    options[:vault][:tls_cert_chain] = vault_client_cert
+  end
+
+  opts.on('--vault-private-key=<path/to/private_key>', String, 'Path to Vault TLS client private key to use') do |vault_client_key|
+    options[:vault][:tls_private_key] = vault_client_key
+  end
+
+  opts.on('--skip-vault-verify-tls', 'Skip verifying Vault TLS via certificate authority (DANGEROUS)') do
+    options[:vault][:tls_verify_peer] = false
   end
 
   opts.on('-T', '--vault-token=<token>', String, 'Token used to authenticate against vault.') do |vault_token|

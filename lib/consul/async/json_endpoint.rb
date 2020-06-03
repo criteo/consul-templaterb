@@ -9,7 +9,7 @@ module Consul
     class JSONConfiguration
       attr_reader :url, :retry_duration, :min_duration, :retry_on_non_diff,
                   :debug, :enable_gzip_compression, :request_method, :json_body,
-                  :headers, :tls_client_cert, :tls_client_key, :tls_cacert
+                  :headers, :tls_cert_chain, :tls_private_key, :tls_verify_peer
       def initialize(url:,
                      debug: { network: false },
                      retry_duration: 10,
@@ -19,9 +19,9 @@ module Consul
                      json_body: nil,
                      headers: {},
                      enable_gzip_compression: true,
-                     tls_client_cert: nil,
-                     tls_client_key: nil,
-                     tls_cacert: nil)
+                     tls_cert_chain: nil,
+                     tls_private_key: nil,
+                     tls_verify_peer: true)
         @url = url
         @debug = debug
         @enable_gzip_compression = enable_gzip_compression
@@ -31,9 +31,9 @@ module Consul
         @request_method = request_method
         @json_body = json_body
         @headers = headers
-        @tls_client_cert = tls_client_cert
-        @tls_client_key = tls_client_key
-        @tls_cacert = tls_cacert
+        @tls_cert_chain = tls_cert_chain
+        @tls_private_key = tls_private_key
+        @tls_verify_peer = tls_verify_peer
       end
 
       def create(_url)
@@ -187,11 +187,11 @@ module Consul
           connect_timeout: 5, # default connection setup timeout
           inactivity_timeout: 60 # default connection inactivity (post-setup) timeout
         }
-        unless conf.tls_client_cert.nil?
+        unless conf.tls_cert_chain.nil?
           options[:tls] = {
-            cert_chain_file: conf.tls_client_cert,
-            private_key_file: conf.tls_client_key,
-            verify_peer: false # TODO: use the tls_cacert in the cert_chain_file and verify
+            cert_chain_file: conf.tls_cert_chain,
+            private_key_file: conf.tls_private_key,
+            verify_peer: conf.tls_verify_peer
           }
         end
         connection = {

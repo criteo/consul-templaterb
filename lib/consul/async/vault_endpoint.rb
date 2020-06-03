@@ -10,7 +10,8 @@ module Consul
     # Configuration for Vault Endpoints
     class VaultConfiguration
       attr_reader :base_url, :token, :token_renew, :retry_duration, :min_duration, :wait_duration, :max_retry_duration, :retry_on_non_diff,
-                  :lease_duration_factor, :debug, :max_consecutive_errors_on_endpoint, :fail_fast_errors, :tls_client_cert, :tls_client_key, :tls_cacert
+                  :lease_duration_factor, :debug, :max_consecutive_errors_on_endpoint, :fail_fast_errors, :tls_cert_chain, :tls_private_key,
+                  :tls_verify_peer
 
       def initialize(base_url: 'http://localhost:8200',
                      debug: { network: false },
@@ -23,9 +24,9 @@ module Consul
                      paths: {},
                      max_consecutive_errors_on_endpoint: 10,
                      fail_fast_errors: false,
-                     tls_client_cert: nil,
-                     tls_client_key: nil,
-                     tls_cacert: nil)
+                     tls_cert_chain: nil,
+                     tls_private_key: nil,
+                     tls_verify_peer: true)
         @base_url = base_url
         @token_renew = token_renew
         @debug = debug
@@ -37,9 +38,9 @@ module Consul
         @token = token
         @max_consecutive_errors_on_endpoint = max_consecutive_errors_on_endpoint
         @fail_fast_errors = fail_fast_errors
-        @tls_client_cert = tls_client_cert
-        @tls_client_key = tls_client_key
-        @tls_cacert = tls_cacert
+        @tls_cert_chain = tls_cert_chain
+        @tls_private_key = tls_private_key
+        @tls_verify_peer = tls_verify_peer
       end
 
       def ch(path, symbol)
@@ -232,11 +233,11 @@ module Consul
           connect_timeout: 5, # default connection setup timeout
           inactivity_timeout: 1 # default connection inactivity (post-setup) timeout
         }
-        unless conf.tls_client_cert.nil?
+        unless conf.tls_cert_chain.nil?
           options[:tls] = {
-            cert_chain_file: conf.tls_client_cert,
-            private_key_file: conf.tls_client_key,
-            verify_peer: false # TODO: use the tls_cacert in the cert_chain_file and verify
+            cert_chain_file: conf.tls_cert_chain,
+            private_key_file: conf.tls_private_key,
+            verify_peer: conf.tls_verify_peer
           }
         end
         connection = EventMachine::HttpRequest.new(conf.base_url, options)
