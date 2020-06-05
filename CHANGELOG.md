@@ -2,6 +2,8 @@
 
 ## (UNRELEASED)
 
+## 1.27.0 (June 5, 2020)
+
 NEW FEATURES:
 
  * For Consul 1.7+, now support `checks_in_state(check_state, dc: nil, [agent: consul_agent_address])`,
