@@ -388,6 +388,15 @@ name or its ID. If DC is specified, will lookup for given node in another datace
 
 [Find all the checks](https://www.consul.io/api/health.html#list-checks-for-service) of a given service.
 
+## def checks_in_state(check_state, dc: nil, [agent: consul_agent_address])
+
+[Find all the checks in a given state](https://www.consul.io/api-docs/health#list-checks-in-state) in the whole cluster.
+
+The filter check_state must be one of any|critical|warning|passing.
+
+Warning: this endpoint might be very frequently updated in a
+large cluster if you are using `any` value. This endpoint is supported with Consul 1.7+.
+
 ## kv(name, [dc: nil], [keys: false], [recurse: false], [agent: consul_agent_address])
 
 [Read keys from KV Store](https://www.consul.io/api/kv.html#read-key). It can be used for both listing the keys and

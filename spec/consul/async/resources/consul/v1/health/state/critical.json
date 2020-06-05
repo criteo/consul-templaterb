@@ -1,0 +1,15 @@
+[
+    {
+        "Node": "consul02.prod",
+        "CheckID": "disk_check",
+        "Name": "Disk Usage",
+        "Status": "critical",
+        "Notes": "warning at 90%, critical at 100%",
+        "Output": "Disk is full at 100%",
+        "ServiceID": "",
+        "ServiceName": "",
+        "ServiceTags": [],
+        "CreateIndex": 228090242,
+        "ModifyIndex": 228090242
+    }
+]

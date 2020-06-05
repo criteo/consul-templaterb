@@ -1,0 +1,13 @@
+<%=
+  # This sample displays checks for the whole cluster
+  # in warning or critical state
+  # API available with Consul 1.7+
+  res = []
+  checks_in_state('warning').each do |c|
+    res << c
+  end
+  checks_in_state('critical').each do |c|
+    res << c
+  end
+  YAML.dump({'warning_or_critical_checks' => res})
+%>

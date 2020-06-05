@@ -4,6 +4,11 @@
 
 NEW FEATURES:
 
+ * For Consul 1.7+, now support `checks_in_state(check_state, dc: nil, [agent: consul_agent_address])`,
+   fixes feature [#65](https://github.com/criteo/consul-templaterb/issues/65)
+ * New options to support/disable TLS validation thanks to [@jeromegn](https://github.com/jeromegn)
+   [#66](https://github.com/criteo/consul-templaterb/pull/66)
+
 ## 1.26.3 (April 15, 2020)
 
 BUGFIX:

@@ -161,6 +161,18 @@ module Consul
         create_if_missing(path, query_params, agent: agent) { ConsulTemplateChecks.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]', agent)) }
       end
 
+      # https://www.consul.io/api-docs/health#list-checks-in-state
+      # Supported in Consul 1.7+
+      def checks_in_state(check_state, dc: nil, agent: nil)
+        valid_checks_states = %w[any critical passing warning]
+        raise "checks_in_state('#{check_state}'...) must be one of #{valid_checks_states}" unless valid_checks_states.include?(check_state)
+
+        path = "/v1/health/state/#{check_state}"
+        query_params = {}
+        query_params[:dc] = dc if dc
+        create_if_missing(path, query_params, agent: agent) { ConsulTemplateChecks.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '[]', agent)) }
+      end
+
       # https://www.consul.io/api/catalog.html#list-nodes
       def nodes(dc: nil, agent: nil)
         path = '/v1/catalog/nodes'

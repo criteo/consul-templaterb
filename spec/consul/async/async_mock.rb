@@ -57,6 +57,8 @@ module Consul
          v1/health/checks/consul
          v1/health/node/consul01.prod
          v1/health/service/consul
+         v1/health/state/critical
+         v1/health/state/warning
          v1/kv/
          v1/kv/choregraphie
          v1/kv/template-in-template/return-10
