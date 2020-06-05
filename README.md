@@ -332,7 +332,7 @@ Please consult [CHANGELOG.md](CHANGELOG.md) for fixed bugs.
 
 ## TODO
 
-* [x] Hashi's Vault support (EXPERIMENTAL)
+* [x] Hashi's Vault support
 * [ ] Implement automatic dynamic rate limit
 * [x] More samples: apache, nginx, a full website displaying consul information...
 * [x] Optimize rendering speed at start-up: an iteration is done every second by default, but it would be possible to speed
