@@ -1,0 +1,56 @@
+# HELP consul_wan_servers_rtt_seconds Min Round trip with other servers of DC
+# TYPE consul_wan_servers_rtt_seconds gauge
+<%
+# This computes the RTT over WAN for all DCs
+results = {'min' => {}, 'max' => {}, 'p50' => {}, 'p90' => {}}
+my_dcname = (agent_self['Config'] || {})['Datacenter']
+my_dc = coordinate.datacenters.select { |d| d['Datacenter'] == my_dcname }.first
+
+def percentile(values_sorted, percentile)
+  k = (percentile*(values_sorted.length-1)+1).floor - 1
+  f = (percentile*(values_sorted.length-1)+1).modulo(1)
+  return values_sorted[k] + (f * (values_sorted[k+1] - values_sorted[k]))
+end
+
+if my_dc
+  from = my_dc['Datacenter']
+  coordinate.datacenters.each do |dc_coords|  
+    min = Float::MAX
+    max = 0
+    rtts = []
+    dc_coords['Coordinates'].each do |s2|
+      my_dc['Coordinates'].each do |s1|
+        rtt = coordinate.rtt(s1['Coord'], s2['Coord'])
+        min = rtt if rtt < min
+        max = rtt if rtt > max
+        idx = rtts.bsearch_index { |x| x > rtt }
+        if idx.nil?
+          rtts << rtt
+        else
+          rtts = rtts.insert(idx, rtt)
+        end
+%>
+consul_wan_servers_rtt_seconds{from="<%= from %>",to="<%= dc_coords['Datacenter'] %>",from_node="<%= s1['Node'] %>",to_node="<%= s2['Node'] %>"} <%= rtt.round(3) %><%
+      end
+    end
+    results['min'][dc_coords['Datacenter']] = min
+    results['max'][dc_coords['Datacenter']] = max
+    results['p50'][dc_coords['Datacenter']] = percentile(rtts, 0.5)
+    results['p90'][dc_coords['Datacenter']] = percentile(rtts, 0.9)
+  end
+
+  # Now, we iterate over aggregated results, type is min, max...
+  results.each do |type, res_type|
+  %>
+
+# HELP consul_wan_dc_<%= type %>_seconds <%= type %> round trip with other DCs
+# TYPE consul_wan_dc_<%= type %>_seconds gauge
+<%
+    # Iterate over destinations
+    res_type.each do |dst, val|
+%>consul_wan_dc_<%= type %>_seconds{from="<%= my_dcname %>",to="<%= dst %>"} <%= val.round(3) %>
+<%
+    end
+  end
+end
+%>
