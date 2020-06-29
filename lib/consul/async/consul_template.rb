@@ -31,7 +31,8 @@ module Consul
 
       def as_json(url, default_value, refresh_delay_secs: 10, **opts)
         conf = JSONConfiguration.new(url: url, min_duration: refresh_delay_secs, retry_on_non_diff: refresh_delay_secs, **opts)
-        @endp_manager.create_if_missing(url, {}) do
+        endpoint_id = url + opts.to_json
+        @endp_manager.create_if_missing(url, {}, endpoint_id: endpoint_id) do
           if default_value.is_a?(Array)
             ConsulTemplateJSONArray.new(JSONEndpoint.new(conf, url, default_value))
           else
@@ -394,16 +395,21 @@ module Consul
         VaultEndpoint.new(vault_conf, path, :POST, {}, {})
       end
 
-      def create_if_missing(path, query_params, fail_fast_errors: @fail_fast_errors, max_consecutive_errors_on_endpoint: @max_consecutive_errors_on_endpoint, agent: nil)
-        fqdn = path.dup
-        query_params.each_pair do |k, v|
-          fqdn = "#{agent}#{fqdn}&#{k}=#{v}"
-        end
-        tpl = @endpoints[fqdn]
+      def create_if_missing(path, query_params, fail_fast_errors: @fail_fast_errors,
+                            max_consecutive_errors_on_endpoint: @max_consecutive_errors_on_endpoint,
+                            agent: nil, endpoint_id: nil)
+        endpoint_id ||= begin
+                          fqdn = path.dup
+                          query_params.each_pair do |k, v|
+                            fqdn = "#{agent}#{fqdn}&#{k}=#{v}"
+                          end
+                          fqdn
+                        end
+        tpl = @endpoints[endpoint_id]
         unless tpl
           tpl = yield
           ::Consul::Async::Debug.print_debug "path #{path.ljust(64)} #{query_params.inspect}\r"
-          @endpoints[fqdn] = tpl
+          @endpoints[endpoint_id] = tpl
           tpl.endpoint.on_response do |result|
             @net_info[:success] += 1
             @net_info[:bytes_read] += result.data.bytesize
