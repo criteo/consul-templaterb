@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.27.1 (July 28 2020)
+
+BUGIX:
+
+ * Fix collision in JSON queries when using payload in requests #68
+
 ## 1.27.0 (June 5, 2020)
 
 NEW FEATURES:
