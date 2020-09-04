@@ -63,7 +63,7 @@ function nodeState(checks) {
 
 supported_protocols = ['https', 'http', 'sftp', 'ftp', 'ssh', 'telnet']
 
-function serviceTitleGenerator(instance) {
+function serviceTitleGenerator(instance, serviceName) {
     var protocol = null;
     for (i in supported_protocols) {
         var protoc = supported_protocols[i]
@@ -74,10 +74,6 @@ function serviceTitleGenerator(instance) {
     }
 
     var htmlTitle = document.createElement('h5');
-    htmlTitle.setAttribute('title', 'Node Name: ' + instance.name +
-        '\nAddress: ' + instance.addr +
-        '\nService ID: ' + instance.id +
-        '\nService Port: ' + instance.port);
 
     htmlTitle.setAttribute('class', 'instance-name');
     var instanceLink = document.createElement('a');
@@ -91,6 +87,15 @@ function serviceTitleGenerator(instance) {
     }
 
     instanceLink.appendChild(document.createTextNode(instance.name + appendPort));
+    const nodeInfo = document.createElement('a');
+    nodeInfo.appendChild(document.createTextNode('\u24D8'));
+    nodeInfo.setAttribute('title', 'Click to see details of Node: ' + instance.name +
+        '\nAddress: ' + instance.addr +
+        '\nService ID: ' + instance.id +
+        '\nService Port: ' + instance.port);
+    nodeInfo.setAttribute('href', 'consul-nodes-ui.html?node_filter=^' + encodeURIComponent(instance.name) + '$');
+    htmlTitle.appendChild(nodeInfo);
+    htmlTitle.appendChild(document.createTextNode(' '));
     htmlTitle.appendChild(instanceLink);
     htmlTitle.appendChild(document.createTextNode(' '));
     htmlTitle.appendChild(document.createTextNode(instance.addr));
@@ -216,24 +221,44 @@ function toCSSClass(state) {
     return state;
 }
 
-function servicesGenerator(instanceServices) {
-    var services = document.createElement('div');
-    services.className = 'instance-services';
-    services.appendChild(document.createTextNode("Services: "));
-    services.appendChild(document.createElement('br'));
+function servicesGenerator(instanceServices, node) {
+    var servicesTop = document.createElement('div');
+    servicesTop.className = 'instance-services';
+    const card = document.createElement('div');
+    card.setAttribute('class', 'card');
+    const servicesCard = document.createElement('div');
+    servicesCard.setAttribute('class', 'card-body');
+    const title = document.createElement('h5');
+    title.appendChild(document.createTextNode('Services'));
+    title.setAttribute('class', 'card-title')
+    servicesCard.appendChild(title);
+    const services = document.createElement('div');
+    servicesCard.appendChild(services);
     for (var serviceKey in instanceServices) {
-        var service = document.createElement('a');
-        var serviceName = instanceServices[serviceKey]['Service']['Service'];
+        const serviceGrp = document.createElement('span');
+        serviceGrp.setAttribute('class', 'btn btn-sm');
+        serviceGrp.classList.add('btn-outline-' + toCSSClass(nodeState(instanceServices[serviceKey]['Checks'])))
+        const service = document.createElement('a');
+        serviceGrp.appendChild(service);
+        const serviceName = instanceServices[serviceKey]['Service']['Service'];
+        service.setAttribute('class', 'serviceLink');
+        service.setAttribute('href', 'consul-services-ui.html?service=' + encodeURIComponent(serviceName) + '&node_filter=^' + encodeURIComponent(node['Node']['Name'])+'$');
+        service.appendChild(document.createTextNode(serviceName));
         var servicePort = instanceServices[serviceKey]['Service']['Port'];
-        service.setAttribute('class', 'btn btn-sm m-1 lookup');
-        service.setAttribute('target', '_blank');
-        nodeAddr = instanceServices[serviceKey]['Service']['Address'];
-        service.setAttribute('href', 'http://' + nodeAddr + ':' + servicePort);
-        service.classList.add('btn-outline-' + toCSSClass(nodeState(instanceServices[serviceKey]['Checks'])))
-        service.appendChild(document.createTextNode(serviceName + ':' + servicePort));
-        services.appendChild(service);
+        if (servicePort) {
+            // Add unbreakable space
+            serviceGrp.appendChild(document.createTextNode('\u00A0'));
+            const servicePortElem = document.createElement('a');
+            servicePortElem.setAttribute('class', 'serviceTargetPort');
+            const nodeAddr = instanceServices[serviceKey]['Service']['Address'];
+            servicePortElem.setAttribute('href', 'http://' + nodeAddr + ':' + servicePort);
+            servicePortElem.appendChild(document.createTextNode(':' + servicePort));
+            serviceGrp.appendChild(servicePortElem);
+        }
+        services.appendChild(serviceGrp);
     }
-    return services;
+    servicesTop.appendChild(servicesCard);
+    return servicesTop;
 }
 
 function checksStatusGenerator(instance, prefix) {

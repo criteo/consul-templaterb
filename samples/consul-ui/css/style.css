@@ -15,6 +15,10 @@
   content: '⚠ ';
 }
 
+.btn-outline-success a:hover, .btn-outline-warning a:hover, .btn-outline-danger a:hover{
+  color: #fff;
+}
+
 #service-wrapper, #instances-wrapper, #keys-wrapper {
   overflow-y: scroll;
   border-top-left-radius: 0px;

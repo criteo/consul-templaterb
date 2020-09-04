@@ -111,7 +111,7 @@ class NodeMainSelector extends MainSelector {
         nodesChecks.appendChild(checksStatusGenerator(node, node['Node']['Name']));
         content.appendChild(nodesChecks);
 
-        content.appendChild(servicesGenerator(node['Service']));
+        content.appendChild(servicesGenerator(node['Service'], node));
         content.appendChild(tagsGenerator(getTagsNode(node)));
 
         sidebar.setAttribute('status', state);
