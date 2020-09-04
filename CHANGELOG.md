@@ -2,7 +2,13 @@
 
 ## (UNRELEASED)
 
-## 1.27.1 (July 28 2020)
+## 1.27.2 (Sept 4, 2020)
+
+IMPROVEMENTS:
+
+ * Consul-UI now supports navigation between nodes and services in both ways
+
+## 1.27.1 (July 28, 2020)
 
 BUGIX:
 
