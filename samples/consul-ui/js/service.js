@@ -304,7 +304,7 @@ class ServiceMainSelector extends MainSelector {
         element.setAttribute("class", "list-group-item service-instance");
         var state = nodeState(instance.checks);
         element.appendChild(weightsGenerator(instance.weights, state));
-        element.appendChild(serviceTitleGenerator(instance));
+        element.appendChild(serviceTitleGenerator(instance, serviceName));
         var node_info = this.nodes[instance.name];
         if (node_info != null) {
             node_info = node_info.meta;
