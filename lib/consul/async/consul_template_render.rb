@@ -59,7 +59,7 @@ module Consul
         return false unless new_template != @template
 
         # We render to ensure the template is valid
-        render(new_template, current_template_info)
+        render(new_template, current_template_info: current_template_info)
         @template = new_template.freeze
         true
       end
