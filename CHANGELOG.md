@@ -2,11 +2,18 @@
 
 ## (UNRELEASED)
 
+## 1.28.0 (Sept 25, 2020)
+
 NEW FEATURES:
 
  * Added `-W` or `--wait-between-reload-signal` to avoid sending too many signals
    to a process executed. This avoids for instance reloading too much a HAProxy configuration
    without having to play with `-w` as described in [#69](https://github.com/criteo/consul-templaterb/issues/69)
+
+BUGFIX:
+
+ * Removed warnings at runtime with Ruby 2.7+
+ * Minor JS fix in Consul-UI (Added missing unused parameter to function `serviceTitleGenerator`)
 
 ## 1.27.2 (Sept 4, 2020)
 
