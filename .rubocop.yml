@@ -10,7 +10,7 @@ Metrics/AbcSize:
   Max: 87
 
 Metrics/BlockLength:
-  Max: 182
+  Max: 188
 
 Metrics/BlockNesting:
   Max: 4

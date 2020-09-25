@@ -94,6 +94,7 @@ consul_engine = Consul::Async::ConsulTemplateEngine.new
 @programs = {}
 cur_sig_reload = 'HUP'.freeze
 cur_sig_term = 'TERM'.freeze
+cur_min_duration_between_signals = 1
 
 optparse = OptionParser.new do |opts|
   opts.banner = usage_text
@@ -215,6 +216,10 @@ optparse = OptionParser.new do |opts|
     cur_sig_term = compute_signal(sig, nil)
   end
 
+  opts.on('-M', '--debug-memory-usage', 'Display messages when RAM grows') do
+    consul_engine.debug_memory = true
+  end
+
   opts.on('-T', '--trim-mode=trim_mode', String,
           "ERB Trim mode to use (#{options[:erb][:trim_mode]} by default)") do |trim_mode|
     options[:erb][:trim_mode] = trim_mode
@@ -225,25 +230,36 @@ optparse = OptionParser.new do |opts|
     cur_sig_reload = compute_signal(sig, 'NONE')
   end
 
-  opts.on('-M', '--debug-memory-usage', 'Display messages when RAM grows') do
-    consul_engine.debug_memory = true
+  opts.on('-W', '--wait-signal=min_duration', Float, 'Wait at least n seconds before each reload signal being sent to next --exec process') do |min_duration|
+    raise "-wait-between-reload-signal=#{min_duration} must be greater than 0" unless min_duration.positive?
+
+    cur_min_duration_between_signals = min_duration
   end
 
-  opts.on('-e', '--exec=<command>', String, 'Execute the following command') do |cmd|
+  opts.on('-e', '--exec=<command>', String, 'Execute the following command in as a subprocess when all templates are ready') do |cmd|
     sig_reload = cur_sig_reload
     sig_term = cur_sig_term
+    sig_min_interval = cur_min_duration_between_signals
     consul_engine.add_template_callback do |all_ready, template_manager, results|
       if all_ready
         modified = results.any?(&:modified)
         if @programs[cmd].nil?
-          warn "[EXEC] Starting process: #{cmd}... on_reload=#{sig_reload || 'NONE'} on_term=#{sig_term}"
+          warn "[EXEC] Starting process: #{cmd}... on_reload=#{sig_reload || 'NONE'} on_term=#{sig_term}, delay between reloads=#{sig_min_interval}s"
           @programs[cmd] = Consul::Async::ProcessHandler.new(cmd, sig_reload: sig_reload, sig_term: sig_term)
           @programs[cmd].start
         else
+
           # At least one template has been modified
-          @programs[cmd].reload if modified
+          process_to_reload = @programs[cmd]
+          if modified && !process_to_reload.reload_scheduled
+            process_to_reload.reload_scheduled = true
+            now = Time.now
+            delay = sig_min_interval - (now - @programs[cmd].last_signal_sent)
+            delay = 0 if delay.negative?
+            EventMachine.add_timer(delay) { process_to_reload.reload }
+          end
           begin
-            @programs[cmd].process_status
+            process_to_reload.process_status
           rescue Consul::Async::ProcessDoesNotExist => e
             warn "[FATAL] The process is dead, aborting run: #{e.inspect}"
             template_manager.terminate

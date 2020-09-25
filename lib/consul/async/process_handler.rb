@@ -7,7 +7,8 @@ module Consul
     # Handle the full lifecycle of a process and allows to forward
     # Posix signals to child process when needed.
     class ProcessHandler
-      attr_reader :command, :sig_reload, :sig_term, :pid, :exit_status
+      attr_reader :command, :sig_reload, :sig_term, :pid, :exit_status, :last_signal_sent, :reload_scheduled
+      attr_writer :reload_scheduled
       def initialize(command, sig_reload: 'HUP', sig_term: 'TERM')
         raise 'empty sig_term is not supported' unless sig_term
 
@@ -16,18 +17,23 @@ module Consul
         @sig_term = sig_term
         @pid = nil
         @exit_status = nil
+        @last_signal_sent = Time.now
+        @reload_scheduled = false
       end
 
       def start
         return pid unless pid.nil?
 
         @pid = Process.spawn(command)
+        @last_signal_sent = Time.now
       end
 
       def reload
         return if sig_reload.nil?
 
+        @last_signal_sent = Time.now
         warn "Sending SIG #{sig_reload} to #{pid}..."
+        @reload_scheduled = false
         begin
           Process.kill(sig_reload, pid)
         rescue Errno::ESRCH => e

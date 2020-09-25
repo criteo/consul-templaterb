@@ -165,9 +165,19 @@ USAGE: consul-templaterb [[options]]
     -f, --[no-]fail-fast             If consul/vault endpoints fail at startup, fail immediately
     -g, --no-gzip-compression        Disable GZIP compression in HTTP requests
     -c, --consul-addr=<address>      Address of Consul, eg: http://localhost:8500
+        --consul-cert-chain=<path/to/cert_chain>
+                                     Path to Consul TLS client certificate chain to use
+        --consul-private-key=<path/to/private_key>
+                                     Path to Consul TLS client private key to use
+        --skip-consul-verify-tls     Skip verifying Consul TLS via certificate authority (DANGEROUS)
     -l, --log-level=<log_level>      Log level, default=info, any of none|error|info|debug
         --consul-token=<token>       Use a token to connect to Consul
     -V, --vault-addr=<address>       Address of Vault, eg: http://localhost:8200
+        --vault-cert-chain=<path/to/cert_chain>
+                                     Path to Vault TLS client certificate chain to use
+        --vault-private-key=<path/to/private_key>
+                                     Path to Vault TLS client private key to use
+        --skip-vault-verify-tls      Skip verifying Vault TLS via certificate authority (DANGEROUS)
         --vault-token=<token>        Token used to authenticate against vault.
         --[no-]vault-renew           Control auto-renewal of the Vault token. Default: activated
         --vault-retry, --vault-retry-attempts [RETRIES]
@@ -178,10 +188,11 @@ USAGE: consul-templaterb [[options]]
     -r, --retry-delay=<min_duration> Min Retry delay on Error/Missing Consul Index
     -k, --hot-reload=<behavior>      Control hot reload behaviour, one of :[die (kill daemon on hot reload failure), keep (on error, keep running), disable (hot reload disabled)]
     -K, --sig-term=kill_signal       Signal to send to next --exec command on kill, default=TERM
+    -M, --debug-memory-usage         Display messages when RAM grows
     -T, --trim-mode=trim_mode        ERB Trim mode to use (- by default)
     -R, --sig-reload=reload_signal   Signal to send to next --exec command on reload (NONE supported), default=HUP
-    -M, --debug-memory-usage         Display messages when RAM grows
-    -e, --exec=<command>             Execute the following command
+    -W, --wait-signal=min_duration   Wait at least n seconds before each reload signal being sent to next --exec process
+    -e, --exec=<command>             Execute the following command in as a subprocess when all templates are ready
     -d, --debug-network-usage        Debug the network usage
     -t erb_file:[output]:[command]:[params_file],
         --template                   Add a erb template, its output and optional reload command
@@ -235,7 +246,11 @@ nor write the file.
 Signals can be customized per process. Two signals are supported with options `--sig-reload` and
 `--sig-term`. When the option is added, the next `--exec` options to start a process will use the
 given signal. By default, HUP will be sent to reload events (you can use NONE to avoid sending any
-reload signal), TERM will be used when leaving consul-templaterb.
+reload signal), TERM will be used when leaving consul-templaterb. A minimum duration between reload
+signals can be specified for each sub process by prepending `--wait-signal=min_duration` to `--exec`
+command.
+In such case, the signal will be sent every `min_duration` as a maximum (very useful for templates
+changing a lot, but you don't want to trigger too many reloads, for instance for a load-balancer).
 
 ### Bandwidth limitation
 
