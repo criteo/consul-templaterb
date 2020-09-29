@@ -10,7 +10,7 @@ NEW FEATURES:
    to a process executed. This avoids for instance reloading too much a HAProxy configuration
    without having to play with `-w` as described in [#69](https://github.com/criteo/consul-templaterb/issues/69)
 
-BUGFIX:
+BUG FIXES:
 
  * Removed warnings at runtime with Ruby 2.7+
  * Minor JS fix in Consul-UI (Added missing unused parameter to function `serviceTitleGenerator`)
@@ -25,7 +25,7 @@ IMPROVEMENTS:
 
 BUGIX:
 
- * Fix collision in JSON queries when using payload in requests #68
+ * Fix collision in JSON queries when using payload in requests [#68](https://github.com/criteo/consul-templaterb/pull/68)
 
 ## 1.27.0 (June 5, 2020)
 
@@ -38,15 +38,15 @@ NEW FEATURES:
 
 ## 1.26.3 (April 15, 2020)
 
-BUGFIX:
+BUG FIXES:
 
  * Removed all Criteo specific decorators from Consul-UI
 
 ## 1.26.2 (April 15, 2020)
 
-BUGFIX:
+BUG FIXES:
 
- * Fixed broken Dockerfile (was missing the new `decorator.js.erb` file). Fixes #61 (Thanks to @ simongareste)
+ * Fixed broken Dockerfile (was missing the new `decorator.js.erb` file). Fixes #61 (Thanks to [@simongareste](https://github.com/simongareste))
 
 NEW FEATURES:
 
@@ -54,7 +54,7 @@ NEW FEATURES:
 
 ## 1.26.1 (March 27, 2020)
 
-BUGFIX:
+BUG FIXES:
 
  * Using `agent: http://vault_or_consul_agent:port>` was not properly taken into account in some endpoints
 
@@ -72,7 +72,7 @@ NEW FEATURES:
 
 ## 1.25.2 (February 29, 2020)
 
-BUGFIX:
+BUG FIXES:
 
  * Update rake to 12.3.3 to fix [CVE-2020-8130](https://github.com/advisories/GHSA-jppv-gw3r-w3q8)
 
@@ -91,7 +91,7 @@ NEW FEATURES:
 
 ## 1.24.1 (February 19, 2020)
 
-BUGFIX:
+BUG FIXES:
 
  * Properly set service meta in node meta decorator
 
@@ -108,7 +108,7 @@ NEW FEATURES:
  * Implementation of #59 - implementation of `--retry` and `--vault-retry` new flags
    Those flags work in a similar way as in consul-template: stop program after X failures
    of consul or vault endpoints
- * Added --fail-fast that stop the programs immediately if vault or consul are not available
+ * Added `--fail-fast` that stop the programs immediately if vault or consul are not available
    at startup (also works with `--once`)
 
 ## 1.22.0 (January 17, 2020)
@@ -119,7 +119,7 @@ NEW FEATURES:
 
 ## 1.21.8 (January 2, 2020)
 
-BUGFIX:
+BUG FIXES:
 
  * Escape properly metadata containing double quotes in prometheus exporter
 
@@ -133,13 +133,13 @@ IMPROVEMENTS:
 
 IMPROVEMENTS:
 
- * Added node_meta_info for serviceInstanceDecorator and serviceMetaDecorator
+ * Added `node_meta_info` for `serviceInstanceDecorator` and `serviceMetaDecorator` in Consul-UI
 
 ## 1.21.5 (December 6, 2019)
 
 NEW FEATURES:
 
- * Added clean() method in nodes.js to allow nexw behaviors
+ * Added `clean()` method in nodes.js to allow new behaviors
 
 ## 1.21.4 (November 28, 2019)
 
@@ -170,7 +170,7 @@ IMPROVEMENTS:
 ## 1.21.0 (November 21, 2019)
 
 * added function `templates` to list all templates being rendered
-* added support for JS decorators in consul-ui (thanks to @Thib17)
+* added support for JS decorators in consul-ui (thanks to [@Thib17](https://github.com/Thib17))
 
 ## 1.20.0 (October 16, 2019)
 
@@ -189,7 +189,7 @@ NEW FEATURES:
 
 * Added new function `checks_for_node`
 
-BUGFIXs:
+BUG FIXES:
 
 * Avoid try publishing several times Gem on rubygems.org
 
@@ -211,13 +211,13 @@ IMPROVEMENTS:
 
 ## 1.18.3 (September 2, 2019)
 
-BUGFIX:
+BUG FIXES:
 
 * When vault receives at timeout, correctly reschedule it
 
 ## 1.18.2 (August 28,  2019)
 
-BUGFIX:
+BUG FIXES:
 
 * In Consul UI, showing data from KV with markup was not properly handled
 
@@ -233,7 +233,7 @@ Support any request method for remote_resource.as_json (#41)
 
 ## 1.18.1 (July 27, 2019)
 
-BUGFIX:
+BUG FIXES:
 
 Fixed wrong lazy initialization in `remote_resource.as_json` that
 cause too many connections to be opened.
@@ -242,13 +242,13 @@ cause too many connections to be opened.
 
 NEW FEATURES:
 
- * Support for `remote_resource` provided by @kamaradclimber
+ * Support for `remote_resource` provided by [@kamaradclimber](https://github.com/kamaradclimber)
  * Added support for `remote_resource.as_json` to fetch JSON remote resource from a web server
  * Added `samples/list_ruby_versions_from_rubygems.txt.erb` to demonstrate usage
 
 ## 1.17.3 (July 18, 2019)
 
-BUGFIX:
+BUG FIXES:
 
  * Added gem parallel as a dependency to allow `samples/prometheus_consul_coordinates.erb`
    to work properly
@@ -373,7 +373,7 @@ NEW FEATURES:
 
 ## 1.10.1 (February 28, 2019)
 
-BUGFIX:
+BUG FIXES:
 
  * Ensure that timeline sort properly events when healthchecks are removed (eg: maintenance)
 
@@ -396,7 +396,7 @@ IMPROVEMENTS:
 
 ## 1.9.8 (January 16, 2019)
 
-BUGFIX:
+BUG FIXES:
 
  * When default value was the same as real value, endpoints were always marked as
    dirty, thus rendering of templates did never succeed.
@@ -412,7 +412,7 @@ IMPROVEMENTS:
 
 ## 1.9.6 (January 15, 2019)
 
-BUGFIX:
+BUG FIXES:
 
  * Keep connections open properly as it increase timeouts on Consul servers on
    very large templates
@@ -423,7 +423,7 @@ IMPROVEMENTS:
 
 ## 1.9.5 (January 14, 2019)
 
-BUGFIX:
+BUG FIXES:
 
  * Ensure to always re-open Connection to Consul agent in case of network error
 
@@ -473,11 +473,11 @@ IMPROVEMENTS:
 
 OPTIMIZATIONS:
 
- * Better network issue because of X-Consul-Index parsing bug
+ * Better network usage because of X-Consul-Index parsing bug
 
-NEW FEATURES:
+BUG FIXES:
 
- * value.endpoint.x_consul_index now works as expected
+ * `value.endpoint.x_consul_index` now works as expected
 
 IMPROVEMENTS:
 
@@ -517,7 +517,7 @@ NEW FEATURES:
 
 ## 1.8.1 (December 12, 2018)
 
-BUGFIX:
+BUG FIXES:
 
  * Properly fill `template_info` strtucture when hot reload is performed so templates using
    `template_info()` new function can behave nicely.
@@ -626,8 +626,8 @@ IMPROVEMENTS:
  * [Prometheus template](samples/metrics.erb) to export easily Consul
    informations about nodes, datacenters and all services states
  * Code style cleanup + travis now enforces Rubocop
- * Remove criteo references in spec files thanks to @pierrecdn
- * Bitrate display more consistent thanks to @pierrecdn
+ * Remove criteo references in spec files thanks to [@pierrecdn](https://github.com/pierrecdn)
+ * Bitrate display more consistent thanks to [@pierrecdn](https://github.com/pierrecdn)
 
 ## 1.5.3 (September 24, 2018)
 
