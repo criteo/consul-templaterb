@@ -17,10 +17,10 @@ Gem::Specification.new do |spec|
                          'changelog_uri' => 'https://github.com/criteo/consul-templaterb/blob/master/CHANGELOG.md',
                          'homepage_uri' => 'https://github.com/criteo/consul-templaterb',
                          'source_code_uri' => 'https://github.com/criteo/consul-templaterb' }
-  spec.license       = 'Apache v2'
+  spec.license       = 'Apache-2.0'
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features)/})
+    f.match(%r{^(test|spec|features|docs)/})
   end
   spec.bindir        = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
@@ -28,15 +28,15 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.4.0'
 
-  spec.add_runtime_dependency 'em-http-request', '>= 1.1.5'
-  spec.add_runtime_dependency 'eventmachine', '>= 1.2.7'
+  spec.add_runtime_dependency 'em-http-request', '~> 1.1'
+  spec.add_runtime_dependency 'eventmachine', '~> 1.2'
   spec.add_runtime_dependency 'parallel', '>= 1.2.7'
 
   spec.add_development_dependency 'bundler', '>= 1.14'
-  spec.add_development_dependency 'rake', '~> 12.3.3'
+  spec.add_development_dependency 'rake', '~> 12.3'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rspec_junit_formatter'
-  spec.add_development_dependency 'rubocop', '0.80.0'
-  spec.add_development_dependency 'rubocop-junit-formatter'
-  spec.add_development_dependency 'webmock'
+  spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4.1'
+  spec.add_development_dependency 'rubocop', '~> 0.80.0'
+  spec.add_development_dependency 'rubocop-junit-formatter', '0.1.4'
+  spec.add_development_dependency 'webmock', '~> 2.1'
 end
