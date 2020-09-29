@@ -388,7 +388,7 @@ name or its ID. If DC is specified, will lookup for given node in another datace
 
 [Find all the checks](https://www.consul.io/api/health.html#list-checks-for-service) of a given service.
 
-## def checks_in_state(check_state, dc: nil, [agent: consul_agent_address])
+## checks_in_state(check_state, dc: nil, [agent: consul_agent_address])
 
 [Find all the checks in a given state](https://www.consul.io/api-docs/health#list-checks-in-state) in the whole cluster.
 
