@@ -2,6 +2,8 @@
 
 ## (UNRELEASED)
 
+## 1.28.1 (Sept 30,, 2020)
+
 IMPROVEMENTS:
 
  * Reduced size of GEM from 400k o 100k by removing not needed files
