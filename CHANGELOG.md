@@ -2,7 +2,7 @@
 
 ## (UNRELEASED)
 
-## 1.28.1 (Sept 30,, 2020)
+## 1.28.1 (Sept 30, 2020)
 
 IMPROVEMENTS:
 
