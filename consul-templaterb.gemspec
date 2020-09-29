@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
                          'source_code_uri' => 'https://github.com/criteo/consul-templaterb' }
   spec.license       = 'Apache-2.0'
 
-  spec.files = `git ls-files -z`.split("\x0").reject do |f|
+  spec.files = `git ls-files -z lib/ bin/ samples/`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features|docs)/})
   end
   spec.bindir        = 'bin'
@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'em-http-request', '~> 1.1'
   spec.add_runtime_dependency 'eventmachine', '~> 1.2'
-  spec.add_runtime_dependency 'parallel', '>= 1.2.7'
+  spec.add_runtime_dependency 'parallel', '~> 1.2'
 
   spec.add_development_dependency 'bundler', '>= 1.14'
   spec.add_development_dependency 'rake', '~> 12.3'
