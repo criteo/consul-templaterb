@@ -71,7 +71,7 @@ class NodeMainSelector extends MainSelector {
         content.setAttribute('class', 'instance-content');
         var contentHead = document.createElement('div');
         contentHead.setAttribute('class', 'instance-content-header');
-        contentHead.appendChild(nodeNameGenator(node['Node']['Name'], node['Node']['Address']));
+        contentHead.appendChild(nodeNameGenator(node['Node']));
         contentHead.appendChild(nodeAddressGenator(node['Node']['Address']));
         contentHead.appendChild(nodeMetaGenerator(node['Node']['Meta']));
         content.appendChild(contentHead);

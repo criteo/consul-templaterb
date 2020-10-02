@@ -63,7 +63,7 @@ function nodeState(checks) {
 
 supported_protocols = ['https', 'http', 'sftp', 'ftp', 'ssh', 'telnet']
 
-function serviceTitleGenerator(instance, serviceName) {
+function serviceTitleGenerator(instance, serviceName, node_info) {
     var protocol = null;
     for (i in supported_protocols) {
         var protoc = supported_protocols[i]
@@ -86,7 +86,10 @@ function serviceTitleGenerator(instance, serviceName) {
         instanceLink.setAttribute('target', '_blank');
     }
 
-    instanceLink.appendChild(document.createTextNode(instance.name + appendPort));
+    var nodemeta = (node_info != null) ? node_info.meta : null; 
+    instanceLink.appendChild(createNodeDisplayElement(instance.name, nodemeta));
+    instanceLink.appendChild(document.createTextNode(appendPort));
+
     const nodeInfo = document.createElement('a');
     nodeInfo.appendChild(document.createTextNode('\u24D8'));
     nodeInfo.setAttribute('title', 'Click to see details of Node: ' + instance.name +
@@ -103,7 +106,7 @@ function serviceTitleGenerator(instance, serviceName) {
     return htmlTitle;
 }
 
-function nodeNameGenator(nodename, nodeaddr) {
+function nodeNameGenator(node) {
     var protocol = 'ssh://'
 
     var htmlTitle = document.createElement('h5');
@@ -111,10 +114,10 @@ function nodeNameGenator(nodename, nodeaddr) {
     var instanceLink = document.createElement('a');
     instanceLink.setAttribute('class', 'instance-name');
     if (protocol != null) {
-        instanceLink.setAttribute('href', protocol + nodeaddr);
+        instanceLink.setAttribute('href', protocol + node['Address']);
         instanceLink.setAttribute('target', '_blank');
     }
-    instanceLink.appendChild(document.createTextNode(nodename));
+    instanceLink.appendChild(createNodeDisplayElement(node['Name'], node['Meta']));
     htmlTitle.appendChild(instanceLink);
 
     return htmlTitle;
