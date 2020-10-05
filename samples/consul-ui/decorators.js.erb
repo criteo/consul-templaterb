@@ -37,6 +37,13 @@ function usefullLinksGenerator(instance, serviceName, node_meta_info) {
 }
 
 /**
+ * createNodeDisplayElement resolves and displays the node name.
+ */
+function createNodeDisplayElement(nodeName, nodemeta) {
+  return document.createTextNode(nodeName);
+}
+
+/**
  * serviceInstanceDecorator is called to decorate an instance.
  */
 function serviceInstanceDecorator(instance, element, serviceName, node_meta_info) {
