@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.28.2 (Oct 5, 2020)
+
+NEW FEATURES:
+
+ * Added new decorator to compute node names in consul-ui ([#70](https://github.com/criteo/consul-templaterb/pull/70))
+
 ## 1.28.1 (Sept 30, 2020)
 
 IMPROVEMENTS:
