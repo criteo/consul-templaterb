@@ -225,9 +225,34 @@ module Consul
         retry_in / 2 + Consul::Async::Utilities.random.rand(retry_in)
       end
 
+      # rubocop:disable Style/ClassVars
+      def _last_429
+        @@_last_429 ||= { count: 0 }
+      end
+      # rubocop:enable Style/ClassVars
+
       def _handle_error(http, consul_index)
         retry_in = _compute_retry_in([600, conf.retry_duration + 2**@consecutive_errors].min)
-        ::Consul::Async::Debug.puts_error "[#{path}] X-Consul-Index:#{consul_index} - #{http.error} - Retry in #{retry_in}s #{stats.body_bytes_human}"
+        if http.response_header.status == 429
+          _last_429
+          retry_in = 60 + Consul::Async::Utilities.random.rand(180) if retry_in < 60
+          _last_429[:time] = Time.now.utc
+          _last_429[:count] += 1
+          if (_last_429[:count] % 10) == 1
+            if _last_429[:count] == 1
+              ::Consul::Async::Debug.puts_error "Rate limiting detected on Consul side (HTTP 429)!\n\n" \
+                                                "******************************* CONFIGURATION ISSUE DETECTED *******************************\n" \
+                                                "* Too many simultaneous connections for Consul agent #{conf.base_url}\n" \
+                                                "* You should tune 'limits.http_max_conns_per_client' to a higher value.\n" \
+                                                "* This program will behave badly until you change this.\n" \
+                                                "* See https://www.consul.io/docs/agent/options.html#http_max_conns_per_client for more info\n" \
+                                                "********************************************************************************************\n\n"
+            end
+            ::Consul::Async::Debug.puts_error "[#{path}] Too many conns to #{conf.base_url}, errors=#{_last_429[:count]} - Retry in #{retry_in}s #{stats.body_bytes_human}"
+          end
+        else
+          ::Consul::Async::Debug.puts_error "[#{path}] X-Consul-Index:#{consul_index} - #{http.error} - Retry in #{retry_in}s #{stats.body_bytes_human}"
+        end
         @consecutive_errors += 1
         http_result = HttpResponse.new(http)
         EventMachine.add_timer(retry_in) do

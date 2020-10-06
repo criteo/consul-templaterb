@@ -2,6 +2,11 @@
 
 ## (UNRELEASED)
 
+NEW FEATURES:
+
+ * Auto-detection of rate-limit on Consul Side (introduced in Consul 1.6.2+), this feature
+   will work only Consul 1.9+ (see [Consul #7527](https://github.com/hashicorp/consul/issues/7527). 
+
 ## 1.29.0 (Oct 6, 2020)
 
 IMPROVEMENTS:
