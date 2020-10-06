@@ -1,5 +1,5 @@
 module Consul
   module Async
-    VERSION = '1.28.2'.freeze
+    VERSION = '1.29.0'.freeze
   end
 end

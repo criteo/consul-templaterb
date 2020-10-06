@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.29.0 (Oct 6, 2020)
+
+IMPROVEMENTS:
+
+ * When no template has been specified, stop early with an error message
+
 ## 1.28.2 (Oct 5, 2020)
 
 NEW FEATURES:

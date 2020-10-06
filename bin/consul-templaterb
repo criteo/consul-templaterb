@@ -375,6 +375,11 @@ ARGV.each do |tpl|
   consul_engine.add_template(tpl, dest)
 end
 
+if consul_engine.templates.count.zero?
+  puts 'You must specify at least one template as arg or using -t'
+  exit 255
+end
+
 template_manager = Consul::Async::EndPointsManager.new(consul_conf, vault_conf, consul_engine.templates, options[:erb][:trim_mode])
 
 Signal.trap('USR1', 'IGNORE') unless Gem.win_platform?
