@@ -1,0 +1,1 @@
+SORT_CONSUL_SERVICE_NODES = -> (nodes) { nodes.sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] } }

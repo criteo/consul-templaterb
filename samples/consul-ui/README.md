@@ -94,3 +94,9 @@ This app supports the following environment variables:
 * `EXCLUDE_SERVICES`: comma-separated services to exclude (default: lbl7.*,netsvc-probe.*,consul-probed.*)
 * `CONSUL_TIMELINE_BUFFER`: number of entries to keep in the timeline. 1000 by default.
 * `CONSUL_TIMELINE_BLACKLIST`: regexp of services to hide from timeline
+
+### Preferences
+
+Some templates allows you to override some behavior through `.preferences.rb` file.
+In order to do that, rename `.preferences.rb.samples` file to `.preferences.rb`
+and update lambda defined inside to match targeted behavior.
