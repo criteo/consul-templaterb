@@ -6,6 +6,19 @@
 #   INSTANCE_EXCLUDE_TAG: Exclude instances having the given tag (default: canary)
 #   EXCLUDE_SERVICES: comma-separated services regexps to exclude (default: lbl7.*,netsvc-probe.*,consul-probed.*)
 
+  unless @sort_consul_service_nodes
+    begin
+      target_dir = File.split(File.expand_path(template_info['source']))[0]
+      target = File.join(target_dir, '.preferences.rb')
+      load "#{target}"
+      STDERR.puts "Using #{target} file."
+      @sort_consul_service_nodes = SORT_CONSUL_SERVICE_NODES
+    rescue LoadError
+      STDERR.puts 'Couldn\'t find .preferences.rb file ; default configuration will be used.'
+      @sort_consul_service_nodes = -> (nodes) { nodes.sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] } }
+    end
+  end
+
   service_tag_filter = ENV['SERVICES_TAG_FILTER'] || nil
   instance_must_tag = ENV['INSTANCE_MUST_TAG'] || service_tag_filter
   instance_exclude_tag = ENV['INSTANCE_EXCLUDE_TAG']
@@ -20,7 +33,7 @@
     if !services_blacklist.any? {|r| r.match(service_name)} && (instance_must_tag.nil? || tags.include?(instance_must_tag))
       tags_per_service[service_name] = tags.sort
       the_backends = []
-      service(service_name).sort {|a,b| a['Node']['Node'] <=> b['Node']['Node'] }.each do |snode|
+      @sort_consul_service_nodes.call(service(service_name)).each do |snode|
         tags_of_instance = snode['Service']['Tags'].sort
         if (instance_must_tag.nil? || tags_of_instance.include?(instance_must_tag)) && !tags_of_instance.include?(instance_exclude_tag)
           the_backends << snode if snode['Service']['Port']
