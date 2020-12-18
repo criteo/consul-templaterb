@@ -2,6 +2,12 @@
 
 ## (UNRELEASED)
 
+## 1.30.0 (Dec 18, 2020)
+
+IMPROVEMENTS:
+
+ * Allow customization to sort nodes in service view in Consul-UI ([#71](https://github.com/criteo/consul-templaterb/pull/71))
+
 NEW FEATURES:
 
  * Auto-detection of rate-limit on Consul Side (introduced in Consul 1.6.2+), this feature
