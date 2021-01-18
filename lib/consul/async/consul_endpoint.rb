@@ -297,11 +297,12 @@ module Consul
                             end
               new_content = http_result.response.freeze
               modified = @last_result.fake? || @last_result.data != new_content
-              if n_consul_index == consul_index || n_consul_index.nil?
+              if n_consul_index.nil?
                 retry_in = modified ? conf.missing_index_retry_time_on_diff : conf.missing_index_retry_time_on_unchanged
                 n_consul_index = consul_index
               else
                 retry_in = modified ? conf.min_duration : conf.retry_on_non_diff
+                retry_in = 0.1 if retry_in < (Time.now - @last_result.last_update)
               end
               retry_in = _compute_retry_in(retry_in)
               retry_in = 0.1 if retry_in < 0.1

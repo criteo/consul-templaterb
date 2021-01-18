@@ -1,6 +1,10 @@
 # CHANGELOG
 
-## (UNRELEASED)
+## 1.31.0 (Jan 18, 2021)
+
+IMPROVEMENTS:
+
+* Do not apply penalty on unmodified services not changing much (Will improve streaming performance)
 
 ## 1.30.0 (Dec 18, 2020)
 
