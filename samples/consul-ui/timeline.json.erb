@@ -41,10 +41,12 @@ cur_state = services.map do |service_name, _tags|
       mindex = chk['ModifyIndex'] || 0
       mod_index = mindex if mod_index < mindex
     end
-    ["#{instance['Node']['Node']}:#{instance['Service']['ID']}",
+    node_name = instance['Node']['Node']
+    ["#{node_name}:#{instance['Service']['ID']}",
      {
        'address' => instance.service_address,
-       'node' => instance['Node']['Node'],
+       'node' => node_name,
+       'fqdn' => instance.node_meta['fqdn'] || node_name,
        'port' => instance['Service']['Port'],
        'idx'  => mod_index || cur_index,
        'status' => instance.status,

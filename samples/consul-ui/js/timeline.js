@@ -434,7 +434,7 @@ class ServiceTimeline {
             }
             var text = e.instance;
             if (e.instance_info && e.instance_info.node) {
-                text = e.instance_info.node;
+                text = e.instance_info.fqdn;
                 if (e.instance_info.port > 0) {
                     text += ":" + e.instance_info.port
                 }

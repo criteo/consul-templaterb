@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.31.1 (Jan 25, 2021)
+
+IMPROVEMENTS:
+
+* Use Node.Meta.fqdn to display node names in timeline if set
+
 ## 1.31.0 (Jan 18, 2021)
 
 IMPROVEMENTS:
