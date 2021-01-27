@@ -245,7 +245,7 @@ module Consul
           http = connection.send(http_method.downcase, build_request) # Under the hood: c.send('get', {stuff}) === c.get({stuff})
           http.callback do
             http_result = VaultHttpResponse.new(http.dup.freeze, default_value)
-            if enforce_json_200 && http.response_header.status != 200
+            if enforce_json_200 && ![200, 404].include?(http.response_header.status)
               _handle_error(http_result) { connection = EventMachine::HttpRequest.new(conf.base_url, options) }
             else
               @consecutive_errors = 0
