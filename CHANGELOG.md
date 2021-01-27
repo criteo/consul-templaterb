@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.32.0 (Jan 27, 2021)
+
+IMPROVEMENTS:
+
+* Use Ruby 2.7.2 in Travis build
+* [VAULT] Do not handle missing secret as a blocking exception ([#73](https://github.com/criteo/consul-templaterb/pull/73))
+
 ## 1.31.1 (Jan 25, 2021)
 
 IMPROVEMENTS:
