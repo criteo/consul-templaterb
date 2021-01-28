@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.31.1 (Jan 28, 2021)
+
+IMPROVEMENTS:
+
+* Switched to Github Actions (build)
+* No functional changes in GEM - Test release only
+
 ## 1.32.0 (Jan 27, 2021)
 
 IMPROVEMENTS:

@@ -9,7 +9,23 @@ on:
     branches: [master]
 
 jobs:
+  rubocop:
+    name: Rubocop
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundler install
+      - name: Check code
+        run: bundle exec rubocop
+
   test:
+    needs: rubocop
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
@@ -27,8 +43,6 @@ jobs:
         run: |
           gem install bundler
           bundler install
-      - name: rubocop
-        run: bundle exec rubocop
       - name: Run tests
         run: bundle exec rspec
 
