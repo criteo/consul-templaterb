@@ -40,7 +40,7 @@ module Consul
       end
 
       def add_template(source, dest, params = {})
-        @templates.push([source, dest, params])
+        @templates.push([source, dest, params, { 'ready' => false }])
       end
 
       # Run templating engine once
@@ -51,8 +51,17 @@ module Consul
           EventMachine.stop
           return
         end
-        results = template_renders.map(&:run)
-        all_ready = results.all?(&:ready?)
+        i = 0
+        all_ready = true
+        results = template_renders.map do |t|
+          res = t.run
+          tready = res.ready?
+          all_ready &= tready
+          t_info = @templates[i][3]
+          t_info['ready'] = tready
+          i += 1
+          res
+        end
         if !@all_templates_rendered && all_ready
           @all_templates_rendered = true
           cur_time = Time.now
@@ -94,7 +103,7 @@ module Consul
         @template_manager = template_manager
         EventMachine.run do
           template_renders = []
-          @templates.each do |template_file, output_file, params|
+          @templates.each do |template_file, output_file, params, _tinfo|
             template_renders << Consul::Async::ConsulTemplateRender.new(template_manager, template_file, output_file,
                                                                         hot_reload_failure: hot_reload_failure,
                                                                         params: params)

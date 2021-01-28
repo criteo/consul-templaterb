@@ -693,7 +693,10 @@ I am the file template_info.erb included from template include.erb rendered as d
 ## templates
 
 It returns list of templates evaluated by this instance of consul-templaterb.
-Information returned is an array of elements where elements are `[template_name, template_destination, args]`.
+Information returned is an array of elements where elements are `[template_name, template_destination, args, tinfo]`.
+
+The object tinfo['ready'] will be always true when rendered in a files are written once all templates are rendered,
+however, its value might be wrong when first complete rendering has not yet occured.
 
 <details><summary>Example</summary>
 <div class="samples">
@@ -703,8 +706,8 @@ Information returned is an array of elements where elements are `[template_name,
 ```erb
 Here are templates rendered by consul-templaterb:
 <ul>
-<% templates.each do |template, destination, args| %>
-<li>I render <%= template %> with args <%= args.inspect %> and write the result to <%= destination %></li>
+<% templates.each do |template, destination, args, tinfo| %>
+<li>I render <%= template %> with args <%= args.inspect %> and write the result to <%= destination %> (ready: <%= tinfo['ready'] %></li>
 <% end %>
 </ul>
 ```
