@@ -5,5 +5,12 @@ Nodes
 <%
   end
 %>
-Node: <%= node('consul02.prod')['Node'] %>
-ID: <%= node('7a985997-3925-4f18-8613-637c81bd750b')['ID'] %>
+Helper when exists:
+Node: <%= node('consul02.prod').node['Node'] %>
+ID: <%= node('7a985997-3925-4f18-8613-637c81bd750b').node['ID'] %>
+exists? <%= node('consul02.prod').exists? %>
+
+Helpes when does not exists:
+* exists? = <%= node("does_not_exists").exists? %>
+* node empty = <%= node("does_not_exists").node == {} %>
+* services empty <%= node("does_not_exists").services == {} %>

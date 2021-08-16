@@ -380,6 +380,15 @@ Full example: [samples/consul_template.txt.erb](samples/consul_template.txt.erb)
 [List all the services of a given Node](https://www.consul.io/api/catalog.html#list-services-for-node) using its
 name or its ID. If DC is specified, will lookup for given node in another datacenter.
 
+The value returned might be nil (because the node does not exists).
+Thus, it might be safer to use the helper methods on the result:
+
+ * node('mynode').exists? -> true if node exists and result is not nil
+ * node('mynode').services() -> to get the hash of services defined for this node (return empty map if nodes does not exists)
+ * node('mynode').node() -> to get node information (empty map if node does not exists)
+
+ See also: https://github.com/criteo/consul-templaterb/issues/74
+
 ## checks_for_node(name, dc: nil, passing: false, tag: nil, [agent: consul_agent_address])
 
 [Find all the checks](https://www.consul.io/api/health.html#list-checks-for-node) of a given node name.

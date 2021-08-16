@@ -187,7 +187,7 @@ module Consul
         path = "/v1/catalog/node/#{name_or_id}"
         query_params = {}
         query_params[:dc] = dc if dc
-        create_if_missing(path, query_params, agent: agent) { ConsulTemplateNodes.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '{}', agent)) }
+        create_if_missing(path, query_params, agent: agent) { ConsulTemplateNode.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '{}', agent)) }
       end
 
       # https://www.consul.io/api/agent.html#read-configuration
@@ -625,6 +625,36 @@ module Consul
     class ConsulTemplateChecks < ConsulTemplateAbstractArray
       def initialize(consul_endpoint)
         super(consul_endpoint)
+      end
+    end
+
+    # Get information about a single node
+    class ConsulTemplateNode < ConsulTemplateAbstractMap
+      def initialize(consul_endpoint)
+        super(consul_endpoint)
+      end
+
+      def exists?
+        !result_delegate.nil?
+      end
+
+      def safe_get
+        if exists?
+          result_delegate
+        else
+          {
+            'Node': {},
+            'Services': {}
+          }
+        end
+      end
+
+      def node
+        safe_get['Node'] || {}
+      end
+
+      def services
+        safe_get['Services'] || {}
       end
     end
 
