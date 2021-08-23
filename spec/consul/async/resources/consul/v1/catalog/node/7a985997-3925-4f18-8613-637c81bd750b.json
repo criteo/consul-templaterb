@@ -1,16 +1,19 @@
 {
-  "ID": "7a985997-3925-4f18-8613-637c81bd750b",
-  "Node": "consul02.prod",
-  "Address": "10.251.1.96",
-  "Datacenter": "par",
-  "TaggedAddresses": {
-    "lan": "10.251.1.96",
-    "wan": "10.251.1.96"
+  "Node":{
+    "ID": "7a985997-3925-4f18-8613-637c81bd750b",
+    "Node": "consul02.prod",
+    "Address": "10.251.1.96",
+    "Datacenter": "par",
+    "TaggedAddresses": {
+      "lan": "10.251.1.96",
+      "wan": "10.251.1.96"
+    },
+    "Meta": {
+      "consul-network-segment": "",
+      "rack_name": "2207"
+    },
+    "CreateIndex": 228090242,
+    "ModifyIndex": 228091668
   },
-  "Meta": {
-    "consul-network-segment": "",
-    "rack_name": "2207"
-  },
-  "CreateIndex": 228090242,
-  "ModifyIndex": 228091668
+  "Services": {}
 }

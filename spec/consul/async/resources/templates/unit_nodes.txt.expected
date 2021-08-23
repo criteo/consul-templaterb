@@ -4,5 +4,12 @@ consul02.prod
 consul03.prod
 consul04.prod
 
+Helper when exists:
 Node: consul02.prod
 ID: 7a985997-3925-4f18-8613-637c81bd750b
+exists? true
+
+Helpes when does not exists:
+* exists? = false
+* node empty = true
+* services empty true
