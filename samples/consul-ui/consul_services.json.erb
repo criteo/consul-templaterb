@@ -36,7 +36,7 @@
       @sort_consul_service_nodes.call(service(service_name)).each do |snode|
         tags_of_instance = snode['Service']['Tags'].sort
         if (instance_must_tag.nil? || tags_of_instance.include?(instance_must_tag)) && !tags_of_instance.include?(instance_exclude_tag)
-          the_backends << snode if snode['Service']['Port']
+          the_backends << snode
         end
       end
       # We add the backend ONLY if at least one valid instance does exists
