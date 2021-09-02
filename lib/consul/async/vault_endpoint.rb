@@ -230,6 +230,7 @@ module Consul
 
       def fetch
         options = {
+          tls: { verify_peer: conf.tls_verify_peer },
           connect_timeout: 5, # default connection setup timeout
           inactivity_timeout: 1 # default connection inactivity (post-setup) timeout
         }

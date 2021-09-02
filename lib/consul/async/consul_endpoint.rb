@@ -265,7 +265,8 @@ module Consul
       def fetch
         options = {
           connect_timeout: 5, # default connection setup timeout
-          inactivity_timeout: conf.wait_duration + 1 + (conf.wait_duration / 16) # default connection inactivity (post-setup) timeout
+          inactivity_timeout: conf.wait_duration + 1 + (conf.wait_duration / 16), # default connection inactivity (post-setup) timeout
+          tls: { verify_peer: conf.tls_verify_peer }
         }
         unless conf.tls_cert_chain.nil?
           options[:tls] = {
