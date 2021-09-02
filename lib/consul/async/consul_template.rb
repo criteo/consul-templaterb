@@ -31,7 +31,7 @@ module Consul
 
       def as_json(url, default_value, refresh_delay_secs: 10, **opts)
         conf = JSONConfiguration.new(url: url, min_duration: refresh_delay_secs, retry_on_non_diff: refresh_delay_secs, **opts)
-        endpoint_id = url + opts.to_json
+        endpoint_id = url + opts.hash.to_s
         @endp_manager.create_if_missing(url, {}, endpoint_id: endpoint_id) do
           if default_value.is_a?(Array)
             ConsulTemplateJSONArray.new(JSONEndpoint.new(conf, url, default_value))
