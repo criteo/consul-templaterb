@@ -207,6 +207,11 @@ It means that you can call consul-templaterb with `*.erb` arguments, the shell
 will then substitute all files and render it by removing the `.erb` extension as
 if the `--template my_file.ext.erb:myfile.ext` was used.
 
+If the program is run in an automatic context, it could be useful to stream
+logs instead of the default interactive log version which erase last log line.
+To configure this behavior, set the `STREAM_LOG` environment variable to any
+value.
+
 ### Generate multiple templates
 
 In the same way as consul-template, consul-templaterb supports multiple templates and executing

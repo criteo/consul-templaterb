@@ -26,7 +26,10 @@ module Consul
       end
 
       def self.print_info(msg)
+        return unless level > 1
+
         STDERR.print "[INFO] #{msg}" if level > 1
+        warn '' if ENV['LOG_STREAM']
       end
 
       def self.puts_debug(msg)
@@ -34,7 +37,10 @@ module Consul
       end
 
       def self.print_debug(msg)
-        STDERR.print "[DEBG] #{msg}" if level > 2
+        return unless level > 2
+
+        STDERR.print "[DEBG] #{msg}"
+        warn '' if ENV['LOG_STREAM']
       end
     end
   end
