@@ -6,8 +6,9 @@ AllCops:
 Layout/LineLength:
   Max: 175
 
+# those metrics should be disabled
 Metrics/AbcSize:
-  Max: 90
+  Max: 92
 
 Metrics/BlockLength:
   Max: 188
