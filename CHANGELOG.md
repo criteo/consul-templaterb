@@ -1,6 +1,15 @@
 # CHANGELOG
 
-## 1.31.1 (Jan 28, 2021)
+## 1.33.0 (Nov 22, 2021)
+
+IMPROVEMENTS:
+
+* Validate ssl peers
+* Allow to stream log lines
+* [CONSUL-UI] Display services with no port definition
+* Hide opts in logs by default
+
+## 1.32.1 (Jan 28, 2021)
 
 IMPROVEMENTS:
 
