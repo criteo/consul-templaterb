@@ -292,7 +292,7 @@ If you want to test it quickly, you might try with (assuming your consul agent i
 `http://localhost:8500`):
 
 ```shell
-$ be bin/consul-templaterb -c 'http://localhost:8500' samples/*.html.erb
+$ bundle exec bin/consul-templaterb -c 'http://localhost:8500' samples/*.html.erb
 [...]
 ```
 
