@@ -400,8 +400,9 @@ module Consul
                             agent: nil, endpoint_id: nil)
         endpoint_id ||= begin
                           fqdn = path.dup
+                          fqdn = "#{agent}#{fqdn}"
                           query_params.each_pair do |k, v|
-                            fqdn = "#{agent}#{fqdn}&#{k}=#{v}"
+                            fqdn += "&#{k}=#{v}"
                           end
                           fqdn
                         end
