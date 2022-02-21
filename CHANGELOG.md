@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.31.1 (Feb 281 2022)
+
+BUG FIX:
+
+* Correctly identify endpoints
+
 ## 1.33.0 (Nov 22, 2021)
 
 IMPROVEMENTS:
