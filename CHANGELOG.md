@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.31.2 (Aug 04 2022)
+
+BUG FIX:
+
+* URL encode service and KV names when calling the http API
+
 ## 1.31.1 (Feb 281 2022)
 
 BUG FIX:
