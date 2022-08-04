@@ -132,7 +132,7 @@ module Consul
       def service(name, dc: nil, passing: false, tag: nil, agent: nil)
         raise 'You must specify a name for a service' if name.nil?
 
-        path = "/v1/health/service/#{name}"
+        path = '/v1/health/service/' + ERB::Util.url_encode(name.to_s)
         query_params = {}
         query_params[:dc] = dc if dc
         query_params[:passing] = passing if passing
@@ -144,7 +144,7 @@ module Consul
       def checks_for_service(name, dc: nil, passing: false, agent: nil)
         raise 'You must specify a name for a service' if name.nil?
 
-        path = "/v1/health/checks/#{name}"
+        path = '/v1/health/checks/' + ERB::Util.url_encode(name.to_s)
         query_params = {}
         query_params[:dc] = dc if dc
         query_params[:passing] = passing if passing
@@ -155,7 +155,7 @@ module Consul
       def checks_for_node(name, dc: nil, passing: false, agent: nil)
         raise 'You must specify a name for a service' if name.nil?
 
-        path = "/v1/health/node/#{name}"
+        path = '/v1/health/node/' + ERB::Util.url_encode(name.to_s)
         query_params = {}
         query_params[:dc] = dc if dc
         query_params[:passing] = passing if passing
@@ -184,7 +184,7 @@ module Consul
 
       # https://www.consul.io/api/catalog.html#list-services-for-node
       def node(name_or_id, dc: nil, agent: nil)
-        path = "/v1/catalog/node/#{name_or_id}"
+        path = '/v1/catalog/node/' + ERB::Util.url_encode(name_or_id.to_s)
         query_params = {}
         query_params[:dc] = dc if dc
         create_if_missing(path, query_params, agent: agent) { ConsulTemplateNode.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '{}', agent)) }
@@ -247,7 +247,7 @@ module Consul
 
       # https://www.consul.io/api/kv.html#read-key
       def kv(name = nil, dc: nil, keys: nil, recurse: false, agent: nil)
-        path = "/v1/kv/#{name}"
+        path = '/v1/kv/' + ERB::Util.url_encode(name.to_s)
         query_params = {}
         query_params[:dc] = dc if dc
         query_params[:recurse] = recurse if recurse
