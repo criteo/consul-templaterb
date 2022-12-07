@@ -9,6 +9,14 @@ module Consul
     class ProcessHandler
       attr_reader :command, :sig_reload, :sig_term, :pid, :exit_status, :last_signal_sent, :reload_scheduled
       attr_writer :reload_scheduled
+
+      def restart
+        warn "Restart process with pid #{pid}"
+        kill
+        start
+        @reload_scheduled = false
+      end
+
       def initialize(command, sig_reload: 'HUP', sig_term: 'TERM')
         raise 'empty sig_term is not supported' unless sig_term
 

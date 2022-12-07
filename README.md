@@ -191,6 +191,7 @@ USAGE: consul-templaterb [[options]]
     -M, --debug-memory-usage         Display messages when RAM grows
     -T, --trim-mode=trim_mode        ERB Trim mode to use (- by default)
     -R, --sig-reload=reload_signal   Signal to send to next --exec command on reload (NONE supported), default=HUP
+        --restart                    restart the --exec command on each configuration change(if your process do not handle hot-reload)    
     -W, --wait-signal=min_duration   Wait at least n seconds before each reload signal being sent to next --exec process
     -e, --exec=<command>             Execute the following command in as a subprocess when all templates are ready
     -d, --debug-network-usage        Debug the network usage

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.31.3 (Dec 07 2022)
+
+IMPROVEMENTS:
+
+* Add restart mode
+
+
 ## 1.31.2 (Aug 04 2022)
 
 BUG FIX:
