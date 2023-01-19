@@ -87,7 +87,7 @@ function serviceTitleGenerator(instance, serviceName, node_info) {
     }
 
     var nodemeta = (node_info != null) ? node_info.meta : null; 
-    instanceLink.appendChild(createNodeDisplayElement(instance.name, nodemeta));
+    instanceLink.appendChild(createNodeDisplayElement(instance.name, nodemeta, instance.fqdn, instance?.sMeta?.fqdn));
     instanceLink.appendChild(document.createTextNode(appendPort));
 
     const nodeInfo = document.createElement('a');
