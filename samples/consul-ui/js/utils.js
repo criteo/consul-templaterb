@@ -34,7 +34,7 @@ function padDateUnit(x) {
 }
 
 function formatDate(date) {
-    return padDateUnit(date.getMonth() + 1) + "/" + padDateUnit(date.getDate()) + " " + padDateUnit(date.getHours()) + ':' + padDateUnit(date.getMinutes()) + ':' + padDateUnit(date.getSeconds());
+    return padDateUnit(date.getUTCMonth() + 1) + "/" + padDateUnit(date.getUTCDate()) + " " + padDateUnit(date.getUTCHours()) + ':' + padDateUnit(date.getUTCMinutes()) + ':' + padDateUnit(date.getUTCSeconds()) + " UTC";
 }
 
 function indexOfTimelineEvent(e) {
