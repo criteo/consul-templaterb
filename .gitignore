@@ -16,7 +16,7 @@ samples/consul-ui/decorators.js
 /samples/hosts
 /samples/hosts_per_services
 /samples/prometheus_consul_coordinates
-/samples/ready
+/samples/consul-ui/ready
 /samples/render_template_from_kv
 /samples/consul_template
 /samples/metrics

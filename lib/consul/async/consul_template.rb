@@ -318,7 +318,7 @@ module Consul
           params: params,
           template_info: tpl_info
         }
-        result = ERB.new(tpl, nil, @trim_mode).result(binding)
+        result = ERB.new(tpl, trim_mode: @trim_mode).result(binding)
         raise "Result is not a string :='#{result}' for #{tpl_file_path}" unless result.is_a?(String)
 
         @context = old_value
