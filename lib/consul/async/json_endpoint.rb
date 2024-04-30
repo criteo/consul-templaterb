@@ -94,9 +94,10 @@ module Consul
     # Endpoint (aka URL) of a remote API that might be called
     class JSONEndpoint
       attr_reader :conf, :url, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value, :query_params
-      def initialize(conf, url, default_value, enforce_json_200 = true, query_params = {})
+      def initialize(conf, url, default_value, enforce_json_200: true, query_params: {}, default_value_on_error: false)
         @conf = conf.create(url)
         @default_value = default_value
+        @default_value_on_error = default_value_on_error
         @url = url
         @queue = EM::Queue.new
         @s_callbacks = []
@@ -175,7 +176,7 @@ module Consul
         retry_in = _compute_retry_in([600, conf.retry_duration + 2**@consecutive_errors].min)
         ::Consul::Async::Debug.puts_error "[#{url}] - #{http.error} - Retry in #{retry_in}s #{stats.body_bytes_human}"
         @consecutive_errors += 1
-        http_result = HttpResponse.new(http)
+        http_result = @default_value_on_error ? HttpResponse.new(http, @default_value.to_json) : HttpResponse.new(http)
         EventMachine.add_timer(retry_in) do
           yield
           queue.push(Object.new)
@@ -204,6 +205,7 @@ module Consul
           http = connection[:conn].send(request_method, build_request)
           http.callback do
             if enforce_json_200 && !(200..299).cover?(http.response_header.status) && http.response_header['Content-Type'] != 'application/json'
+              handle_default_on_error(http) if @default_value_on_error
               _handle_error(http) do
                 warn "[RETRY][#{url}] (#{@consecutive_errors} errors)" if (@consecutive_errors % 10) == 1
               end
@@ -228,6 +230,7 @@ module Consul
           end
 
           http.errback do
+            handle_default_on_error(http) if @default_value_on_error
             unless @stopping
               _handle_error(http) do
                 if (@consecutive_errors % 10) == 1
@@ -243,6 +246,15 @@ module Consul
           queue.pop(&cb)
         end
         queue.pop(&cb)
+      end
+
+      def handle_default_on_error(http)
+        ::Consul::Async::Debug.puts_error "[#{url}] response status #{http.response_header.status}; using default value"
+        @consecutive_errors = 0
+        json_result = JSONResult.new(@default_value.to_json, false, HttpResponse.new(http, ''), stats, 10, fake: true)
+        @last_result = json_result
+        @ready = true
+        @s_callbacks.each { |c| c.call(json_result) }
       end
     end
   end
