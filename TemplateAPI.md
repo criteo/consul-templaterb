@@ -631,11 +631,12 @@ secret('secret/foo', [force_ttl: intInSecond])
 
 ## remote_resource
 
-### as_json(url, default_value, [refresh_delay_secs: intInSecond])
+### as_json(url, default_value, [refresh_delay_secs: intInSecond, default_value_on_error: bool])
 
 Fetch json data from any url. This allows to create templates with consul/vault data mixed in with data coming from other services/api.
 Polling interval can be controlled with `refresh_delay_secs` option.
 Request method (`GET`, `POST`, ...) can be controlled with `request_method` option.
+To return default value on the case of error, set `default_value_on_error` to true.
 
 ```erb
 remote_resource.as_json('http://my-api.dev/fridge/list.json', [])
