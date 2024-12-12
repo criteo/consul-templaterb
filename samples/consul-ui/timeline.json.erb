@@ -1,5 +1,6 @@
 <%
 require 'json'
+require 'ostruct'
 require 'set'
 services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || 'lbl7.*,netsvc-probe.*,consul-probed.*').split(',')
 services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }  # Compute the health of a Service

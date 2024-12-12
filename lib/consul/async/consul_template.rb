@@ -29,14 +29,14 @@ module Consul
         @endp_manager = endpoints_manager
       end
 
-      def as_json(url, default_value, refresh_delay_secs: 10, **opts)
+      def as_json(url, default_value, refresh_delay_secs: 10, default_value_on_error: false, **opts)
         conf = JSONConfiguration.new(url: url, min_duration: refresh_delay_secs, retry_on_non_diff: refresh_delay_secs, **opts)
         endpoint_id = url + opts.hash.to_s
         @endp_manager.create_if_missing(url, {}, endpoint_id: endpoint_id) do
           if default_value.is_a?(Array)
-            ConsulTemplateJSONArray.new(JSONEndpoint.new(conf, url, default_value))
+            ConsulTemplateJSONArray.new(JSONEndpoint.new(conf, url, default_value, default_value_on_error: default_value_on_error))
           else
-            ConsulTemplateJSONObject.new(JSONEndpoint.new(conf, url, default_value))
+            ConsulTemplateJSONObject.new(JSONEndpoint.new(conf, url, default_value, default_value_on_error: default_value_on_error))
           end
         end
       end

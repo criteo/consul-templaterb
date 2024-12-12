@@ -58,15 +58,31 @@ consul_members_count{serf="lan",status="<%= k %>"} <%= v %><%
             metas: metas,
             service_name: service_name,
             state: {
-              'passing'  => 0,
-              'warning'  => 0,
-              'critical' => 0,
+              'passing' =>  {
+                instances: 0,
+                weight: 0
+              },
+              'warning' =>  {
+                instances: 0,
+                weight: 0
+              },
+              'critical' =>  {
+                instances: 0,
+                weight: 0
+              }
             }
           }
           backends[key] = back
         end
         state = snode.status
-        back[:state][state] += 1
+        # Increment instance number.
+        back[:state][state][:instances] += 1
+        # Increment total weight regarding current node's state.
+        if state == 'passing'
+          back[:state][state][:weight] += snode['Service']['Weights']['Passing']
+        elsif state == 'warning'
+          back[:state][state][:weight] += snode['Service']['Weights']['Warning']
+        end
       end
     end
   end
@@ -118,7 +134,8 @@ end
       meta_string+=",#{k}=\"#{escape_meta(v)}\""
     end
     service_info[:state].each_pair do |state_name, state_count|
-%>consul_service_count{service="<%= service_name %>",state="<%= state_name %>"<%= meta_string %>} <%= state_count %>
+%>consul_service_count{service="<%= service_name %>",state="<%= state_name %>"<%= meta_string %>} <%= state_count[:instances] %>
+consul_service_weight{service="<%= service_name %>",state="<%= state_name %>"<%= meta_string %>} <%= state_count[:weight] %>
 <%
     end
   end
