@@ -1,7 +1,7 @@
 AllCops:
   Exclude:
     - bundle/**/*
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 3.3
 
 Layout/LineLength:
   Max: 175

@@ -28,15 +28,15 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.3.0'
 
-  spec.add_runtime_dependency 'em-http-request', '~> 1.1'
-  spec.add_runtime_dependency 'eventmachine', '~> 1.2'
-  spec.add_runtime_dependency 'parallel', '~> 1.2'
+  spec.add_runtime_dependency 'em-http-request'
+  spec.add_runtime_dependency 'eventmachine'
+  spec.add_runtime_dependency 'parallel'
 
-  spec.add_development_dependency 'bundler', '>= 1.14'
-  spec.add_development_dependency 'rake', '~> 12.3'
-  spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4.1'
-  spec.add_development_dependency 'rubocop', '~> 0.80.0'
-  spec.add_development_dependency 'rubocop-junit-formatter', '0.1.4'
-  spec.add_development_dependency 'webmock', '~> 2.1'
+  spec.add_development_dependency 'bundler'
+  spec.add_development_dependency 'rake'
+  spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'rspec_junit_formatter'
+  spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'rubocop-junit-formatter'
+  spec.add_development_dependency 'webmock'
 end
