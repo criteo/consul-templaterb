@@ -1,6 +1,5 @@
 <%
 require 'json'
-require 'ostruct'
 require 'set'
 services_blacklist_raw = (ENV['EXCLUDE_SERVICES'] || 'lbl7.*,netsvc-probe.*,consul-probed.*').split(',')
 services_blacklist = services_blacklist_raw.map { |v| Regexp.new(v) }  # Compute the health of a Service
@@ -69,8 +68,12 @@ old_state = if @previous_state
 unless @events
   load File.expand_path(File.join(File.dirname(template_info['source']), 'ringbuffer.rb'))
 
+  class Diff
+    attr_accessor :appeared, :disappeared, :stayed, :all
+  end
+
   def diff(old, new_e)
-    diff = OpenStruct.new
+    diff = Diff.new
     diff.appeared = new_e - old
     diff.disappeared = old - new_e
     diff.stayed = new_e & old
