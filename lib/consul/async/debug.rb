@@ -28,7 +28,7 @@ module Consul
       def self.print_info(msg)
         return unless level > 1
 
-        STDERR.print "[INFO] #{msg}" if level > 1
+        $stderr.print "[INFO] #{msg}" if level > 1
         warn '' if ENV['LOG_STREAM']
       end
 
@@ -39,7 +39,7 @@ module Consul
       def self.print_debug(msg)
         return unless level > 2
 
-        STDERR.print "[DEBG] #{msg}"
+        $stderr.print "[DEBG] #{msg}"
         warn '' if ENV['LOG_STREAM']
       end
     end

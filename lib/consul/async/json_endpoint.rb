@@ -10,6 +10,7 @@ module Consul
       attr_reader :url, :retry_duration, :min_duration, :retry_on_non_diff,
                   :debug, :enable_gzip_compression, :request_method, :json_body,
                   :headers, :tls_cert_chain, :tls_private_key, :tls_verify_peer
+
       def initialize(url:,
                      debug: { network: false },
                      retry_duration: 10,
@@ -41,9 +42,11 @@ module Consul
         self
       end
     end
+
     # Result from call to a Remote JSON endpoint
     class JSONResult
       attr_reader :data, :http, :last_update, :stats, :retry_in
+
       def initialize(data, modified, http, stats, retry_in, fake: false)
         @data = data
         @modified = modified
@@ -75,9 +78,11 @@ module Consul
         next_retry + last_update
       end
     end
+
     # Encapsulation of HTTP Response
     class HttpResponse
       attr_reader :response_header, :response, :error
+
       def initialize(http, override_nil_response = nil)
         if http.nil?
           @response_header = nil
@@ -90,9 +95,11 @@ module Consul
         end
       end
     end
+
     # Endpoint (aka URL) of a remote API that might be called
     class JSONEndpoint
       attr_reader :conf, :url, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value, :query_params
+
       def initialize(conf, url, default_value, enforce_json_200: true, query_params: {}, default_value_on_error: false)
         @conf = conf.create(url)
         @default_value = default_value

@@ -10,6 +10,7 @@ module Consul
       attr_reader :base_url, :token, :retry_duration, :min_duration, :wait_duration, :max_retry_duration, :retry_on_non_diff,
                   :missing_index_retry_time_on_diff, :missing_index_retry_time_on_unchanged, :debug, :enable_gzip_compression,
                   :fail_fast_errors, :max_consecutive_errors_on_endpoint, :tls_cert_chain, :tls_private_key, :tls_verify_peer
+
       def initialize(base_url: 'http://localhost:8500',
                      debug: { network: false },
                      token: nil,
@@ -88,6 +89,7 @@ module Consul
     # It also keep statistics about result (x_consul_index, stats...)
     class ConsulResult
       attr_reader :data, :http, :x_consul_index, :last_update, :stats, :retry_in
+
       def initialize(data, modified, http, x_consul_index, stats, retry_in, fake: false)
         @data = data
         @modified = modified
@@ -121,10 +123,12 @@ module Consul
         next_retry + last_update
       end
     end
+
     # Basic Encapsulation of HTTP response from Consul
     # It supports empty responses to handle first call is an easy way
     class HttpResponse
       attr_reader :response_header, :response, :error
+
       def initialize(http, override_nil_response = nil)
         if http.nil?
           @response_header = nil
@@ -137,11 +141,13 @@ module Consul
         end
       end
     end
+
     # This class represents a specific path in Consul HTTP API
     # It also stores x_consul_index and keep track on updates of API
     # So, it basically performs all the optimizations to keep updated with Consul internal state.
     class ConsulEndpoint
       attr_reader :conf, :path, :x_consul_index, :queue, :stats, :last_result, :enforce_json_200, :start_time, :default_value, :query_params
+
       def initialize(conf, path, enforce_json_200 = true, query_params = {}, default_value = '[]', agent = nil)
         @conf = conf.create(path, agent: agent)
         @default_value = default_value

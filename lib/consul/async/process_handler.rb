@@ -7,8 +7,9 @@ module Consul
     # Handle the full lifecycle of a process and allows to forward
     # Posix signals to child process when needed.
     class ProcessHandler
-      attr_reader :command, :sig_reload, :sig_term, :pid, :exit_status, :last_signal_sent, :reload_scheduled
-      attr_writer :reload_scheduled
+      attr_accessor :reload_scheduled
+      attr_reader :command, :sig_reload, :sig_term, :pid, :exit_status, :last_signal_sent
+
       def initialize(command, sig_reload: 'HUP', sig_term: 'TERM')
         raise 'empty sig_term is not supported' unless sig_term
 

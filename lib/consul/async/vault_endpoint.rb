@@ -73,6 +73,7 @@ module Consul
                                fail_fast_errors: @fail_fast_errors)
       end
     end
+
     # Keep information about Vault result of a query
     class VaultResult
       attr_reader :data, :http, :stats, :retry_in
@@ -210,9 +211,8 @@ module Consul
       def _get_errors(http)
         return [http.error] if http.error
 
-        unless http.json.nil?
-          return http.json['errors'] if http.json.key?('errors')
-        end
+        return http.json['errors'] if !http.json.nil? && http.json.key?('errors')
+
         ['unknown error']
       end
 
@@ -250,7 +250,7 @@ module Consul
               _handle_error(http_result) { connection = EventMachine::HttpRequest.new(conf.base_url, options) }
             else
               @consecutive_errors = 0
-              modified = @last_result.nil? ? true : @last_result.data != http_result.response # Leaving it do to stats with this later
+              modified = @last_result.nil? || @last_result.data != http_result.response # Leaving it do to stats with this later
               retry_in = get_lease_duration(http_result) * conf.lease_duration_factor
               retry_in = [retry_in, conf.max_retry_duration].min
               retry_in = [retry_in, conf.min_duration].max

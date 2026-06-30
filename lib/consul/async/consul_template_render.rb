@@ -7,6 +7,7 @@ module Consul
     # .ready? will tell if rendering is full or partial
     class ConsulTemplateRenderedResult
       attr_reader :template_file, :output_file, :hot_reloaded, :ready, :modified, :last_result
+
       def initialize(template_file, output_file, hot_reloaded, was_success, modified, last_result)
         @template_file = template_file
         @output_file = output_file
@@ -20,11 +21,13 @@ module Consul
         @ready
       end
     end
+
     # Object handling the whole rendering of a template
     # It stores the input, the output and flags about last result being modified or simply readiness
     # information about whether the template did receive all data to be fully rendered
     class ConsulTemplateRender
       attr_reader :template_file, :output_file, :template_file_ctime, :hot_reload_failure, :params
+
       def initialize(template_manager, template_file, output_file, hot_reload_failure: 'die', params: {})
         @hot_reload_failure = hot_reload_failure
         @template_file = template_file

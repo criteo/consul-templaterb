@@ -8,7 +8,7 @@ Layout/LineLength:
 
 # those metrics should be disabled
 Metrics/AbcSize:
-  Max: 92
+  Max: 93
 
 Metrics/BlockLength:
   Max: 188
@@ -20,16 +20,17 @@ Metrics/ClassLength:
   Max: 285
 
 Metrics/CyclomaticComplexity:
-  Max: 21
+  Max: 25
 
 Metrics/MethodLength:
   Max: 70
 
 Metrics/ParameterLists:
   Max: 18
+  MaxOptionalParameters: 5
 
 Metrics/PerceivedComplexity:
-  Max: 24
+  Max: 26
 
 # We use `dc` as a parameter in many methods
 Naming/MethodParameterName:
@@ -54,5 +55,8 @@ Style/HashTransformValues:
   Enabled: true
 
 Style/MultilineBlockChain:
+  Enabled: false
+
+Style/OptionalBooleanParameter:
   Enabled: false
 

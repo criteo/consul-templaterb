@@ -10,7 +10,9 @@ module Consul
     # its rendering
     class InvalidTemplateException < StandardError
       attr_reader :cause
+
       def initialize(cause)
+        super
         @cause = cause
       end
     end
@@ -18,7 +20,9 @@ module Consul
     # Exception thrown when the template is Invalid due to a Syntax Error
     class SyntaxErrorInTemplate < InvalidTemplateException
       attr_reader :cause
+
       def initialize(cause)
+        super
         @cause = cause
       end
     end
@@ -92,6 +96,7 @@ module Consul
     # to template writters.
     class EndPointsManager
       attr_reader :consul_conf, :vault_conf, :running, :net_info, :start_time, :coordinate, :remote_resource, :templates
+
       def initialize(consul_configuration, vault_configuration, templates, trim_mode = nil)
         @running = true
         @consul_conf = consul_configuration
@@ -132,7 +137,7 @@ module Consul
       def service(name, dc: nil, passing: false, tag: nil, agent: nil)
         raise 'You must specify a name for a service' if name.nil?
 
-        path = '/v1/health/service/' + ERB::Util.url_encode(name.to_s)
+        path = "/v1/health/service/#{ERB::Util.url_encode(name.to_s)}"
         query_params = {}
         query_params[:dc] = dc if dc
         query_params[:passing] = passing if passing
@@ -144,7 +149,7 @@ module Consul
       def checks_for_service(name, dc: nil, passing: false, agent: nil)
         raise 'You must specify a name for a service' if name.nil?
 
-        path = '/v1/health/checks/' + ERB::Util.url_encode(name.to_s)
+        path = "/v1/health/checks/#{ERB::Util.url_encode(name.to_s)}"
         query_params = {}
         query_params[:dc] = dc if dc
         query_params[:passing] = passing if passing
@@ -155,7 +160,7 @@ module Consul
       def checks_for_node(name, dc: nil, passing: false, agent: nil)
         raise 'You must specify a name for a service' if name.nil?
 
-        path = '/v1/health/node/' + ERB::Util.url_encode(name.to_s)
+        path = "/v1/health/node/#{ERB::Util.url_encode(name.to_s)}"
         query_params = {}
         query_params[:dc] = dc if dc
         query_params[:passing] = passing if passing
@@ -184,7 +189,7 @@ module Consul
 
       # https://www.consul.io/api/catalog.html#list-services-for-node
       def node(name_or_id, dc: nil, agent: nil)
-        path = '/v1/catalog/node/' + ERB::Util.url_encode(name_or_id.to_s)
+        path = "/v1/catalog/node/#{ERB::Util.url_encode(name_or_id.to_s)}"
         query_params = {}
         query_params[:dc] = dc if dc
         create_if_missing(path, query_params, agent: agent) { ConsulTemplateNode.new(ConsulEndpoint.new(consul_conf, path, true, query_params, '{}', agent)) }
@@ -247,7 +252,7 @@ module Consul
 
       # https://www.consul.io/api/kv.html#read-key
       def kv(name = nil, dc: nil, keys: nil, recurse: false, agent: nil)
-        path = '/v1/kv/' + ERB::Util.url_encode(name.to_s)
+        path = "/v1/kv/#{ERB::Util.url_encode(name.to_s)}"
         query_params = {}
         query_params[:dc] = dc if dc
         query_params[:recurse] = recurse if recurse
@@ -301,10 +306,10 @@ module Consul
       end
 
       def find_line(e)
-        return e.message.dup[5..-1] if e.message.start_with? '(erb):'
+        return e.message.dup[5..] if e.message.start_with? '(erb):'
 
         e.backtrace.each do |line|
-          return line[5..-1] if line.start_with? '(erb):'
+          return line[5..] if line.start_with? '(erb):'
         end
         nil
       end
@@ -399,13 +404,13 @@ module Consul
                             max_consecutive_errors_on_endpoint: @max_consecutive_errors_on_endpoint,
                             agent: nil, endpoint_id: nil)
         endpoint_id ||= begin
-                          fqdn = path.dup
-                          fqdn = "#{agent}#{fqdn}"
-                          query_params.each_pair do |k, v|
-                            fqdn += "&#{k}=#{v}"
-                          end
-                          fqdn
-                        end
+          fqdn = path.dup
+          fqdn = "#{agent}#{fqdn}"
+          query_params.each_pair do |k, v|
+            fqdn += "&#{k}=#{v}"
+          end
+          fqdn
+        end
         tpl = @endpoints[endpoint_id]
         unless tpl
           tpl = yield
@@ -437,6 +442,7 @@ module Consul
     # Abstract class that stores information about a result
     class ConsulTemplateAbstract
       attr_reader :result, :endpoint, :seen_at
+
       def initialize(consul_endpoint)
         @endpoint = consul_endpoint
         consul_endpoint.on_response do |res|
@@ -478,16 +484,10 @@ module Consul
 
     # Concrete class of a result when the result is a JSON Object
     class ConsulTemplateAbstractMap < ConsulTemplateAbstract
-      def initialize(consul_endpoint)
-        super(consul_endpoint)
-      end
     end
 
     # Concrete class of a result when the result is a JSON Array
     class ConsulTemplateAbstractArray < ConsulTemplateAbstract
-      def initialize(consul_endpoint)
-        super(consul_endpoint)
-      end
     end
 
     # technically this class could be also an array, a simple string or any simple json object other than a hash.
@@ -500,6 +500,7 @@ module Consul
     # basically a Hash.
     class ServiceInstance < Hash
       def initialize(obj)
+        super
         merge!(obj)
       end
 
@@ -578,17 +579,10 @@ module Consul
 
     # Object returned by datacenters(), basically a JSON Array
     class ConsulTemplateDatacenters < ConsulTemplateAbstractArray
-      def initialize(consul_endpoint)
-        super(consul_endpoint)
-      end
     end
 
     # Object returned by services() an abstract map of service_name, tags
     class ConsulTemplateServices < ConsulTemplateAbstractMap
-      def initialize(consul_endpoint)
-        super(consul_endpoint)
-      end
-
       def parse_result(res)
         return res unless res.data == '{}' || endpoint.query_params[:tag]
 
@@ -610,31 +604,18 @@ module Consul
 
     # Object returned by /v1/agent/self, a JSON Map
     class ConsulAgentSelf < ConsulTemplateAbstractMap
-      def initialize(consul_endpoint)
-        super(consul_endpoint)
-      end
     end
 
     # Object returning metrics from Consul agent, a JSON Map
     class ConsulAgentMetrics < ConsulTemplateAbstractMap
-      def initialize(consul_endpoint)
-        super(consul_endpoint)
-      end
     end
 
     # List of checks for agent
     class ConsulTemplateChecks < ConsulTemplateAbstractArray
-      def initialize(consul_endpoint)
-        super(consul_endpoint)
-      end
     end
 
     # Get information about a single node
     class ConsulTemplateNode < ConsulTemplateAbstractMap
-      def initialize(consul_endpoint)
-        super(consul_endpoint)
-      end
-
       def exists?
         !result_delegate.nil?
       end
@@ -661,15 +642,13 @@ module Consul
 
     # List of nodes of the whole cluster
     class ConsulTemplateNodes < ConsulTemplateAbstractArray
-      def initialize(consul_endpoint)
-        super(consul_endpoint)
-      end
     end
 
     # The ServiceInstance has shortcuts (such as service_address method), but is
     # basically a Hash.
     class SerfMember < Hash
       def initialize(obj)
+        super
         merge!(obj)
       end
 
@@ -686,10 +665,6 @@ module Consul
 
     # List of serf members of the whole cluster
     class ConsulTemplateMembers < ConsulTemplateAbstractArray
-      def initialize(consul_endpoint)
-        super(consul_endpoint)
-      end
-
       def result_delegate
         return @cached_result if @cached_json == result.json
 
@@ -708,6 +683,7 @@ module Consul
     # Several helpers exist to handle nicely transformations
     class ConsulTemplateKV < ConsulTemplateAbstractArray
       attr_reader :root
+
       def initialize(consul_endpoint, root)
         @root = root
         super(consul_endpoint)
@@ -762,9 +738,6 @@ module Consul
 
     # Vault Secrets is a Map of secrets properly decoded
     class ConsulTemplateVaultSecret < ConsulTemplateAbstractMap
-      def initialize(vault_endpoint)
-        super(vault_endpoint)
-      end
     end
 
     # Array of available secrets

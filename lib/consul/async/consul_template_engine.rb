@@ -11,8 +11,9 @@ module Consul
     # The Engine keeps tracks of all templates, handle hot-reload of files if needed
     # as well as ticking the clock to compute state of templates periodically.
     class ConsulTemplateEngine
-      attr_reader :template_manager, :hot_reload_failure, :template_frequency, :debug_memory, :result, :templates
-      attr_writer :hot_reload_failure, :template_frequency, :debug_memory
+      attr_accessor :hot_reload_failure, :template_frequency, :debug_memory
+      attr_reader :template_manager, :result, :templates
+
       def initialize
         @templates = []
         @template_callbacks = []

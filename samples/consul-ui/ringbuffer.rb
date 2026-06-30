@@ -2,8 +2,8 @@ module ConsulTimeline
   # Node of a ringbuffer
   # This contains entries to next and previous elemens as well as the value
   class RingBufferNode
-    attr_reader :prev, :value, :next
-    attr_writer :prev, :next, :value
+    attr_accessor :prev, :value, :next
+
     def initialize(value, p_elem, n_elem)
       @value = value
       @prev = p_elem
@@ -30,6 +30,7 @@ module ConsulTimeline
       "[prev=#{@prev.object_id}, next=#{@next.object_id}, value=#{@value}]"
     end
   end
+
   # A ringbuffer that supports inserting out of order elements at the right place
   # This is needed as Consul might notify us from changes in any order, so we
   # might receive a notification t-2 AFTER t-1, at t.
@@ -112,5 +113,5 @@ if ARGV.count.positive? && ARGV[0] == 'debug'
   arr = ringbuff.to_a
   raise "OOPS wrong size := #{arr.count} instead of #{size}" unless arr.count == size
 
-  STDOUT.puts JSON.generate(arr)
+  $stdout.puts JSON.generate(arr)
 end
